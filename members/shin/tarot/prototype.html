@@ -64,7 +64,7 @@
   @keyframes float { 50% { transform: translateY(calc(var(--space-2) * -1)) rotate(var(--tilt, 2deg)); } }
 
   /* 위쪽 막대: 진행, 움직임 멈추기 */
-  .topbar { position: fixed; top: var(--space-3); left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: var(--space-3); z-index: 10; padding: 0 var(--space-4); }
+  .topbar { position: fixed; top: var(--space-3); left: 0; right: 0; pointer-events: none; display: flex; justify-content: center; align-items: center; gap: var(--space-3); z-index: 10; padding: 0 var(--space-4); }
   .progress { display: flex; gap: var(--space-2); }
   .progress i { width: 24px; height: var(--space-1); background: color-mix(in srgb, var(--on-dark) 35%, transparent); border-radius: 2px; }
   .progress i.on { background: var(--gold); }
@@ -80,7 +80,7 @@
   .app { position: relative; height: 100%; z-index: 1; }
   .scene {
     position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: flex-start;
-    text-align: center; padding: 72px var(--space-4) 88px; overflow-y: auto;
+    text-align: center; padding: 72px var(--space-4) 88px; overflow-y: auto; overflow-x: hidden;
   }
   .scene.on { display: flex; }
   .scene > :first-child { margin-top: auto; }
@@ -165,7 +165,7 @@
   .front .name { position: absolute; bottom: var(--space-8); width: 100%; font-family: var(--display); font-size: var(--text-xs); letter-spacing: .2em; }
   .tap-hint { margin-top: var(--space-4); font-size: var(--text-xs); color: var(--on-dark-muted); animation: breathe 2s ease-in-out infinite; }
   @keyframes breathe { 50% { opacity: .8; } }
-  .result-wrap { display: flex; flex-direction: column; align-items: center; width: 100%; }
+  .result-wrap { margin-top: auto; display: flex; flex-direction: column; align-items: center; width: 100%; }
   .result-wrap.lift .flip { width: 150px; transition: width .8s cubic-bezier(.2,.7,.2,1); }
 
   /* 공개: 위에서부터 차례로 마법처럼. 나타나기 전에는 누를 수도, 포커스할 수도 없다 */
@@ -327,7 +327,7 @@
     <div class="kept-art" aria-hidden="true"><img class="kept-bunny" src="assets/web/rabbit-moon.webp" alt=""><div class="stamp" lang="en">LUCK<br>KEPT</div></div>
     <h1 class="h-sm" id="s5Title" tabindex="-1" style="margin-top:var(--space-6)">오늘의 운을 지켰어요</h1>
     <p class="muted" id="keptMsg"></p>
-    <p class="muted" style="margin-top:var(--space-2)">자정이 지나면 새 카드를 뽑을 수 있어요</p>
+    <p class="muted" style="margin-top:var(--space-2)">내일 또 새 카드를 만나 보세요</p>
   </section>
 </main>
 <button class="ghost-btn restart" id="restart" type="button">처음부터</button>

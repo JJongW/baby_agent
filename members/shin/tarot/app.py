@@ -13,11 +13,12 @@ import streamlit.components.v1 as components
 
 HERE = Path(__file__).parent
 MIME = {".webp": "image/webp", ".png": "image/png", ".woff2": "font/woff2"}
-FRAME_HEIGHT = 860  # iframe은 높이를 정해야 한다. 노트북 화면 한 장 기준
+FRAME_HEIGHT = 860  # 높이 값은 필수라 넣지만, 아래 CSS가 창 높이(100dvh)로 덮어쓴다
 
 
 @st.cache_data
-def build_page() -> str:
+def build_page(_version: float) -> str:
+    """_version: prototype.html 수정 시각. 파일이 바뀌면 캐시를 새로 만든다."""
     html = (HERE / "prototype.html").read_text(encoding="utf-8")
     # 폰트 미리 불러오기 줄은 iframe 안에서 쓸모가 없어 뺀다
     html = re.sub(r'<link rel="preload"[^>]*>\n?', "", html)
@@ -36,8 +37,8 @@ st.markdown(
     header, footer, #MainMenu { visibility: hidden; height: 0; }
     .block-container { padding: 0 !important; max-width: 100% !important; }
     .stApp { background: #2A040C; }
-    iframe { display: block; }
+    iframe { display: block; height: 100dvh !important; }
     </style>""",
     unsafe_allow_html=True,
 )
-components.html(build_page(), height=FRAME_HEIGHT, scrolling=False)
+components.html(build_page((HERE / "prototype.html").stat().st_mtime), height=FRAME_HEIGHT, scrolling=False)
