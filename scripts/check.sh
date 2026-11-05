@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 레포 규칙 검사. PR 전에 직접 돌리고, CI(.github/workflows/check.yml)도 같은 걸 돌린다.
+# 레포 규칙 검사. PR 올리기 전에 각자 돌리고, 리뷰어도 한 번 돌린다.
 # 규칙 설명은 CLAUDE.md "이름 규칙". 사람 목록은 members/ 아래 폴더 이름이다.
 # macOS 기본 bash 3.2에서도 돌도록 연관 배열은 쓰지 않는다.
 set -u

@@ -28,7 +28,7 @@ members/<사람>/
 docs/
   rules.md                          브랜치, 커밋, PR, 머지 규칙
   agent-card-template.md            소개 카드 양식
-scripts/check.sh                    이름 규칙 검사 (CI도 같은 스크립트를 돌린다)
+scripts/check.sh                    이름 규칙 검사 (PR 전에 각자 돌린다)
 ```
 
 에이전트 파일은 `members/` 안이 아니라 `.claude/agents/<사람>/`에 둔다.
