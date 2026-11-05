@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오늘의 타로 디자인 시안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Noto+Serif+KR:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root {
+    --red: #C8102E;
+    --red-deep: #8E0B21;
+    --red-soft: #F6DCDF;
+    --paper: #FBF7F2;
+    --white: #FFFFFF;
+    --ink: #2A1A1C;
+    --muted: #7A6466;
+    --line: #EADCD6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Pretendard, -apple-system, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 56px 16px 96px; }
+  header.top { text-align: center; margin-bottom: 56px; }
+  .eyebrow {
+    font-family: Cinzel, serif; letter-spacing: .32em; font-size: 12px; color: var(--red);
+  }
+  h1 {
+    font-family: "Cormorant Garamond", "Noto Serif KR", serif; font-weight: 600;
+    font-size: clamp(34px, 6vw, 52px); line-height: 1.15; margin: 12px 0 14px;
+  }
+  .lead { color: var(--muted); max-width: 620px; margin: 0 auto; }
+  .palette { display: flex; justify-content: center; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .swatch { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+  .swatch i { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line); display: inline-block; }
+
+  section.opt {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 40px; align-items: center;
+    padding: 48px 0; border-top: 1px solid var(--line);
+  }
+  .opt-text .tag {
+    display: inline-block; font-family: Cinzel, serif; font-size: 12px; letter-spacing: .2em;
+    color: var(--white); background: var(--red); padding: 3px 10px; border-radius: 2px;
+  }
+  .opt-text h2 {
+    font-family: "Cormorant Garamond", "Noto Serif KR", serif; font-size: 32px; font-weight: 600; margin: 12px 0 8px;
+  }
+  .opt-text p { color: var(--muted); margin-bottom: 14px; }
+  .opt-text ul { list-style: none; font-size: 14px; }
+  .opt-text li { padding: 6px 0 6px 18px; position: relative; border-bottom: 1px dashed var(--line); }
+  .opt-text li::before { content: ""; position: absolute; left: 0; top: 14px; width: 6px; height: 6px; background: var(--red); transform: rotate(45deg); }
+  .opt-text li b { color: var(--ink); }
+  .stage {
+    min-height: 460px; display: flex; align-items: center; justify-content: center; gap: 20px;
+    background: var(--white); border-radius: 18px; padding: 32px 16px; position: relative; overflow: hidden;
+    box-shadow: 0 1px 0 var(--line);
+  }
+
+  /* 공통 카드 */
+  .card {
+    width: 220px; aspect-ratio: 11 / 19; background: var(--paper); border-radius: 14px;
+    color: var(--red); position: relative; flex-shrink: 0;
+    box-shadow: 0 18px 40px -18px rgba(142, 11, 33, .35);
+  }
+  .card .frame { position: absolute; top: 12px; left: 12px; width: calc(100% - 24px); height: calc(100% - 24px); }
+  .card .num { position: absolute; top: 30px; width: 100%; text-align: center; font-family: Cinzel, serif; font-size: 12px; letter-spacing: .2em; }
+  .card .name { position: absolute; bottom: 30px; width: 100%; text-align: center; font-family: Cinzel, serif; font-size: 13px; letter-spacing: .24em; }
+  .card .art { position: absolute; inset: 70px 30px; display: flex; align-items: center; justify-content: center; }
+
+  /* A 클래식 */
+  .a-stage { background: var(--red-deep); }
+  .a-stage .back {
+    position: absolute; width: 200px; aspect-ratio: 11/19; border-radius: 14px; background: var(--red);
+    transform: rotate(-14deg) translate(-110px, 10px); opacity: .9;
+  }
+  .a-stage .back.two { transform: rotate(10deg) translate(120px, 20px); }
+  .a-stage .card { transform: rotate(-2deg); }
+
+  /* B 미니멀 타이포 */
+  .b-card { background: var(--white); border: 1px solid var(--line); box-shadow: none; }
+  .b-card .big {
+    position: absolute; top: 46px; width: 100%; text-align: center;
+    font-family: "Cormorant Garamond", "Noto Serif KR", serif; font-size: 96px; line-height: 1; font-weight: 500;
+  }
+  .b-card .bar { position: absolute; left: 50%; top: 170px; width: 1px; height: 90px; background: var(--red); }
+  .b-card .dot { position: absolute; left: calc(50% - 22px); top: 270px; width: 44px; height: 44px; border-radius: 50%; background: var(--red); }
+  .b-card .name { font-size: 12px; }
+  .b-card .sub { position: absolute; bottom: 52px; width: 100%; text-align: center; font-family: "Cormorant Garamond", "Noto Serif KR", serif; font-style: italic; color: var(--muted); font-size: 14px; }
+
+  /* C 뒤집기 */
+  .flip { width: 220px; aspect-ratio: 11/19; perspective: 1200px; cursor: pointer; border: 0; background: none; }
+  .flip-inner { position: relative; width: 100%; height: 100%; transition: transform .8s cubic-bezier(.2,.7,.2,1); transform-style: preserve-3d; }
+  .flip.on .flip-inner { transform: rotateY(180deg); }
+  .face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 14px; }
+  .face.front { transform: rotateY(180deg); }
+  .face.backside { background: var(--red); box-shadow: 0 18px 40px -18px rgba(142, 11, 33, .5); }
+  .c-hint { position: absolute; bottom: 18px; font-size: 13px; color: var(--muted); }
+  @media (prefers-reduced-motion: reduce) { .flip-inner { transition: none; } }
+
+  /* D 영수증 */
+  .receipt {
+    width: 280px; background: var(--white); padding: 26px 22px 30px; position: relative;
+    border-top: 6px solid var(--red); font-size: 13px; box-shadow: 0 18px 40px -22px rgba(42,26,28,.35);
+    -webkit-mask: radial-gradient(circle at 8px 100%, transparent 6px, #000 6.5px) -8px 100% / 16px 100% repeat-x;
+            mask: radial-gradient(circle at 8px 100%, transparent 6px, #000 6.5px) -8px 100% / 16px 100% repeat-x;
+    padding-bottom: 40px;
+  }
+  .receipt h3 { font-family: Cinzel, serif; text-align: center; color: var(--red); letter-spacing: .24em; font-size: 15px; }
+  .receipt .meta { text-align: center; color: var(--muted); font-size: 11px; margin: 4px 0 14px; }
+  .receipt .row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed var(--line); }
+  .receipt .row span:last-child { color: var(--red); font-weight: 600; }
+  .receipt .mission { margin-top: 14px; padding: 12px; background: var(--red-soft); border-radius: 6px; }
+  .receipt .mission b { color: var(--red-deep); display: block; font-size: 11px; letter-spacing: .1em; margin-bottom: 4px; }
+  .receipt label { display: flex; gap: 8px; align-items: center; margin-top: 8px; cursor: pointer; }
+  .receipt input { accent-color: var(--red); width: 18px; height: 18px; }
+  .receipt .barcode { margin-top: 18px; height: 34px; background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 8px); opacity: .8; }
+
+  /* E 봉투 */
+  .envelope { width: 300px; height: 200px; position: relative; }
+  .env-body { position: absolute; inset: 0; background: var(--red); border-radius: 6px; }
+  .env-flap {
+    position: absolute; left: 0; right: 0; top: 0; height: 120px; background: var(--red-deep);
+    clip-path: polygon(0 0, 100% 0, 50% 100%); border-radius: 6px 6px 0 0;
+  }
+  .env-seal {
+    position: absolute; left: calc(50% - 28px); top: 92px; width: 56px; height: 56px; border-radius: 50%;
+    background: var(--paper); color: var(--red); display: flex; align-items: center; justify-content: center;
+    font-family: Cinzel, serif; font-size: 18px; box-shadow: 0 2px 0 rgba(0,0,0,.15);
+  }
+  .letter {
+    width: 300px; background: var(--white); padding: 22px; border-radius: 6px; margin-top: -60px; position: relative; z-index: 2;
+    box-shadow: 0 18px 40px -22px rgba(42,26,28,.35);
+  }
+  .letter .to { font-family: "Cormorant Garamond", "Noto Serif KR", serif; font-style: italic; color: var(--red); font-size: 18px; }
+  .letter p { font-size: 14px; margin-top: 8px; }
+  .letter .sign { text-align: right; font-family: Cinzel, serif; font-size: 11px; color: var(--red); letter-spacing: .2em; margin-top: 14px; }
+  .e-col { display: flex; flex-direction: column; align-items: center; }
+
+  /* F 에디토리얼 */
+  .editorial { width: 100%; max-width: 480px; background: var(--white); padding: 28px; border: 1px solid var(--line); }
+  .ed-top { display: flex; justify-content: space-between; font-family: Cinzel, serif; font-size: 11px; letter-spacing: .2em; color: var(--red); border-bottom: 2px solid var(--red); padding-bottom: 8px; }
+  .ed-title { font-family: "Cormorant Garamond", "Noto Serif KR", serif; font-size: 44px; line-height: 1.05; margin: 18px 0 6px; font-weight: 600; }
+  .ed-title em { color: var(--red); font-style: italic; }
+  .ed-grid { display: grid; grid-template-columns: 110px 1fr; gap: 18px; margin-top: 16px; align-items: start; }
+  .ed-mini { aspect-ratio: 11/19; background: var(--red); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .ed-body { font-size: 14px; }
+  .ed-body .drop::first-letter { font-family: "Cormorant Garamond", "Noto Serif KR", serif; float: left; font-size: 46px; line-height: .9; color: var(--red); padding-right: 6px; }
+  .ed-mission { margin-top: 14px; border-left: 3px solid var(--red); padding-left: 12px; font-size: 14px; }
+  .ed-mission b { color: var(--red); }
+
+  /* 화면 흐름 */
+  .flow { padding-top: 48px; border-top: 1px solid var(--line); }
+  .flow h2 { font-family: "Cormorant Garamond", "Noto Serif KR", serif; font-size: 32px; margin-bottom: 6px; }
+  .flow > p { color: var(--muted); margin-bottom: 24px; }
+  .phones { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+  .phone { background: var(--white); border-radius: 22px; border: 1px solid var(--line); padding: 18px 14px; min-height: 360px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+  .phone .step { font-family: Cinzel, serif; font-size: 11px; letter-spacing: .2em; color: var(--red); }
+  .phone .t { font-weight: 600; font-size: 15px; }
+  .phone .d { font-size: 12px; color: var(--muted); }
+  .field { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px; font-size: 13px; color: var(--muted); text-align: left; }
+  .btn { width: 100%; background: var(--red); color: var(--white); border-radius: 999px; padding: 11px; font-size: 14px; font-weight: 600; }
+  .fan { display: flex; justify-content: center; margin-top: 10px; height: 120px; }
+  .fan span { width: 52px; height: 90px; background: var(--red); border-radius: 6px; border: 2px solid var(--paper); margin: 0 -10px; }
+  .fan span:nth-child(1){ transform: rotate(-18deg) translateY(14px); }
+  .fan span:nth-child(2){ transform: rotate(-8deg) translateY(4px); }
+  .fan span:nth-child(3){ transform: translateY(-8px); background: var(--red-deep); }
+  .fan span:nth-child(4){ transform: rotate(8deg) translateY(4px); }
+  .fan span:nth-child(5){ transform: rotate(18deg) translateY(14px); }
+  .mini { width: 92px; aspect-ratio: 11/19; background: var(--paper); border: 1px solid var(--red); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .stamp { width: 96px; height: 96px; border-radius: 50%; border: 2px solid var(--red); color: var(--red); display: flex; align-items: center; justify-content: center; font-family: Cinzel, serif; font-size: 12px; letter-spacing: .14em; transform: rotate(-12deg); line-height: 1.3; }
+
+  .note { margin-top: 48px; padding: 22px; background: var(--white); border-left: 3px solid var(--red); font-size: 14px; }
+  .note b { color: var(--red); }
+
+  @media (max-width: 860px) {
+    section.opt { grid-template-columns: 1fr; gap: 24px; }
+    .phones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stage { min-height: 400px; }
+  }
+  @media (max-width: 480px) {
+    .phones { grid-template-columns: 1fr; }
+    .a-stage .back { display: none; }
+    .ed-grid { grid-template-columns: 80px 1fr; }
+    .ed-title { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="frame" viewBox="0 0 196 356" preserveAspectRatio="none">
+      <rect x="1" y="1" width="194" height="354" fill="none" stroke="currentColor" stroke-width="1"/>
+      <rect x="6" y="6" width="184" height="344" fill="none" stroke="currentColor" stroke-width=".8"/>
+      <g fill="none" stroke="currentColor" stroke-width=".9">
+        <path d="M6 22 Q14 14 22 6 M6 30 Q20 20 30 6"/>
+        <path d="M190 22 Q182 14 174 6 M190 30 Q176 20 166 6"/>
+        <path d="M6 334 Q14 342 22 350 M6 326 Q20 336 30 350"/>
+        <path d="M190 334 Q182 342 174 350 M190 326 Q176 336 166 350"/>
+        <circle cx="6" cy="178" r="7"/><circle cx="190" cy="178" r="7"/>
+      </g>
+      <path d="M6 174 l3 4 -3 4 -3 -4z M190 174 l3 4 -3 4 -3 -4z" fill="currentColor"/>
+    </symbol>
+    <symbol id="spark" viewBox="0 0 20 20"><path d="M10 0 L12 8 L20 10 L12 12 L10 20 L8 12 L0 10 L8 8Z" fill="currentColor"/></symbol>
+    <symbol id="sun" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="1"/>
+      <path d="M60 22 L66 50 L92 38 L72 58 L98 66 L70 68 L80 94 L60 74 L40 94 L50 68 L22 66 L48 58 L28 38 L54 50Z" fill="currentColor"/>
+      <g stroke="currentColor" stroke-width="1"><line x1="60" y1="2" x2="60" y2="10"/><line x1="60" y1="110" x2="60" y2="118"/><line x1="2" y1="60" x2="10" y2="60"/><line x1="110" y1="60" x2="118" y2="60"/></g>
+    </symbol>
+    <symbol id="moon" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="40" fill="none" stroke="currentColor" stroke-width="1"/>
+      <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="1 5"/>
+      <path d="M68 32 A30 30 0 1 0 72 88 A24 24 0 1 1 68 32Z" fill="currentColor"/>
+      <use href="#spark" x="76" y="46" width="12" height="12"/>
+      <use href="#spark" x="86" y="66" width="7" height="7"/>
+    </symbol>
+    <symbol id="star" viewBox="0 0 120 120">
+      <path d="M60 10 L66 54 L110 60 L66 66 L60 110 L54 66 L10 60 L54 54Z" fill="none" stroke="currentColor" stroke-width="1"/>
+      <path d="M60 36 L63 57 L84 60 L63 63 L60 84 L57 63 L36 60 L57 57Z" fill="currentColor"/>
+      <circle cx="60" cy="60" r="34" fill="none" stroke="currentColor" stroke-width=".8"/>
+    </symbol>
+    <symbol id="backpat" viewBox="0 0 196 356">
+      <rect x="10" y="10" width="176" height="336" rx="6" fill="none" stroke="#FBF7F2" stroke-width="1" opacity=".7"/>
+      <g fill="none" stroke="#FBF7F2" stroke-width=".8" opacity=".55">
+        <circle cx="98" cy="178" r="60"/><circle cx="98" cy="178" r="44"/><circle cx="98" cy="178" r="28"/>
+        <path d="M98 108 L98 248 M28 178 L168 178 M48 128 L148 228 M148 128 L48 228"/>
+      </g>
+      <path d="M98 160 L102 174 L116 178 L102 182 L98 196 L94 182 L80 178 L94 174Z" fill="#FBF7F2"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">TODAY'S TAROT</div>
+    <h1>오늘의 타로 한 장,<br>그리고 운을 지키는 미션 하나</h1>
+    <p class="lead">같은 색(크림슨 레드와 따뜻한 화이트)으로 형식만 다르게 여섯 가지를 그렸어요. 하나만 고르지 않고 섞어 써도 돼요. 예를 들어 뽑는 장면은 C, 결과는 A, 미션 확인은 D처럼요.</p>
+    <div class="palette">
+      <span class="swatch"><i style="background:#C8102E"></i>크림슨 #C8102E</span>
+      <span class="swatch"><i style="background:#8E0B21"></i>딥 레드 #8E0B21</span>
+      <span class="swatch"><i style="background:#F6DCDF"></i>소프트 #F6DCDF</span>
+      <span class="swatch"><i style="background:#FBF7F2"></i>페이퍼 #FBF7F2</span>
+      <span class="swatch"><i style="background:#FFFFFF"></i>화이트</span>
+    </div>
+  </header>
+
+  <section class="opt">
+    <div class="opt-text">
+      <span class="tag">A</span>
+      <h2>클래식 타로 카드</h2>
+      <p>보내 주신 레퍼런스에 가장 가까운 형식이에요. 이중 테두리, 로마 숫자, 얇은 선 일러스트, 아래의 영문 카드 이름.</p>
+      <ul>
+        <li><b>느낌</b>: 고혹적, 정통 타로</li>
+        <li><b>잘 맞는 곳</b>: 결과 카드, 공유 이미지</li>
+        <li><b>부담</b>: 카드마다 일러스트가 필요해요 (22장)</li>
+      </ul>
+    </div>
+    <div class="stage a-stage">
+      <div class="back"></div><div class="back two"></div>
+      <div class="card">
+        <svg class="frame"><use href="#frame"/></svg>
+        <div class="num">XIX</div>
+        <div class="art"><svg width="120" height="120"><use href="#sun"/></svg></div>
+        <div class="name">THE SUN</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="opt">
+    <div class="opt-text">
+      <span class="tag">B</span>
+      <h2>미니멀 타이포</h2>
+      <p>일러스트 없이 큰 로마 숫자와 레드 점 하나로 끝내요. 여백이 가장 많고 가장 모던해요.</p>
+      <ul>
+        <li><b>느낌</b>: 깔끔, 갤러리, 하이엔드</li>
+        <li><b>잘 맞는 곳</b>: 22장을 빠르게 다 만들 때</li>
+        <li><b>부담</b>: 카드끼리 구분이 숫자와 이름뿐이라 덜 화려해요</li>
+      </ul>
+    </div>
+    <div class="stage">
+      <div class="card b-card">
+        <div class="big">XVIII</div>
+        <div class="bar"></div>
+        <div class="dot"></div>
+        <div class="sub">the moon</div>
+        <div class="name">THE MOON</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="opt">
+    <div class="opt-text">
+      <span class="tag">C</span>
+      <h2>뒷면에서 뒤집기</h2>
+      <p>레드 뒷면 카드를 눌러 흰 앞면으로 넘기는 장면이에요. 오른쪽 카드를 눌러 보세요. 움직임 줄이기를 켠 사람에게는 바로 바뀌어요.</p>
+      <ul>
+        <li><b>느낌</b>: 뽑는 순간의 두근거림</li>
+        <li><b>잘 맞는 곳</b>: 카드 뽑기 화면</li>
+        <li><b>부담</b>: Streamlit에서 직접 만든 HTML 조각이 필요해요</li>
+      </ul>
+    </div>
+    <div class="stage">
+      <button class="flip" type="button" aria-label="카드 뒤집기" onclick="this.classList.toggle('on')">
+        <div class="flip-inner">
+          <div class="face backside"><svg width="100%" height="100%"><use href="#backpat"/></svg></div>
+          <div class="face front card" style="width:100%;">
+            <svg class="frame"><use href="#frame"/></svg>
+            <div class="num">XVII</div>
+            <div class="art"><svg width="120" height="120"><use href="#star"/></svg></div>
+            <div class="name">THE STAR</div>
+          </div>
+        </div>
+      </button>
+      <span class="c-hint">카드를 눌러 보세요</span>
+    </div>
+  </section>
+
+  <section class="opt">
+    <div class="opt-text">
+      <span class="tag">D</span>
+      <h2>운세 영수증</h2>
+      <p>오늘의 운을 영수증처럼 뽑아 줘요. 맨 아래 미션을 체크하면 "지킴 완료"가 돼요. 가장 장난스럽고 공유하기 좋아요.</p>
+      <ul>
+        <li><b>느낌</b>: 위트, 일상</li>
+        <li><b>잘 맞는 곳</b>: 미션 확인, 캡처 공유</li>
+        <li><b>부담</b>: 고혹적인 느낌은 약해져요</li>
+      </ul>
+    </div>
+    <div class="stage">
+      <div class="receipt">
+        <h3>LUCK RECEIPT</h3>
+        <div class="meta">2026.11.05 &nbsp;No. XIX</div>
+        <div class="row"><span>오늘의 카드</span><span>THE SUN</span></div>
+        <div class="row"><span>연애운</span><span>★★★★☆</span></div>
+        <div class="row"><span>일운</span><span>★★★☆☆</span></div>
+        <div class="row"><span>행운의 색</span><span>크림슨</span></div>
+        <div class="mission">
+          <b>이 운을 지키려면</b>
+          오늘 처음 만나는 사람에게 먼저 인사하기
+          <label><input type="checkbox"> 지켰어요</label>
+        </div>
+        <div class="barcode"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="opt">
+    <div class="opt-text">
+      <span class="tag">E</span>
+      <h2>봉인된 편지</h2>
+      <p>레드 봉투의 씰을 뜯으면 카드가 보낸 편지가 나와요. 운세를 "나에게 온 말"처럼 읽게 해요.</p>
+      <ul>
+        <li><b>느낌</b>: 감성, 개인적인 메시지</li>
+        <li><b>잘 맞는 곳</b>: 운세 본문을 길게 보여 줄 때</li>
+        <li><b>부담</b>: 카드 그림이 덜 보여요</li>
+      </ul>
+    </div>
+    <div class="stage">
+      <div class="e-col">
+        <div class="envelope">
+          <div class="env-body"></div>
+          <div class="env-flap"></div>
+          <div class="env-seal">XIX</div>
+        </div>
+        <div class="letter">
+          <div class="to">Dear 신,</div>
+          <p>오늘은 먼저 웃는 쪽이 하루를 가져가요. 망설이던 연락이 있다면 오전 안에 보내 보세요.</p>
+          <div class="sign">THE SUN</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="opt">
+    <div class="opt-text">
+      <span class="tag">F</span>
+      <h2>매거진 한 페이지</h2>
+      <p>잡지의 운세 칼럼처럼 큰 세리프 제목, 작은 카드, 본문, 미션 박스로 짜요. 글이 많아도 정돈돼 보여요.</p>
+      <ul>
+        <li><b>느낌</b>: 에디토리얼, 세련됨</li>
+        <li><b>잘 맞는 곳</b>: 결과 화면 전체 레이아웃</li>
+        <li><b>부담</b>: 휴대폰에서는 단이 하나로 접혀요</li>
+      </ul>
+    </div>
+    <div class="stage">
+      <div class="editorial">
+        <div class="ed-top"><span>NO. XVII</span><span>2026.11.05</span></div>
+        <div class="ed-title">Hope, <em>quietly</em><br>returns.</div>
+        <div class="ed-grid">
+          <div class="ed-mini" style="color:#FBF7F2"><svg width="64" height="64"><use href="#star"/></svg></div>
+          <div class="ed-body">
+            <p class="drop">오래 기다린 소식이 조용히 도착하는 날이에요. 크게 기대하지 않을 때 더 잘 풀려요.</p>
+            <div class="ed-mission"><b>이 운을 지키려면</b><br>자기 전에 오늘 고마웠던 일 하나 적기</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="flow">
+    <h2>화면 흐름</h2>
+    <p>화면은 다섯 단계예요. 팝업 창 없이 한 화면 안에서 이어져요. 직접 눌러 보려면 <a href="prototype.html" style="color:#C8102E">시제품(prototype.html)</a>을 여세요.</p>
+    <div class="phones">
+      <div class="phone">
+        <span class="step">01 ENTER</span>
+        <div class="t">샤라라 입장</div>
+        <div class="d">반짝이 가루와 함께 제목이 흐릿한 데서 또렷하게 차례로 나타나요. 제목에는 레드 빛이 한 번 스쳐요</div>
+        <div class="field">이름 또는 별명</div>
+        <div class="btn">입장하기</div>
+      </div>
+      <div class="phone">
+        <span class="step">02 SHUFFLE</span>
+        <div class="t">마음이 가는 순간에 멈추세요</div>
+        <div class="fan"><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="d">뒷면 카드 7장이 좌우로 계속 섞여요</div>
+        <div class="btn">이 카드로 할게요</div>
+      </div>
+      <div class="phone">
+        <span class="step">03 CHOSEN</span>
+        <div class="mini" style="background:#C8102E;border-color:#C8102E"></div>
+        <div class="t">한 장이 떠올라요</div>
+        <div class="d">나머지 카드는 흩어지며 사라지고, 화면 가득 반짝인 뒤 고른 한 장이 뒷면 그대로 앞으로 떠올라요</div>
+      </div>
+      <div class="phone">
+        <span class="step">04 REVEAL</span>
+        <div class="mini"><svg width="54" height="54" style="color:#C8102E"><use href="#sun"/></svg></div>
+        <div class="d">카드를 누르면 앞면으로 뒤집혀요. 카드 이름, 운세 한 줄, 풀이, 미션이 위에서부터 하나씩 흐릿한 데서 나타나요</div>
+        <div class="field" style="border-color:#C8102E;color:#2A1A1C"><b style="color:#C8102E">미션</b> 처음 만나는 사람에게 먼저 인사하기</div>
+      </div>
+      <div class="phone">
+        <span class="step">05 KEEP</span>
+        <div class="stamp">LUCK<br>KEPT</div>
+        <div class="t">오늘의 운을 지켰어요</div>
+        <div class="d">자정이 지나면 새 카드를 뽑을 수 있어요</div>
+        <div class="btn">이미지로 저장</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="note">
+    <b>추천 조합</b>: 뒤집기는 <b>C</b>, 결과 카드는 <b>A</b>(클래식), 미션 확인은 <b>D</b>(영수증)의 "지켰어요" 체크와 도장. 시제품이 이 조합이에요.
+    일러스트가 부담되면 A 대신 <b>B</b>(미니멀)로 22장을 먼저 채우고, 인기 카드부터 일러스트를 더해 가면 돼요.
+    일러스트는 레퍼런스를 그대로 쓰지 않고 새로 그린 선 그림이에요.
+  </div>
+</div>
+</body>
+</html>

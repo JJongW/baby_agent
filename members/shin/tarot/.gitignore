@@ -1,0 +1,5 @@
+.streamlit/secrets.toml
+__pycache__/
+.DS_Store
+# 원본 그림(약 12MB)은 내 컴퓨터에만 두고, 앱은 assets/web의 가벼운 사본을 쓴다
+assets/*.png
