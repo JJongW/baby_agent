@@ -1,25 +1,29 @@
 # 폴더 주인. PR이 이 경로를 건드리면 주인이 리뷰어로 자동 지정된다.
-# 각자 GitHub 아이디를 받으면 아래 주석을 풀고 @아이디를 채운다.
-# 주석을 풀기 전까지 공통 파일과 shin 폴더만 리뷰어가 자동 지정된다.
+# 아이디는 레포 협업자여야 동작한다 (초대를 받기 전에는 무시된다).
 
 *                         @JJongW
 
+# 신 (PO)
 /.claude/agents/shin/     @JJongW
 /.claude/skills/shin-*/   @JJongW
 /members/shin/            @JJongW
 
-# /.claude/agents/noh/    @노-아이디
-# /.claude/skills/noh-*/  @노-아이디
-# /members/noh/           @노-아이디
+# 노 (개발)
+/.claude/agents/noh/      @Roohyeon
+/.claude/skills/noh-*/    @Roohyeon
+/members/noh/             @Roohyeon
 
-# /.claude/agents/yoon/   @윤-아이디
-# /.claude/skills/yoon-*/ @윤-아이디
-# /members/yoon/          @윤-아이디
+# 윤 (개발)
+/.claude/agents/yoon/     @uyeon0
+/.claude/skills/yoon-*/   @uyeon0
+/members/yoon/            @uyeon0
 
-# /.claude/agents/kwon/   @권-아이디
-# /.claude/skills/kwon-*/ @권-아이디
-# /members/kwon/          @권-아이디
+# 권 (디자인)
+/.claude/agents/kwon/     @kwonji1238-web
+/.claude/skills/kwon-*/   @kwonji1238-web
+/members/kwon/            @kwonji1238-web
 
-# /.claude/agents/eo/     @어-아이디
-# /.claude/skills/eo-*/   @어-아이디
-# /members/eo/            @어-아이디
+# 어 (디자인)
+/.claude/agents/eo/       @eosangkyung-jpg
+/.claude/skills/eo-*/     @eosangkyung-jpg
+/members/eo/              @eosangkyung-jpg
