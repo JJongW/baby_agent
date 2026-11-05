@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PO 에이전트 후보</title>
+<style>
+  :root {
+    --bg: #fbfaf7; --surface: #ffffff; --line: #e4e1da; --text: #1d1b20; --muted: #625e6a;
+    --high: #1f7a4d; --high-bg: #e3f4ea; --mid: #8a5a00; --mid-bg: #fbf0d6; --low: #a23b2a; --low-bg: #f9e3de;
+    --accent: #3a4bd8; --accent-bg: #e8eafc;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17161a; --surface: #211f25; --line: #35323b; --text: #f4f2ee; --muted: #aaa5b3;
+      --high: #6fd39d; --high-bg: #1d3328; --mid: #f0c062; --mid-bg: #3a301a; --low: #f19a88; --low-bg: #3b2320;
+      --accent: #9aa6ff; --accent-bg: #262a4a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", sans-serif; }
+  main { max-width: 1040px; margin: 0 auto; padding: 40px 16px 80px; }
+  h1 { font-size: 28px; line-height: 1.3; margin: 0 0 8px; }
+  h2 { font-size: 20px; margin: 48px 0 12px; }
+  h3 { font-size: 17px; margin: 0; }
+  p { margin: 0 0 12px; }
+  .lead { color: var(--muted); max-width: 720px; }
+  .conclusion { background: var(--accent-bg); border-radius: 12px; padding: 20px 24px; margin: 24px 0; }
+  .conclusion strong { color: var(--accent); }
+  .conclusion ol { margin: 8px 0 0; padding-left: 20px; }
+  .criteria { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .criteria div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .criteria b { display: block; margin-bottom: 4px; }
+  .criteria span { color: var(--muted); font-size: 14px; }
+  .table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 14px; }
+  th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td.num { text-align: center; white-space: nowrap; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .h { color: var(--high); background: var(--high-bg); }
+  .m { color: var(--mid); background: var(--mid-bg); }
+  .l { color: var(--low); background: var(--low-bg); }
+  .cards { display: grid; gap: 12px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .card header { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 10px; }
+  .rank { font-weight: 700; color: var(--accent); }
+  code { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--accent-bg); color: var(--accent); padding: 1px 6px; border-radius: 6px; }
+  .card dl { display: grid; grid-template-columns: 88px 1fr; gap: 6px 12px; margin: 0; font-size: 15px; }
+  .card dt { color: var(--muted); }
+  .card dd { margin: 0; }
+  .keep { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 24px; }
+  .keep li { margin-bottom: 6px; }
+  .note { color: var(--muted); font-size: 14px; margin-top: 40px; border-top: 1px solid var(--line); padding-top: 16px; }
+  @media (max-width: 560px) { .card dl { grid-template-columns: 1fr; } .card dt { margin-top: 6px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>PO 일 중 에이전트에게 맡기기 좋은 것</h1>
+  <p class="lead">baby_agent에 올릴 shin(PO) 에이전트를 고르기 위한 정리. 자주 하고, 글로 들어오고 나가며, 결과를 사람이 빨리 확인할 수 있는 일일수록 효율이 크다.</p>
+
+  <section class="conclusion">
+    <p><strong>결론: 먼저 만들 3개</strong></p>
+    <ol>
+      <li><b>PRD 빈틈 리뷰</b>: 개발과 디자인이 가장 먼저 읽는 문서라, 여기서 빠진 것을 잡으면 뒤의 되묻기와 재작업이 줄어든다</li>
+      <li><b>요구사항을 스토리와 수용 기준으로 쪼개기</b>: 매 기능마다 반복하는 일이고, 개발 쪽(노, 윤) 에이전트가 바로 받아 쓸 수 있는 모양이 된다</li>
+      <li><b>회의록에서 결정과 할 일 뽑기</b>: 거의 매일 하고, 틀려도 위험이 낮아 처음 만들기에 좋다</li>
+    </ol>
+  </section>
+
+  <h2>어떻게 골랐나</h2>
+  <div class="criteria">
+    <div><b>빈도</b><span>한 주에 몇 번 하나. 자주 할수록 아끼는 시간이 쌓인다</span></div>
+    <div><b>입력이 글인가</b><span>문서, 메모, 피드백처럼 붙여 넣을 수 있으면 에이전트가 바로 일한다</span></div>
+    <div><b>확인 쉬움</b><span>결과가 맞는지 사람이 몇 분 안에 볼 수 있나</span></div>
+    <div><b>틀렸을 때 위험</b><span>잘못된 결과가 그대로 나가면 얼마나 아픈가. 낮을수록 맡기기 좋다</span></div>
+    <div><b>팀 연결</b><span>결과를 다른 직군 에이전트가 이어 받을 수 있나</span></div>
+  </div>
+
+  <h2>후보 한눈에 보기</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>순위</th><th>일</th><th>빈도</th><th>입력이 글</th><th>확인 쉬움</th><th>틀렸을 때 위험</th><th>팀 연결</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="num">1</td><td>PRD 빈틈 리뷰</td><td class="num"><span class="pill h">높음</span></td><td class="num"><span class="pill h">예</span></td><td class="num"><span class="pill h">쉬움</span></td><td class="num"><span class="pill h">낮음</span></td><td class="num"><span class="pill h">개발, 디자인</span></td></tr>
+        <tr><td class="num">2</td><td>스토리와 수용 기준 쪼개기</td><td class="num"><span class="pill h">높음</span></td><td class="num"><span class="pill h">예</span></td><td class="num"><span class="pill h">쉬움</span></td><td class="num"><span class="pill m">보통</span></td><td class="num"><span class="pill h">개발</span></td></tr>
+        <tr><td class="num">3</td><td>회의록에서 결정과 할 일 뽑기</td><td class="num"><span class="pill h">높음</span></td><td class="num"><span class="pill h">예</span></td><td class="num"><span class="pill h">쉬움</span></td><td class="num"><span class="pill h">낮음</span></td><td class="num"><span class="pill m">전체</span></td></tr>
+        <tr><td class="num">4</td><td>VOC 묶기와 요약</td><td class="num"><span class="pill m">보통</span></td><td class="num"><span class="pill h">예</span></td><td class="num"><span class="pill m">보통</span></td><td class="num"><span class="pill m">보통</span></td><td class="num"><span class="pill m">디자인</span></td></tr>
+        <tr><td class="num">5</td><td>릴리즈 노트와 변경 공지</td><td class="num"><span class="pill m">보통</span></td><td class="num"><span class="pill h">예 (PR 목록)</span></td><td class="num"><span class="pill h">쉬움</span></td><td class="num"><span class="pill m">보통</span></td><td class="num"><span class="pill h">개발</span></td></tr>
+        <tr><td class="num">6</td><td>지표 정의와 이벤트 설계 초안</td><td class="num"><span class="pill m">보통</span></td><td class="num"><span class="pill h">예</span></td><td class="num"><span class="pill m">보통</span></td><td class="num"><span class="pill m">보통</span></td><td class="num"><span class="pill h">개발</span></td></tr>
+        <tr><td class="num">7</td><td>PRD와 디자인, 구현 차이 찾기</td><td class="num"><span class="pill m">보통</span></td><td class="num"><span class="pill m">일부 (시안 필요)</span></td><td class="num"><span class="pill m">보통</span></td><td class="num"><span class="pill h">낮음</span></td><td class="num"><span class="pill h">개발, 디자인</span></td></tr>
+        <tr><td class="num">8</td><td>경쟁 서비스 조사 1차 정리</td><td class="num"><span class="pill l">낮음</span></td><td class="num"><span class="pill m">웹 검색</span></td><td class="num"><span class="pill l">어려움</span></td><td class="num"><span class="pill l">높음</span></td><td class="num"><span class="pill l">적음</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>후보별 이유</h2>
+  <div class="cards">
+    <article class="card">
+      <header><span class="rank">1</span><h3>PRD 빈틈 리뷰</h3><code>shin-prd-reviewer</code></header>
+      <dl>
+        <dt>하는 일</dt><dd>PRD를 읽고 빠진 예외 상황, 모호한 문장, 수용 기준 없는 요구사항, 지표 없는 목표를 찾아 목록으로 돌려준다</dd>
+        <dt>왜 효율적</dt><dd>PRD의 빈틈은 개발이 시작된 뒤 질문이나 재작업으로 돌아온다. 검사 항목이 정해져 있어 에이전트가 빠짐없이 훑기 좋고, PO는 지적을 받아들일지만 고르면 된다</dd>
+        <dt>사람이 할 것</dt><dd>지적 중 무엇을 반영할지 판단. 에이전트는 고치지 않고 지적만 한다 (읽기 전용)</dd>
+      </dl>
+    </article>
+    <article class="card">
+      <header><span class="rank">2</span><h3>스토리와 수용 기준 쪼개기</h3><code>shin-story-splitter</code></header>
+      <dl>
+        <dt>하는 일</dt><dd>기능 설명을 사용자 스토리로 쪼개고, 스토리마다 "어떤 상황에서, 무엇을 하면, 어떻게 된다" 형식의 수용 기준과 GitHub 이슈 초안을 만든다</dd>
+        <dt>왜 효율적</dt><dd>기능마다 반복되는 형식 작업이라 시간이 많이 들지만 판단은 적다. 결과 모양이 고정되어 있어 개발 에이전트가 그대로 받아 작업 단위로 쓸 수 있다</dd>
+        <dt>사람이 할 것</dt><dd>쪼갠 크기가 맞는지, 우선순위와 범위(이번에 할 것, 미룰 것) 결정</dd>
+        <dt>주의</dt><dd>원래 기능 설명에 없는 요구를 지어내지 않게, 근거 문장을 같이 달게 한다</dd>
+      </dl>
+    </article>
+    <article class="card">
+      <header><span class="rank">3</span><h3>회의록에서 결정과 할 일 뽑기</h3><code>shin-meeting-digest</code></header>
+      <dl>
+        <dt>하는 일</dt><dd>회의 메모나 녹취록에서 결정된 것, 아직 열린 질문, 할 일(누가, 언제까지)을 나눠 정리한다</dd>
+        <dt>왜 효율적</dt><dd>거의 매일 하는 일이고, 원문과 대조해 바로 확인할 수 있다. 틀려도 공유 전에 고치면 되어 위험이 낮다. 첫 에이전트로 만들며 레포 흐름(카드, PR)을 익히기 좋다</dd>
+        <dt>사람이 할 것</dt><dd>담당자와 마감이 맞는지 확인 후 공유</dd>
+        <dt>주의</dt><dd>회의록에 회사 내부 내용이 있으면 레포에 결과를 올리지 않는다 (에이전트 파일만 올린다)</dd>
+      </dl>
+    </article>
+    <article class="card">
+      <header><span class="rank">4</span><h3>VOC 묶기와 요약</h3><code>shin-voc-digest</code></header>
+      <dl>
+        <dt>하는 일</dt><dd>사용자 피드백을 주제별로 묶고, 묶음마다 건수와 대표 인용문을 붙인다</dd>
+        <dt>왜 효율적</dt><dd>양이 많을수록 사람 손으로는 놓치는 게 생긴다. 묶기는 에이전트, 무엇을 먼저 고칠지는 PO로 나누면 좋다. 건수 세기는 에이전트 판단이 아니라 계산으로 하게 한다</dd>
+        <dt>주의</dt><dd>원문에 개인 정보가 섞이기 쉽다. 붙여 넣기 전에 지우거나 가명 처리</dd>
+      </dl>
+    </article>
+    <article class="card">
+      <header><span class="rank">5</span><h3>릴리즈 노트와 변경 공지</h3><code>shin-release-notes</code></header>
+      <dl>
+        <dt>하는 일</dt><dd>머지된 PR과 이슈 목록을 읽어 사용자가 이해하는 말로 바뀐 점을 정리한다</dd>
+        <dt>왜 효율적</dt><dd>입력이 이미 GitHub에 있어 붙여 넣을 것도 없다. 개발 용어를 사용자 말로 바꾸는 일은 에이전트가 잘한다</dd>
+        <dt>주의</dt><dd>밖으로 나가는 글이라 보내기 전 꼭 사람이 읽는다</dd>
+      </dl>
+    </article>
+    <article class="card">
+      <header><span class="rank">6</span><h3>지표 정의와 이벤트 설계 초안</h3><code>shin-metric-planner</code></header>
+      <dl>
+        <dt>하는 일</dt><dd>기능 목표를 보고 볼 지표, 그 지표를 위해 남길 이벤트와 속성 목록 초안을 만든다</dd>
+        <dt>왜 효율적</dt><dd>빠뜨리면 출시 후에 측정을 못 해 되돌릴 수 없다. 초안이 있으면 개발과 이벤트 이름을 맞추기 쉽다</dd>
+        <dt>사람이 할 것</dt><dd>목표 지표 선택, 데이터 담당과 이벤트 이름 합의</dd>
+      </dl>
+    </article>
+    <article class="card">
+      <header><span class="rank">7</span><h3>PRD와 디자인, 구현 차이 찾기</h3><code>shin-spec-diff</code></header>
+      <dl>
+        <dt>하는 일</dt><dd>PRD 요구사항 목록과 디자인 시안, 구현 화면을 대조해 빠지거나 다른 것을 찾는다</dd>
+        <dt>왜 아직 뒤</dt><dd>팀 효과는 크지만 시안(Figma)과 화면 접근이 필요하다. 디자인(권, 어), 개발(노, 윤) 에이전트가 생긴 뒤 같이 만드는 편이 낫다</dd>
+      </dl>
+    </article>
+    <article class="card">
+      <header><span class="rank">8</span><h3>경쟁 서비스 조사 1차 정리</h3><code>shin-market-scan</code></header>
+      <dl>
+        <dt>하는 일</dt><dd>경쟁 서비스의 기능, 가격, 평가를 웹에서 모아 표로 정리한다</dd>
+        <dt>왜 마지막</dt><dd>가끔 하는 일이고, 웹 정보는 오래되거나 틀린 경우가 많아 확인에 시간이 든다. 틀린 사실이 기획 근거로 들어가면 위험이 크다</dd>
+      </dl>
+    </article>
+  </div>
+
+  <h2>에이전트에게 맡기지 않을 것</h2>
+  <div class="keep">
+    <ul>
+      <li><b>무엇을 먼저 할지 최종 결정</b>: 에이전트는 비교표까지만 만들고, 결정과 그 책임은 PO가 진다</li>
+      <li><b>이해관계자와의 합의와 협상</b>: 관계와 맥락이 결과를 좌우한다. 준비 자료 정리까지만 돕게 한다</li>
+      <li><b>사용자 인터뷰 진행</b>: 질문지 초안과 정리는 돕지만, 대화와 그 자리에서 파고드는 질문은 사람이 한다</li>
+      <li><b>제품 방향과 전략</b>: 근거 자료 요약은 맡길 수 있지만 방향은 PO가 정한다</li>
+    </ul>
+  </div>
+
+  <p class="note">점수는 일반적인 PO 업무를 기준으로 한 판단이고 실제로 잰 값이 아니다. 지금 내 한 주를 기준으로 빈도와 걸리는 시간을 채워 넣으면 순서가 바뀔 수 있다. 에이전트 이름은 baby_agent 규칙(<code>shin-</code> 접두어, 영어 소문자)에 맞춘 제안이다.</p>
+</main>
+</body>
+</html>

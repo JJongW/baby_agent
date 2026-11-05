@@ -4,4 +4,4 @@
 
 | 에이전트 | 하는 일 | 소개 카드 |
 | --- | --- | --- |
-| (아직 없음) | | |
+| kwon-accessibility-checker | 시안과 UI 코드를 WCAG 2.1 A·AA 기준으로 점검 (읽기 전용) | [카드](cards/kwon-accessibility-checker.md) |
