@@ -12,7 +12,8 @@ members=$(find members -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | so
 is_member() { echo "$members" | grep -qx "$1"; }
 
 # frontmatter(첫 --- 와 다음 --- 사이)에서 key 값을 꺼낸다
-front() { awk -v k="$2" 'NR==1&&$0!="---"{exit} NR>1&&$0=="---"{exit} NR>1&&index($0,k": ")==1{sub(k": *","");print;exit}' "$1"; }
+# 윈도우에서 만든 파일은 줄 끝에 \r이 붙어 있으므로 먼저 떼고 읽는다
+front() { awk -v k="$2" '{sub(/\r$/,"")} NR==1&&$0!="---"{exit} NR>1&&$0=="---"{exit} NR>1&&index($0,k": ")==1{sub(k": *","");print;exit}' "$1"; }
 
 # 1. 폴더, 파일 이름에 한글 등 ASCII 밖 글자 금지 (git이 아는 파일 + 새로 만든 파일)
 while IFS= read -r p; do
