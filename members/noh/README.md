@@ -4,4 +4,4 @@
 
 | 에이전트 | 하는 일 | 소개 카드 |
 | --- | --- | --- |
-| (아직 없음) | | |
+| `noh-pr-reviewer` | PR 코드 변경을 읽고 main과의 머지 충돌, 버그, 보안, 예외 처리 문제를 심각한 순서로 정리 (읽기 전용) | [cards/noh-pr-reviewer.md](cards/noh-pr-reviewer.md) |
