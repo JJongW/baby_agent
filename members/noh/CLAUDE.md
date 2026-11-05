@@ -1,0 +1,14 @@
+# members/noh — 노 (개발)
+
+이 폴더는 노님 것이다. 공통 규칙은 루트 [CLAUDE.md](../../CLAUDE.md)와 [docs/rules.md](../../docs/rules.md)를 따른다.
+
+## 여기서 고치는 곳
+- 에이전트: `.claude/agents/noh/noh-<이름>.md`
+- 스킬: `.claude/skills/noh-<이름>/SKILL.md`
+- 소개 카드: `members/noh/cards/noh-<이름>.md` (양식: `docs/agent-card-template.md`)
+- 목록: `members/noh/README.md` 표에 한 줄
+
+다른 사람 폴더와 공통 파일은 고치지 않는다.
+
+## 노님 개인 규칙
+(필요하면 여기에 추가. 예: 자주 쓰는 도구, 문서 말투)
