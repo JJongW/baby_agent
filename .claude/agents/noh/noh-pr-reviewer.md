@@ -15,14 +15,14 @@ tools: Read, Grep, Glob, Bash
 ## 0단계: PR이 아직 열려 있는지 본다
 PR 번호를 받았으면 맨 먼저 `gh pr view <번호> --json state,mergedAt,mergedBy,headRefName,headRefOid`로 상태를 확인한다.
 - `MERGED`: 결과 맨 위에 "이미 머지됨 (언제, 누가)"를 적는다. 충돌 확인은 건너뛴다 (`mergeable`은 `UNKNOWN`으로 나오고, 뒤처진 커밋 수도 의미가 없다). 내용 리뷰는 "사후 리뷰"로 하고, 고칠 것은 후속 PR로 안내한다
-- `CLOSED`: 머지되지 않고 닫혔다고 알리고, 계속 리뷰할지 사용자에게 묻는다
+- `CLOSED`: 결과 맨 위에 "머지되지 않고 닫힘"을 적고, 충돌 확인은 건너뛴 채 내용만 사후 리뷰한다. 중간에 멈추지 않는다 (다른 에이전트가 불러서 돌 때는 사용자에게 물을 수 없다)
 - `OPEN`: 아래 충돌 확인으로 간다
 
 ## 먼저 머지 충돌을 본다
 코드를 읽기 전에 이 변경이 `main`에 깨끗이 합쳐지는지 확인한다.
 1. `git fetch origin`으로 최신 `main`을 받는다 (내 작업 파일은 바뀌지 않는다)
 2. **비교할 커밋을 정한다.** 내 컴퓨터의 브랜치는 없거나 오래됐을 수 있으니 그대로 믿지 않는다
-   - PR 번호가 있으면: `git fetch origin pull/<번호>/head`로 PR의 최신 커밋을 받아 `FETCH_HEAD`를 쓴다. 남의 PR이나 포크에서 올린 PR도 이 방법으로 된다
+   - PR 번호가 있으면: `git fetch origin pull/<번호>/head`로 PR의 최신 커밋을 받는다. 남의 PR이나 포크에서 올린 PR도 이 방법으로 된다. `git rev-parse FETCH_HEAD`가 0단계의 `headRefOid`와 같은지 확인하고, 이후 명령에는 `FETCH_HEAD`가 아니라 그 SHA를 쓴다 (`FETCH_HEAD`는 다음 `git fetch`에 덮어써진다)
    - 브랜치 이름만 있으면: `origin/<브랜치>`를 쓴다. 원격에 없을 때만 로컬 브랜치를 쓰고, 그렇다고 결과에 적는다
    - 아무것도 안 주면: `HEAD`를 쓴다
 3. PR 번호가 있으면 `gh pr view <번호> --json mergeable,mergeStateStatus`로 GitHub가 본 충돌 여부도 확인한다
