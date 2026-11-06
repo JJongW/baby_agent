@@ -17,6 +17,9 @@ SOURCE = "다나와"          # 수집처
 METHOD = "정적 크롤링"     # API / 정적 크롤링 / Playwright
 UNIT = "원"                # 선택. 원화가 아니면 적는다(예: "달러"). 전체 보기 합계에서 빠진다
 
+def show(st) -> None:       # 선택. 있으면 이 조원 항목을 골랐을 때 공통 화면 대신 이걸 그린다 (예: sources/eo)
+    ...
+
 def load() -> pd.DataFrame:  # 아래 열을 돌려준다. 크롤링을 여기서 다시 하지 않고 CSV를 읽는다
     ...
 ```

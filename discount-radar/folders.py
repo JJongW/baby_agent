@@ -12,6 +12,7 @@ import json
 from pathlib import Path
 
 import pandas as pd
+import streamlit as st
 import streamlit.components.v1 as components
 
 TSX = (Path(__file__).parent / "components" / "glass_folder" / "glass-folder-cards.tsx").read_text(encoding="utf-8")
@@ -34,7 +35,9 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   body { margin: 0; background: transparent; }
-  #root { display: flex; flex-wrap: wrap; gap: 24px; padding: 48px 4px 8px; }
+  /* 열면 종이가 양옆으로 최대 약 50px 펼쳐진다(--gf-spread 40px, 5도 기울기). 잘리지 않게 양옆에 여백을 둔다.
+     같은 만큼 iframe을 바깥으로 넓혀(theme.css .st-key-folders) 폴더 자리는 본문 왼쪽 줄에 맞는다 */
+  #root { display: flex; flex-wrap: wrap; gap: 24px; padding: 48px 56px 8px; }
   .gf-root { font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif !important; }
   .gf-sheet:focus-visible, .gf-key:focus-visible { outline-color: #191f28 !important; }
 </style>
@@ -113,4 +116,5 @@ def show(sources: dict, selected: str | None, all_label: str) -> None:
     data = {"folders": folders, "art": GREY_ART, "width": CARD_W, "selected": selected, "all": all_label}
     html = PAGE.replace("__TSX__", TSX).replace("__DATA__", json.dumps(data, ensure_ascii=False).replace("</", "<\\/"))
     rows = -(-len(folders) // PER_ROW)
-    components.html(html, height=rows * ROW_H + 24, scrolling=False)
+    with st.container(key="folders"):
+        components.html(html, height=rows * ROW_H + 24, scrolling=False)

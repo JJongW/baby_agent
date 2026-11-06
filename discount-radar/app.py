@@ -21,6 +21,13 @@ st.set_page_config(page_title="할인 레이더", page_icon="📡", layout="wide
 st.markdown(f"<style>{(HERE / 'theme.css').read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
 
 
+def import_adapter(path: Path):
+    spec = importlib.util.spec_from_file_location(f"src_{path.parent.name}", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 @st.cache_data
 def load_sources(version: float) -> tuple[dict, list]:  # version: 바뀐 시각. 밑줄로 시작하면 캐시 키에서 빠지니 주의
     """조원 폴더를 읽는다. 한 명이 깨져도 나머지는 뜨도록 오류는 모아서 돌려준다."""
@@ -28,16 +35,16 @@ def load_sources(version: float) -> tuple[dict, list]:  # version: 바뀐 시각
     for adapter in sorted(HERE.glob("sources/*/adapter.py")):
         folder = adapter.parent
         try:
-            spec = importlib.util.spec_from_file_location(f"src_{folder.name}", adapter)
-            mod = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(mod)
+            mod = import_adapter(adapter)
             raw = mod.load()
             df = radar.normalize(raw)
             df["source"] = mod.TITLE
             sources[mod.TITLE] = {
                 "df": df,
                 "raw": raw,
-                "unit": getattr(mod, "UNIT", "원"),  # 원화가 아닌 데이터는 전체 보기 합계에서 뺀다
+                "unit": getattr(mod, "UNIT", "원"),
+                "adapter": str(adapter),
+                "own_screen": hasattr(mod, "show"),  # 조원이 자기 화면을 만들었으면 공통 화면 대신 그걸 쓴다  # 원화가 아닌 데이터는 전체 보기 합계에서 뺀다
                 "folder": folder.name,
                 "where": getattr(mod, "SOURCE", ""),
                 "method": getattr(mod, "METHOD", ""),
@@ -103,8 +110,14 @@ folders.show(sources, None if choice == ALL else choice, ALL)
 if left_out:
     st.caption(f"할인 정보가 없거나 원화가 아니라 전체 합계에서 뺀 데이터: {', '.join(left_out)}. 폴더를 열면 따로 볼 수 있어요.")
 
+# 조원 전용 화면: adapter.py에 show(st)가 있으면 공통 화면 대신 그걸 그린다 (예: 어의 야구 티켓 대시보드)
+# 함수는 캐시에 담을 수 없어 고를 때 adapter를 다시 읽는다
+if choice != ALL and sources[choice]["own_screen"]:
+    import_adapter(Path(sources[choice]["adapter"])).show(st)
+    footer(where, method)
+    st.stop()
+
 # 할인 정보가 없는 데이터는 할인 계산 대신 모은 표를 그대로 보여 준다
-# 바꿀 시점: 이런 조원이 둘 이상이면 adapter에 표 모양을 정하는 약속(예: show())을 만든다
 if choice != ALL and df["discount_rate"].isna().all():
     raw = sources[choice]["raw"]
     st.info(f"이 데이터에는 할인 정보(정가와 할인가)가 없어서 할인 비교 대신 모은 표를 보여 줘요. 가격 단위: {sources[choice]['unit']}")

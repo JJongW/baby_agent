@@ -99,3 +99,8 @@ button p, .stLinkButton a p { color: inherit !important; }
 
 /* 맨 아래 출처 줄: 가는 선 위에 작게 */
 .st-key-footer { border-top: 1px solid var(--grey-200); margin-top: 56px; padding-top: 16px; }
+
+/* 폴더 칸: 열린 종이가 잘리지 않게 양옆으로 56px씩 넓힌다 (folders.py #root 여백과 같은 값) */
+.st-key-folders iframe { margin-left: -56px; width: calc(100% + 112px) !important; max-width: none; }
+/* 좁은 화면에서는 넓힌 폴더 칸이 화면 밖으로 나가 가로 스크롤이 생긴다. 본문이 옆으로 밀리지 않게 자른다 */
+[data-testid="stMain"] { overflow-x: clip; }
