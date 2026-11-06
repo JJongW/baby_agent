@@ -43,6 +43,7 @@ def load_sources(version: float) -> tuple[dict, list]:  # version: 바뀐 시각
                 "df": df,
                 "raw": raw,
                 "unit": getattr(mod, "UNIT", "원"),
+                "note": getattr(mod, "NOTE", ""),  # 데이터를 볼 때 알아야 할 점 (표 화면에 보인다)
                 "adapter": str(adapter),
                 "own_screen": hasattr(mod, "show"),  # 조원이 자기 화면을 만들었으면 공통 화면 대신 그걸 쓴다  # 원화가 아닌 데이터는 전체 보기 합계에서 뺀다
                 "folder": folder.name,
@@ -121,6 +122,8 @@ if choice != ALL and sources[choice]["own_screen"]:
 if choice != ALL and df["discount_rate"].isna().all():
     raw = sources[choice]["raw"]
     st.info(f"이 데이터에는 할인 정보(정가와 할인가)가 없어서 할인 비교 대신 모은 표를 보여 줘요. 가격 단위: {sources[choice]['unit']}")
+    if sources[choice]["note"]:
+        st.caption(sources[choice]["note"])
     st.metric("항목 수", f"{len(raw):,}개")
     st.dataframe(
         raw,
