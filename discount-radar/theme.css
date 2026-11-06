@@ -96,3 +96,6 @@ button p, .stLinkButton a p { color: inherit !important; }
 /* 확인 필요 칩 */
 .chip { display: inline-block; background: var(--grey-100); color: var(--grey-700); font-size: 13px; font-weight: 600;
   border-radius: 8px; padding: 6px 10px; line-height: 1.4; }
+
+/* 맨 아래 출처 줄: 가는 선 위에 작게 */
+.st-key-footer { border-top: 1px solid var(--grey-200); margin-top: 56px; padding-top: 16px; }

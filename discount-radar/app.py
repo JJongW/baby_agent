@@ -54,6 +54,12 @@ def newest_change() -> float:
     return max((f.stat().st_mtime for f in files if f.is_file()), default=0.0)
 
 
+def footer(where: str, method: str) -> None:
+    """맨 아래 출처 줄. 중간에 멈추는 화면(할인 정보 없는 데이터)에서도 부른다."""
+    with st.container(key="footer"):
+        st.caption(f"수집처: {where or '-'}  |  수집 방법: {method or '-'}")
+
+
 def won(x: float) -> str:
     return f"{int(x):,}원"
 
@@ -90,7 +96,6 @@ else:
 st.title("할인 레이더")
 st.caption("폴더를 열면 그 조원 데이터로 바뀌어요. 다시 닫으면 전체 보기.")
 folders.show(sources, None if choice == ALL else choice, ALL)
-st.caption(f"수집처: {where or '-'}  |  수집 방법: {method or '-'}")
 if left_out:
     st.caption(f"할인 정보가 없거나 원화가 아니라 전체 합계에서 뺀 데이터: {', '.join(left_out)}. 폴더를 열면 따로 볼 수 있어요.")
 
@@ -111,6 +116,7 @@ if choice != ALL and df["discount_rate"].isna().all():
             "url": st.column_config.LinkColumn("출처", display_text="열기"),
         },
     )
+    footer(where, method)
     st.stop()
 c1, c2, c3 = st.columns(3)
 c1.metric("상품 수", f"{len(df):,}개")
@@ -186,3 +192,5 @@ st.dataframe(
         "url": st.column_config.LinkColumn("링크", display_text="열기"),
     },
 )
+
+footer(where, method)
