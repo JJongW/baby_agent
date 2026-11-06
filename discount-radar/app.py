@@ -49,9 +49,10 @@ def load_sources(version: float) -> tuple[dict, list]:  # version: 바뀐 시각
 
 
 def newest_change() -> float:
-    """조원 파일이나 공통 계산(radar.py)이 바뀌면 캐시를 새로 만든다."""
-    files = [*HERE.glob("sources/**/*"), HERE / "radar.py"]
-    return max((f.stat().st_mtime for f in files if f.is_file()), default=0.0)
+    """조원 파일이나 공통 계산(radar.py)이 바뀌면 캐시를 새로 만든다.
+    폴더 시각도 본다: 파일이나 조원 폴더를 지우면 남은 파일 시각은 그대로지만 그 위 폴더 시각은 바뀐다."""
+    files = [HERE / "sources", *HERE.glob("sources/**/*"), HERE / "radar.py"]
+    return max((f.stat().st_mtime for f in files if f.exists()), default=0.0)
 
 
 def footer(where: str, method: str) -> None:
