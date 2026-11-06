@@ -94,6 +94,7 @@ st.header("① 어느 카테고리가 할인을 가장 많이 할까")
 cats = radar.by_category(df)
 best = cats.index[0]
 st.subheader(f"정답: **{best}** (평균 {cats.iloc[0]['평균할인율']}% 할인)")
+st.caption(f"할인율을 아는 상품이 {radar.CATEGORY_MIN}개 이상인 카테고리만 비교해요. 정가를 안 보여 주는 쇼핑몰 상품은 빠져요.")
 chart = (
     alt.Chart(cats.reset_index())
     .mark_bar(cornerRadiusEnd=6, height=22)

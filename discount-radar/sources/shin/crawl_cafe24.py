@@ -1,6 +1,6 @@
-"""카페24로 만든 그릇 쇼핑몰 5곳을 정적 크롤링(requests)으로 모은다.
+"""카페24로 만든 그릇 쇼핑몰 8곳을 정적 크롤링(requests)으로 모은다.
 
-robots.txt 확인(2026-11-06): 다섯 곳 모두 상품 목록(/product/list.html)은 허용,
+robots.txt 확인(2026-11-06): 여덟 곳 모두 상품 목록(/product/list.html)은 허용,
 /member/ /myshop/ /api /exec/front/ 는 금지라 건드리지 않는다.
 실행: python discount-radar/sources/shin/crawl_cafe24.py
 """
@@ -20,6 +20,9 @@ SHOPS = {
     "로사": ("https://rosamall.co.kr", [23]),  # 전체상품
     "소소모소": ("https://www.sosomoso.com", [356, 357]),  # SIGNATURE(그릇) 먼저, 남는 페이지로 BASIC
     "소로이": ("https://soroishop.com", [506]),  # all
+    "쓰임": ("https://ssueim.com", [1, 1254, 1060]),  # 오늘의 딜, 클리어런스(소비자가 표시), 남는 페이지로 전체
+    "덴비": ("https://denby.co.kr", [42]),  # SHOP 전체
+    "로얄알버트": ("https://royalalbert.co.kr", [25]),  # 컬렉션 (소비자가 없음 → 할인율 모름)
 }
 
 

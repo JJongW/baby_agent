@@ -17,6 +17,7 @@ CATEGORY_WORDS = [
     ("볼/공기", ["보울", "볼", "공기", "대접", "면기", "국그릇", "찬기", "종지", "bowl", "우동기", "돈부리",
                 "덴다시", "다완", "자무시", "탕기", "그라탕", "그릇"]),
     ("접시", ["접시", "플레이트", "plate", "디쉬", "디시", "dish", "쿠프", "굽부", "트레이", "쟁반"]),
+    ("주전자/보관", ["티팟", "주전자", "포트", "찬통", "밀폐", "보관용기", "저장용기", "합"]),
 ]
 
 # 그릇 쇼핑몰이 같이 파는 생활용품. 그릇 데이터에서 뺀다
@@ -25,7 +26,9 @@ NOT_TABLEWARE = ["샤워타월", "타월", "수건", "브러쉬", "화분", "알
 
 
 def is_tableware(name: str) -> bool:
-    return not any(w in name for w in NOT_TABLEWARE)
+    """그릇 낱말이 하나도 없으면(기타) 그릇이 아니라고 보고 뺀다. 이불, 러그처럼 같이 파는 생활용품을 거른다.
+    바꿀 시점: 진짜 그릇이 많이 빠지면 CATEGORY_WORDS에 낱말을 더한다."""
+    return not any(w in name for w in NOT_TABLEWARE) and categorize(name) != "기타"
 
 
 def categorize(name: str) -> str:

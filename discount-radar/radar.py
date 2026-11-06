@@ -13,6 +13,7 @@ import pandas as pd
 
 COLUMNS = ["name", "category", "price", "original_price", "review_count", "url", "note"]
 REVIEW_MIN = 10  # 리뷰가 이보다 적으면 "확인 필요"로 표시한다
+CATEGORY_MIN = 10  # 할인율을 아는 상품이 이보다 적은 카테고리는 평균이 흔들려 정답 후보에서 뺀다
 
 
 def normalize(df: pd.DataFrame) -> pd.DataFrame:
@@ -49,13 +50,15 @@ def normalize(df: pd.DataFrame) -> pd.DataFrame:
 
 def by_category(df: pd.DataFrame) -> pd.DataFrame:
     """① 카테고리별 평균 할인율. 할인율 높은 순."""
-    return (
+    cats = (
         df.dropna(subset=["discount_rate"])
         .groupby("category")
         .agg(평균할인율=("discount_rate", "mean"), 상품수=("name", "count"))
         .round(1)
         .sort_values("평균할인율", ascending=False)
     )
+    enough = cats[cats["상품수"] >= CATEGORY_MIN]
+    return enough if not enough.empty else cats  # 데이터가 적은 조원은 전부 보여 준다
 
 
 def pick_by_budget(df: pd.DataFrame, budget: int, category: str | None, min_reviews: int) -> pd.DataFrame:
