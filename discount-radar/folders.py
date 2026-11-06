@@ -91,7 +91,7 @@ def show(sources: dict, selected: str | None, all_label: str) -> None:
         top = df[df["discount_rate"] > 0].sort_values("discount_rate", ascending=False).head(4)
         folders.append({
             "label": title,
-            "meta": f"{len(df)}개 상품" + (f", 평균 {avg:.0f}%" if pd.notna(avg := df["discount_rate"].mean()) else ""),
+            "meta": f"{len(src['raw'])}개" + (f", 평균 {avg:.0f}% 할인" if pd.notna(avg := df["discount_rate"].mean()) else ", 할인 정보 없음"),
             "selected": title == selected,
             # 가장 큰 할인이 맨 앞(유리 쪽)에 오도록 거꾸로 넣는다
             "files": [

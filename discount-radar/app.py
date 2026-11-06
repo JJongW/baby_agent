@@ -31,10 +31,13 @@ def load_sources(version: float) -> tuple[dict, list]:  # version: 바뀐 시각
             spec = importlib.util.spec_from_file_location(f"src_{folder.name}", adapter)
             mod = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(mod)
-            df = radar.normalize(mod.load())
+            raw = mod.load()
+            df = radar.normalize(raw)
             df["source"] = mod.TITLE
             sources[mod.TITLE] = {
                 "df": df,
+                "raw": raw,
+                "unit": getattr(mod, "UNIT", "원"),  # 원화가 아닌 데이터는 전체 보기 합계에서 뺀다
                 "folder": folder.name,
                 "where": getattr(mod, "SOURCE", ""),
                 "method": getattr(mod, "METHOD", ""),
@@ -69,10 +72,14 @@ if not sources:
     st.stop()
 
 if choice == ALL:
-    df = pd.concat([s["df"] for s in sources.values()], ignore_index=True)
-    where = ", ".join(f"{t} ({s['where']})" for t, s in sources.items() if s["where"])
-    method = ", ".join(sorted({s["method"] for s in sources.values() if s["method"]}))
+    # 할인율을 하나도 모르거나 원화가 아닌 데이터는 섞으면 숫자가 틀어진다 (예: 권의 아이폰 달러 출시가)
+    won_sources = {t: s for t, s in sources.items() if s["unit"] == "원" and s["df"]["discount_rate"].notna().any()}
+    left_out = [t for t in sources if t not in won_sources]
+    df = pd.concat([s["df"] for s in won_sources.values()], ignore_index=True)
+    where = ", ".join(f"{t} ({s['where']})" for t, s in won_sources.items() if s["where"])
+    method = ", ".join(sorted({s["method"] for s in won_sources.values() if s["method"]}))
 else:
+    left_out = []
     src = sources[choice]
     df = src["df"]
     where, method = src["where"], src["method"]
@@ -84,6 +91,27 @@ st.title("할인 레이더")
 st.caption("폴더를 열면 그 조원 데이터로 바뀌어요. 다시 닫으면 전체 보기.")
 folders.show(sources, None if choice == ALL else choice, ALL)
 st.caption(f"수집처: {where or '-'}  |  수집 방법: {method or '-'}")
+if left_out:
+    st.caption(f"할인 정보가 없거나 원화가 아니라 전체 합계에서 뺀 데이터: {', '.join(left_out)}. 폴더를 열면 따로 볼 수 있어요.")
+
+# 할인 정보가 없는 데이터는 할인 계산 대신 모은 표를 그대로 보여 준다
+# 바꿀 시점: 이런 조원이 둘 이상이면 adapter에 표 모양을 정하는 약속(예: show())을 만든다
+if choice != ALL and df["discount_rate"].isna().all():
+    raw = sources[choice]["raw"]
+    st.info(f"이 데이터에는 할인 정보(정가와 할인가)가 없어서 할인 비교 대신 모은 표를 보여 줘요. 가격 단위: {sources[choice]['unit']}")
+    st.metric("항목 수", f"{len(raw):,}개")
+    st.dataframe(
+        raw,
+        hide_index=True,
+        use_container_width=True,
+        column_config={
+            "name": "이름",
+            "category": "분류",
+            "price": st.column_config.NumberColumn(f"가격({sources[choice]['unit']})", format="localized"),
+            "url": st.column_config.LinkColumn("출처", display_text="열기"),
+        },
+    )
+    st.stop()
 c1, c2, c3 = st.columns(3)
 c1.metric("상품 수", f"{len(df):,}개")
 c2.metric("평균 할인율", f"{df['discount_rate'].mean():.1f}%", help="정가를 알 수 있는 상품만 계산해요")
