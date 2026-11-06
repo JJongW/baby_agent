@@ -82,8 +82,11 @@ if choice == ALL:
     won_sources = {t: s for t, s in sources.items() if s["unit"] == "원" and s["df"]["discount_rate"].notna().any()}
     left_out = [t for t in sources if t not in won_sources]
     df = pd.concat([s["df"] for s in won_sources.values()], ignore_index=True)
+    # 조원마다 카테고리 뜻이 달라(그릇 종류, 책 분야, 게임 평가 등급) 섞으면 "복합적"처럼 뜻을 알 수 없다. 누구 데이터인지 붙인다
+    df["category"] = df["category"] + " (" + df["source"] + ")"
     where = ", ".join(f"{t} ({s['where']})" for t, s in won_sources.items() if s["where"])
-    method = ", ".join(sorted({s["method"] for s in won_sources.values() if s["method"]}))
+    # "정적 크롤링, Playwright"처럼 여러 개를 적은 조원도 있어 낱개로 나눠 겹친 것을 없앤다
+    method = ", ".join(sorted({m.strip() for s in won_sources.values() for m in s["method"].split(",") if m.strip()}))
 else:
     left_out = []
     src = sources[choice]
