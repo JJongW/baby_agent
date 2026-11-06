@@ -61,7 +61,11 @@ const GlassFolder = mod.exports.default;
 function pick(title) {
   try {
     const labels = window.parent.document.querySelectorAll('[data-testid="stSidebar"] [role="radiogroup"] label');
-    for (const l of labels) if (l.innerText.trim() === title) { l.click(); return; }
+    for (const l of labels) if (l.innerText.trim() === title) {
+      l.click();
+      l.querySelector("input")?.blur();  // 대신 누른 거라 포커스 상자가 남지 않게
+      return;
+    }
   } catch (e) { /* 부모 문서를 못 읽으면 사이드바로 고르면 된다 */ }
 }
 
