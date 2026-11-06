@@ -17,8 +17,9 @@ FRAME_HEIGHT = 860  # 높이 값은 필수라 넣지만, 아래 CSS가 창 높�
 
 
 @st.cache_data
-def build_page(_version: float) -> str:
-    """_version: prototype.html 수정 시각. 파일이 바뀌면 캐시를 새로 만든다."""
+def build_page(version: float) -> str:
+    """version: 화면 파일들이 마지막으로 바뀐 시각. 바뀌면 캐시를 새로 만든다.
+    인자 이름을 밑줄로 시작하면 Streamlit이 캐시 키에서 빼 버리니 밑줄을 붙이지 않는다."""
     html = (HERE / "prototype.html").read_text(encoding="utf-8")
     # 폰트 미리 불러오기 줄은 iframe 안에서 쓸모가 없어 뺀다
     html = re.sub(r'<link rel="preload"[^>]*>\n?', "", html)
@@ -41,4 +42,10 @@ st.markdown(
     </style>""",
     unsafe_allow_html=True,
 )
-components.html(build_page((HERE / "prototype.html").stat().st_mtime), height=FRAME_HEIGHT, scrolling=False)
+def newest_change() -> float:
+    """HTML, 그림, 폰트 중 가장 최근에 바뀐 시각."""
+    files = [HERE / "prototype.html", *HERE.glob("assets/web/*"), *HERE.glob("fonts/*")]
+    return max(f.stat().st_mtime for f in files)
+
+
+components.html(build_page(newest_change()), height=FRAME_HEIGHT, scrolling=False)
