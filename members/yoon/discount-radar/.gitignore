@@ -1,0 +1,3 @@
+# polite_get 캐시 (받은 원본 HTML · JSON이 그대로 남음)
+.cache/
+__pycache__/
