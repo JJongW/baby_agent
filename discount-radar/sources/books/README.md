@@ -3,7 +3,7 @@
 > **한 줄 목표:** 도서는 **어떤 분야가 할인을 가장 많이 하는가**에 답한다.
 
 공통 앱(`discount-radar/app.py`, `radar.py`)의 약속을 따른다. 약속 원문은 [../README.md](../README.md).
-이 폴더가 하는 일은 **카카오에서 수집해서 `data/books.csv`로 저장하는 것까지**다. 할인율 계산과 화면은 공통 앱이 한다.
+이 폴더가 하는 일은 **카카오에서 도서 가격을 가져와 공통 앱에 넘기는 것까지**다. 할인율 계산과 화면은 공통 앱이 한다.
 
 ---
 
@@ -59,25 +59,20 @@
 ```
 discount-radar/sources/books/
 ├── README.md          # 이 기획서
-├── kakao_books.py     # 수집만: 카카오 호출 → data/books.csv 저장
-├── data/books.csv     # 수집 결과 (공통 앱은 이것만 읽는다)
+├── kakao_books.py     # 카카오 호출. 직접 실행하면 data/books.csv 저장, adapter.py도 이걸 부른다
+├── data/books.csv     # 예비 데이터 (카카오 호출이 안 될 때 공통 앱이 읽는다)
 ├── adapter.py         # 공통 앱 연결: TITLE, SOURCE, METHOD, load()
-├── .env.example       # KAKAO_REST_API_KEY=여기에_키  (공유용 예시)
+├── .gitignore         # .env를 git에서 뺀다
 └── .env               # 실제 키 — ❌ git에 올리지 않기
 ```
 
-- `.env`는 `discount-radar/.gitignore`에 이미 들어 있어 따로 `.gitignore`를 만들지 않는다.
-- 공통 앱은 크롤링을 다시 하지 않는다. 수집은 내 컴퓨터에서 하고 CSV만 올린다.
+### adapter.py 동작
+1. 키가 있으면 앱이 켜질 때 카카오를 바로 불러 최신 가격을 쓴다.
+2. 키가 없거나 호출이 실패하면 `data/books.csv`(예비 데이터)를 읽는다.
+3. 둘 다 없으면 오류를 낸다. 공통 앱은 사이드바에 "불러오지 못함"으로 보여 주고 멈추지 않는다.
+   (빈 표를 돌려주면 공통 앱이 1등 분야를 뽑다가 멈추므로 빈 표는 돌려주지 않는다.)
 
-### adapter.py 약속 (공통 앱 형식)
-```python
-TITLE = "도서"
-SOURCE = "카카오 책 검색"
-METHOD = "API"
-
-def load() -> pd.DataFrame:   # data/books.csv를 읽어 돌려준다
-    ...
-```
+배포 사이트에서도 카카오를 바로 부르려면 배포 서버에 `KAKAO_REST_API_KEY`를 넣어야 한다. 넣지 않으면 예비 데이터로 돈다.
 
 ---
 
@@ -85,7 +80,7 @@ def load() -> pd.DataFrame:   # data/books.csv를 읽어 돌려준다
 
 1. 카카오 디벨로퍼스 → 내 앱 → **[앱] > [플랫폼 키] > REST API 키** 복사
 2. `discount-radar/sources/books/.env` 파일에 `KAKAO_REST_API_KEY=복사한키` 한 줄 작성 (띄어쓰기 · 따옴표 없이)
-3. `pip install requests python-dotenv`
+3. 수집 코드는 설치할 것 없음 (파이썬 기본 기능만 씀). 앱을 볼 때만 `pip install -r discount-radar/requirements.txt`
 4. `python discount-radar/sources/books/kakao_books.py` → `data/books.csv` 생성
 5. `streamlit run discount-radar/app.py` → 사이드바에서 "도서" 선택
 
@@ -120,7 +115,7 @@ def load() -> pd.DataFrame:   # data/books.csv를 읽어 돌려준다
 
 ## 8. Plan B
 
-- 시연 중 API를 실시간 호출하지 않고 **미리 저장한 `data/books.csv`**를 읽는다 (공통 앱 기본 동작).
+- 카카오 호출이 실패하면 **미리 저장한 `data/books.csv`**를 자동으로 읽는다 (와이파이 · 쿼터 문제 대비). 시연 전에 `kakao_books.py`로 한 번 새로 저장해 둔다.
 - 키 문제로 수집이 막히면 DummyJSON(키 불필요) 데이터를 같은 열 형식으로 저장해 화면을 먼저 확인하고, 나중에 CSV만 교체.
 
 ---
