@@ -1,0 +1,8 @@
+# 무채색 테마. 위젯 강조색(라디오, 진행 막대)도 회색 900으로 맞춘다
+[theme]
+base = "light"
+primaryColor = "#191f28"
+backgroundColor = "#f9fafb"
+secondaryBackgroundColor = "#f2f4f6"
+textColor = "#191f28"
+font = "sans serif"
