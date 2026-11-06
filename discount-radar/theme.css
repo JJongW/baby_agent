@@ -77,9 +77,19 @@ section[data-testid="stSidebar"] h1 { font-size: 20px !important; }
   border-radius: var(--radius-control) !important;
 }
 
-/* 라디오: 고른 항목만 진하게 */
-[data-testid="stSidebar"] [role="radiogroup"] label { padding: 8px 0; }
-[data-testid="stSidebar"] [role="radiogroup"] input:checked + div { color: var(--grey-900); font-weight: 700; }
+/* 사이드바 데이터 고르기: 라디오 동그라미 대신 줄 전체를 쓰는 메뉴. 고른 항목만 회색 바탕에 굵게 */
+[data-testid="stSidebar"] .stElementContainer:has(.stRadio),
+[data-testid="stSidebar"] .stRadio { width: 100% !important; } /* 메뉴 칸이 글자 폭으로 줄지 않게 */
+[data-testid="stSidebar"] [role="radiogroup"] { gap: 2px; align-items: stretch; width: 100%; }
+[data-testid="stSidebar"] [role="radiogroup"] label {
+  width: 100%; align-self: stretch; box-sizing: border-box; margin: 0; padding: 10px 12px; border-radius: var(--radius-control);
+  background: transparent; outline: none !important; box-shadow: none !important; cursor: pointer;
+}
+[data-testid="stSidebar"] [role="radiogroup"] label > div > div:not([data-testid="stMarkdownContainer"]) { display: none; } /* 동그라미 */
+[data-testid="stSidebar"] [role="radiogroup"] label:hover { background: var(--grey-50); }
+[data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) { background: var(--grey-100); }
+[data-testid="stSidebar"] [role="radiogroup"] label p { color: var(--grey-600); font-size: 15px; }
+[data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) p { color: var(--grey-900); font-weight: 700; }
 
 /* 알림 상자도 무채색 */
 [data-testid="stAlertContainer"], [data-testid="stAlert"] { background: var(--grey-100) !important; color: var(--grey-800) !important; border: none; border-radius: var(--radius-control); }
