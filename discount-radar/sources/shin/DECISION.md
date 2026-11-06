@@ -14,6 +14,9 @@
 | 쓰임 (ssueim.com) | 수집 | 카페24, 목록 허용. 전체 목록엔 소비자가가 없어 "오늘의 딜", "클리어런스"를 먼저 모은다 → **할인율이 높게 나오는 쪽으로 치우침** |
 | 덴비 (denby.co.kr) | 수집 | 카페24, 목록 허용, 소비자가 표시 |
 | 로얄알버트 (royalalbert.co.kr) | 수집 | 카페24, 목록 허용. 소비자가가 없어 할인율 모름 |
+| 포트메리온 (portmeirion.co.kr) | 수집 | 워드프레스(WooCommerce). robots.txt가 `/product-category/` 허용. 목록에 정가와 할인가가 같이 나옴. 할인 표시가 없는 상품은 0% |
+| 프라우나 (prouna.com) | 탈락 | 쇼피파이. 첫 요청부터 429(요청 제한). 규칙대로 멈추고 다시 시도하지 않음 |
+| 오덴세 (odense.co.kr) | 탈락 | 메이크샵. 가격이 "회원공개"(로그인 영역)이고, 읽을 수 있는 분류가 아기 간식, 위생용품이라 그릇이 아님 |
 | 29CM 그릇/커트러리 | 수집 | `/store/category/` 허용. 화면을 연 뒤 그려져 Playwright 사용 |
 | 쿠팡 | 탈락 | 접속 차단(403). 우회하지 않는다 |
 | 오늘의집 | 탈락 | 접속 차단(403) |
@@ -25,15 +28,16 @@
 
 추가 탐색 (2026-11-06, 그릇 브랜드와 쇼핑몰 34곳을 스크립트로 동시에 점검):
 - 알레시: 카페24지만 목록 구조가 달라 읽지 못함, 주방 소품 위주라 뺌
-- 포트메리온, 프라우나, 오덴세(메이크샵) 등: 카페24가 아니라 지금 수집 코드로는 안 됨. 다음 후보
+- 포트메리온, 프라우나, 오덴세: 카페24가 아니라 따로 확인 → 표의 판정 참고
 - 광주요, 젠한국, 코렐: 접속 시 인증서(SSL) 오류. 뺌
 - 그 밖에 주소를 찾지 못한 곳 다수
 
-이용약관: 카페24 8곳은 약관이 `/member/`(robots 금지 경로) 아래에 있어 사람이 브라우저로 읽어 확인한다. **(확인 필요)**
+이용약관: 카페24 8곳은 약관이 `/member/`(robots 금지 경로) 아래에 있어 사람이 브라우저로 읽어 확인한다. 포트메리온 약관도 같이 확인한다. **(확인 필요)**
 29CM 약관은 화면을 연 뒤 그려져 아직 읽지 못했다. **(확인 필요)**
 
 ## 방법과 범위
 - 카페24 8곳: `crawl_cafe24.py`, requests + BeautifulSoup. 쇼핑몰마다 최대 10페이지. 쇼핑몰끼리는 동시에, 한 쇼핑몰 안에서는 1.5초 간격
+- 포트메리온: `crawl_woocommerce.py`, requests + BeautifulSoup. 식기(dinnerware), 서빙웨어를 합쳐 최대 10페이지
 - 29CM: `crawl_29cm.py`, Playwright로 목록 페이지를 열고 그 페이지가 스스로 불러오는 상품 데이터만 받는다. 최대 10페이지(500개)
 - 요청 사이 1.5초 쉬기, 봇임을 밝히는 User-Agent, 403과 429가 오면 멈추고 다시 시도하지 않는다
 - 로그인 영역, 개인정보(리뷰 작성자 등)는 모으지 않는다. 상품 이름, 가격, 리뷰 수, 링크만
@@ -50,5 +54,5 @@
 ```bash
 pip install -r discount-radar/sources/shin/requirements-crawl.txt
 python -m playwright install chromium
-cd discount-radar/sources/shin && python crawl_cafe24.py && python crawl_29cm.py
+cd discount-radar/sources/shin && python crawl_cafe24.py && python crawl_woocommerce.py && python crawl_29cm.py
 ```

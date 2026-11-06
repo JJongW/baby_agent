@@ -1,4 +1,4 @@
-"""신: 그릇. 카페24 그릇 쇼핑몰 8곳(정적 크롤링) + 29CM 그릇/커트러리(Playwright).
+"""신: 그릇. 카페24 그릇 쇼핑몰 8곳 + 포트메리온(정적 크롤링) + 29CM 그릇/커트러리(Playwright).
 수집 결정과 이유는 수집결정 문서(DECISION.md)에 있다. 데이터를 새로 받으려면 crawl_*.py 를 돌린다."""
 import importlib.util
 from pathlib import Path
@@ -12,7 +12,7 @@ _spec.loader.exec_module(_common)
 categorize, is_tableware = _common.categorize, _common.is_tableware
 
 TITLE = "그릇"
-SOURCE = "그릇114, 한국도자기, 로사, 소소모소, 소로이, 쓰임, 덴비, 로얄알버트, 29CM"
+SOURCE = "그릇114, 한국도자기, 로사, 소소모소, 소로이, 쓰임, 덴비, 로얄알버트, 포트메리온, 29CM"
 METHOD = "정적 크롤링, Playwright"
 
 DATA = Path(__file__).parent / "data"
