@@ -1,0 +1,97 @@
+/* 할인 레이더 공통 테마: TDS(토스 디자인 시스템) 느낌의 무채색.
+   TDS 코드와 폰트를 복사하지 않고, 회색 단계와 여백, 둥근 카드 같은 원칙만 따른다.
+   폰트는 Toss Product Sans 대신 무료 폰트 Pretendard. */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+
+:root {
+  --grey-50: #f9fafb;
+  --grey-100: #f2f4f6;
+  --grey-200: #e5e8eb;
+  --grey-300: #d1d6db;
+  --grey-400: #b0b8c1;
+  --grey-500: #8b95a1;
+  --grey-600: #6b7684;
+  --grey-700: #4e5968;
+  --grey-800: #333d4b;
+  --grey-900: #191f28;
+  --radius-card: 20px;
+  --radius-control: 12px;
+}
+
+html, body, .stApp, p, h1, h2, h3, label, button, input, select, textarea, li, td, th {
+  font-family: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+}
+/* 아이콘은 아이콘 폰트를 그대로 쓴다 */
+[data-testid="stIconMaterial"] { font-family: "Material Symbols Rounded" !important; }
+.stApp { background: var(--grey-50); color: var(--grey-900); }
+header[data-testid="stHeader"] { background: transparent; }
+.block-container { max-width: 960px; padding-top: 48px; }
+
+/* 글자: 큰 제목은 굵고 촘촘하게, 본문은 회색 단계로 위계 */
+h1 { font-size: 30px !important; font-weight: 700 !important; letter-spacing: -0.02em; color: var(--grey-900) !important; }
+h2 { font-size: 22px !important; font-weight: 700 !important; letter-spacing: -0.02em; color: var(--grey-900) !important; margin-top: 40px !important; }
+h3 { font-size: 18px !important; font-weight: 600 !important; color: var(--grey-800) !important; }
+p, li, label, .stMarkdown { color: var(--grey-700); }
+[data-testid="stCaptionContainer"], small { color: var(--grey-500) !important; }
+
+/* 사이드바 */
+section[data-testid="stSidebar"] { background: #fff; border-right: 1px solid var(--grey-100); }
+section[data-testid="stSidebar"] h1 { font-size: 20px !important; }
+
+/* 카드: 테두리 대신 흰 바탕과 큰 둥근 모서리 */
+[data-testid="stMetric"],
+[data-testid="stVerticalBlockBorderWrapper"]:has(> div > [data-testid="stVerticalBlock"]),
+[data-testid="stForm"],
+[data-testid="stExpander"] details,
+[class*="st-key-pick_"] {
+  background: #fff;
+  border: none !important;
+  border-radius: var(--radius-card) !important;
+  padding: 20px 24px;
+  box-shadow: none;
+}
+[data-testid="stMetricLabel"] p { color: var(--grey-600); font-size: 14px; }
+[data-testid="stMetricValue"] { color: var(--grey-900); font-weight: 700; letter-spacing: -0.02em; }
+
+/* 버튼: 주 버튼은 거의 검정, 보조 버튼은 옅은 회색 */
+.stButton button, .stFormSubmitButton button, .stLinkButton a {
+  border-radius: var(--radius-control) !important;
+  font-weight: 600 !important;
+  min-height: 48px;
+  border: none !important;
+  background: var(--grey-100) !important;
+  color: var(--grey-800) !important;
+}
+.stFormSubmitButton button[kind="primaryFormSubmit"], .stButton button[kind="primary"] {
+  background: var(--grey-900) !important;
+  color: #fff !important;
+}
+.stButton button:hover, .stFormSubmitButton button:hover, .stLinkButton a:hover { filter: brightness(0.95); }
+
+/* 입력칸 */
+[data-baseweb="input"], [data-baseweb="select"] > div, .stNumberInput input {
+  background: var(--grey-100) !important;
+  border: none !important;
+  border-radius: var(--radius-control) !important;
+}
+
+/* 라디오: 고른 항목만 진하게 */
+[data-testid="stSidebar"] [role="radiogroup"] label { padding: 8px 0; }
+[data-testid="stSidebar"] [role="radiogroup"] input:checked + div { color: var(--grey-900); font-weight: 700; }
+
+/* 알림 상자도 무채색 */
+[data-testid="stAlertContainer"], [data-testid="stAlert"] { background: var(--grey-100) !important; color: var(--grey-800) !important; border: none; border-radius: var(--radius-control); }
+[data-testid="stAlert"] svg { fill: var(--grey-600) !important; color: var(--grey-600) !important; }
+
+/* 표 */
+[data-testid="stDataFrame"] { background: #fff; border-radius: var(--radius-card); padding: 8px; }
+
+/* 버튼 안 글자는 버튼 색을 따른다 (위 p 색 규칙이 덮지 않게) */
+button p, .stLinkButton a p { color: inherit !important; }
+[data-testid="stExpanderDetails"] { border: none !important; }
+[class*="st-key-pick_"] { height: 100%; gap: 8px; }
+
+/* 확인 필요 칩 */
+.chip { display: inline-block; background: var(--grey-100); color: var(--grey-700); font-size: 13px; font-weight: 600;
+  border-radius: 8px; padding: 6px 10px; line-height: 1.4; }
