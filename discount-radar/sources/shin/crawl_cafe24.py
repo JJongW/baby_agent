@@ -6,6 +6,7 @@ robots.txt 확인(2026-11-06): 다섯 곳 모두 상품 목록(/product/list.htm
 """
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 from bs4 import BeautifulSoup
@@ -84,12 +85,18 @@ def crawl_shop(shop: str, base: str, categories: list[int], session: requests.Se
     return rows
 
 
-def main() -> None:
-    session = requests.Session()
+def crawl_one(shop: str) -> list[dict]:
+    session = requests.Session()  # 쇼핑몰마다 따로. 한 쇼핑몰 안에서는 여전히 1.5초 간격으로 차례대로
     session.headers["User-Agent"] = UA
-    rows = []
-    for shop, (base, cats) in SHOPS.items():
-        rows += crawl_shop(shop, base, cats, session)
+    base, cats = SHOPS[shop]
+    return crawl_shop(shop, base, cats, session)
+
+
+def main() -> None:
+    # 쇼핑몰끼리는 서로 다른 서버라 동시에 돌린다. 한 곳에 보내는 속도는 그대로라 부담은 늘지 않는다
+    with ThreadPoolExecutor(max_workers=len(SHOPS)) as pool:
+        results = list(pool.map(crawl_one, SHOPS))
+    rows = [r for shop_rows in results for r in shop_rows]
     path = save(rows, "cafe24.csv")
     print(f"저장: {path} ({len(rows)}행)")
 
