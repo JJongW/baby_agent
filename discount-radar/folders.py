@@ -81,6 +81,17 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     onFileSelect: (file) => { if (file.url) window.open(file.url, "_blank", "noopener"); },
   })))
 );
+
+// 화면 폭에 따라 한 줄에 들어가는 폴더 수가 달라 높이를 미리 알 수 없다.
+// 같은 출처라 바깥 iframe 높이를 내용에 맞춘다 (못 하면 파이썬이 정한 높이 그대로)
+const root = document.getElementById("root");
+new ResizeObserver(() => {
+  try {
+    const h = (root.scrollHeight + 8) + "px";
+    window.frameElement.style.height = h;
+    window.frameElement.parentElement.style.height = h;  // Streamlit 감싸는 칸도 높이가 고정돼 있다
+  } catch (e) {}
+}).observe(root);
 </script></body></html>"""
 
 

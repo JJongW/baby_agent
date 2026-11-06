@@ -1,4 +1,4 @@
-"""그릇 수집 공통: 예절 규칙, 카테고리 나누기, CSV 저장."""
+"""테이블웨어 수집 공통: 예절 규칙, 카테고리 나누기, CSV 저장."""
 import csv
 import re
 from pathlib import Path

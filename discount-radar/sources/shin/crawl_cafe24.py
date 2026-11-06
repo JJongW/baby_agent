@@ -1,4 +1,4 @@
-"""카페24로 만든 그릇 쇼핑몰 8곳을 정적 크롤링(requests)으로 모은다.
+"""카페24로 만든 테이블웨어 쇼핑몰 8곳을 정적 크롤링(requests)으로 모은다.
 
 robots.txt 확인(2026-11-06): 여덟 곳 모두 상품 목록(/product/list.html)은 허용,
 /member/ /myshop/ /api /exec/front/ 는 금지라 건드리지 않는다.

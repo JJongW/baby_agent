@@ -1,4 +1,4 @@
-"""워드프레스(WooCommerce)로 만든 그릇 쇼핑몰을 정적 크롤링(requests)으로 모은다. 지금은 포트메리온 한 곳.
+"""워드프레스(WooCommerce)로 만든 테이블웨어 쇼핑몰을 정적 크롤링(requests)으로 모은다. 지금은 포트메리온 한 곳.
 
 robots.txt 확인(2026-11-06): /category, /wp-admin 등은 금지, 상품 목록 /product-category/ 는 허용.
 목록 칸(article.product)마다 정가(<del>)와 할인가(<ins>)가 같이 나온다.
