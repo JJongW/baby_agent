@@ -11,6 +11,7 @@ TSX를 바로 돌린다. 폴더 = 조원 데이터 한 묶음, 폴더 속 종이
 import json
 from pathlib import Path
 
+import pandas as pd
 import streamlit.components.v1 as components
 
 TSX = (Path(__file__).parent / "components" / "glass_folder" / "glass-folder-cards.tsx").read_text(encoding="utf-8")
@@ -90,7 +91,7 @@ def show(sources: dict, selected: str | None, all_label: str) -> None:
         top = df[df["discount_rate"] > 0].sort_values("discount_rate", ascending=False).head(4)
         folders.append({
             "label": title,
-            "meta": f"{len(df)}개 상품, 평균 {df['discount_rate'].mean():.0f}%",
+            "meta": f"{len(df)}개 상품" + (f", 평균 {avg:.0f}%" if pd.notna(avg := df["discount_rate"].mean()) else ""),
             "selected": title == selected,
             # 가장 큰 할인이 맨 앞(유리 쪽)에 오도록 거꾸로 넣는다
             "files": [

@@ -86,7 +86,7 @@ folders.show(sources, None if choice == ALL else choice, ALL)
 st.caption(f"수집처: {where or '-'}  |  수집 방법: {method or '-'}")
 c1, c2, c3 = st.columns(3)
 c1.metric("상품 수", f"{len(df):,}개")
-c2.metric("평균 할인율", f"{df['discount_rate'].mean():.1f}%")
+c2.metric("평균 할인율", f"{df['discount_rate'].mean():.1f}%", help="정가를 알 수 있는 상품만 계산해요")
 c3.metric("카테고리", f"{df['category'].nunique()}개")
 
 # ① 카테고리별 할인율
@@ -129,7 +129,7 @@ else:
         with col.container(key=f"pick_{i}"):
             st.markdown(f"**{row['name']}**")
             st.markdown(f"### {won(row['price'])}")
-            if row["discount_rate"] > 0:
+            if pd.notna(row["discount_rate"]) and row["discount_rate"] > 0:
                 st.markdown(f"~~{won(row['original_price'])}~~  **{row['discount_rate']}% 할인**")
             st.caption(f"{row['category']}  |  {row['source']}")
             if row["caution"]:

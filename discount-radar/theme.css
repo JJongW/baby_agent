@@ -52,7 +52,8 @@ section[data-testid="stSidebar"] h1 { font-size: 20px !important; }
   box-shadow: none;
 }
 [data-testid="stMetricLabel"] p { color: var(--grey-600); font-size: 14px; }
-[data-testid="stMetricValue"] { color: var(--grey-900); font-weight: 700; letter-spacing: -0.02em; }
+[data-testid="stMetricValue"] { color: var(--grey-900); font-weight: 700; letter-spacing: -0.02em; font-size: 26px !important; }
+[data-testid="stMetricValue"] > div { overflow: visible !important; text-overflow: clip !important; }
 
 /* 버튼: 주 버튼은 거의 검정, 보조 버튼은 옅은 회색 */
 .stButton button, .stFormSubmitButton button, .stLinkButton a {

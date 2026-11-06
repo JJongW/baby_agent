@@ -4,7 +4,7 @@
 - name            상품 이름
 - category        카테고리
 - price           지금 파는 값 (원)
-- original_price  할인 기준 값 (원). 정가가 없으면 조원이 정한 기준값(예: 같은 검색 결과 중간값)
+- original_price  할인 기준 값 (원). 정가가 없으면 조원이 정한 기준값(예: 같은 검색 결과 중간값), 그것도 없으면 빈칸
 - review_count    리뷰 수. 모르면 비워 둔다
 - url             상품 링크
 - note            조건 (예: "카드 결제 시", "쿠폰 적용가"). 없으면 비워 둔다
@@ -30,11 +30,10 @@ def normalize(df: pd.DataFrame) -> pd.DataFrame:
     df["category"] = df["category"].fillna("기타").astype(str).str.strip()
     df = df.dropna(subset=["price"])
 
-    has_base = df["original_price"].notna() & (df["original_price"] > df["price"])
-    df["discount_rate"] = 0.0
-    df.loc[has_base, "discount_rate"] = (
-        (df["original_price"] - df["price"]) / df["original_price"] * 100
-    ).round(1)
+    # 기준 값이 없으면 할인율을 "모름"(빈칸)으로 둔다. 0%(할인 안 함)와 다르다. 평균에서도 빠진다
+    df["discount_rate"] = (
+        ((df["original_price"] - df["price"]) / df["original_price"] * 100).clip(lower=0).round(1)
+    )
 
     reasons = []
     for note, reviews in zip(df["note"], df["review_count"]):
@@ -51,7 +50,8 @@ def normalize(df: pd.DataFrame) -> pd.DataFrame:
 def by_category(df: pd.DataFrame) -> pd.DataFrame:
     """① 카테고리별 평균 할인율. 할인율 높은 순."""
     return (
-        df.groupby("category")
+        df.dropna(subset=["discount_rate"])
+        .groupby("category")
         .agg(평균할인율=("discount_rate", "mean"), 상품수=("name", "count"))
         .round(1)
         .sort_values("평균할인율", ascending=False)
