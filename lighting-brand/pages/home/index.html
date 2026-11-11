@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>홈 | GYEOL</title>
+  <link rel="stylesheet" href="../../common/style.css">
+  <!-- 이 페이지에만 필요한 모양은 여기 <style>에 쓴다. 색은 common/style.css 의 값(var(--ink) 등)만 쓴다 -->
+  <style></style>
+</head>
+<body data-page="home">
+  <header data-site-header></header>
+  <main>
+    <!-- 담당: 상경(어). PRD 7.2 홈 -->
+    <section class="wrap section" style="padding-top:48px">
+      <div class="ph wide">첫 화면: 불 켜진 조명 사진</div>
+      <h1 style="margin-top:40px">대나무 살과 한지로 만드는 빛</h1>
+      <p>브랜드 한 줄 소개 자리</p>
+      <a class="button" href="../product/">제품 보기</a>
+    </section>
+
+    <section class="wrap section">
+      <p class="eyebrow">대표 제품</p>
+      <div class="grid" id="featured"></div>
+    </section>
+
+    <section class="wrap section">
+      <p class="eyebrow">스토리</p>
+      <div class="todo">스토리 맛보기 한 단락 + 스토리 페이지로 가는 링크</div>
+    </section>
+
+    <section class="wrap section">
+      <p class="eyebrow">매거진</p>
+      <div class="todo">최신 매거진 글 3개</div>
+    </section>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("featured").innerHTML =
+          GYEOL_PRODUCTS.filter((p) => p.featured).map(gyeolProductCard).join("");
+      });
+    </script>
+  </main>
+  <footer data-site-footer></footer>
+  <script src="../../common/products.js"></script>
+  <script src="../../common/layout.js"></script>
+</body>
+</html>
