@@ -7,51 +7,52 @@
   <link rel="stylesheet" href="../../common/style.css">
   <!-- 이 페이지에만 필요한 모양은 여기 <style>에 쓴다. 색은 common/style.css 의 값(var(--ink) 등)만 쓴다 -->
   <style>
-    .faq-head { padding-top: 48px; }
-    .faq-head p { max-width: 36em; }
+    /* 값은 모두 common/style.css 토큰 (DESIGN.md). 화면 폭 기준은 640px, 960px 두 개 */
+    .faq-head { padding-top: var(--space-4); }
+    .faq-head p { max-width: var(--text-width); }
 
-    /* 검색칸: 밑줄 하나만 둔다 */
-    .faq-search { margin-top: 40px; max-width: 640px; }
-    .faq-search label { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 4px; }
+    /* 검색칸 (DESIGN.md 다음에 정할 것: 입력칸 모양). 밑줄 하나만, 테두리는 --ink-soft */
+    .faq-search { margin-top: var(--space-4); max-width: var(--text-width); }
+    .faq-search label { display: block; font-size: var(--text-sm); color: var(--ink-soft); margin-bottom: var(--space-1); }
     .faq-search input {
-      width: 100%; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0; background: transparent;
-      font: inherit; font-size: 20px; color: var(--ink); padding: 8px 0; outline: none;
+      width: 100%; min-height: 44px; border: 0; border-bottom: 1px solid var(--ink-soft); border-radius: var(--radius); background: transparent;
+      font: inherit; font-size: var(--text-lg); color: var(--ink); padding: var(--space-1) 0;
     }
-    .faq-search input::placeholder { color: var(--line); }
+    .faq-search input:focus { border-bottom-color: var(--ink); }
+    .faq-search input::placeholder { color: var(--ink-soft); opacity: .6; }
     .faq-search input::-webkit-search-cancel-button { filter: grayscale(1); cursor: pointer; } /* 기본 파란 × 를 먹색으로 */
-    .faq-search input:focus-visible { border-bottom-width: 2px; padding-bottom: 7px; }
-    .faq-status { font-size: 14px; color: var(--ink-soft); margin: 12px 0 0; min-height: 1.7em; }
+    .faq-status { font-size: var(--text-sm); color: var(--ink-soft); margin: var(--space-1) 0 0; min-height: 1.7em; }
 
-    .faq-topics { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 24px; font-size: 14px; }
-    .faq-topics a { color: var(--ink-soft); border-bottom: 1px solid transparent; }
-    .faq-topics a:hover, .faq-topics a:focus-visible { color: var(--ink); border-bottom-color: var(--ink); }
+    .faq-topics { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin-top: var(--space-3); font-size: var(--text-sm); }
+    .faq-topics a { color: var(--ink-soft); border-bottom: 1px solid transparent; padding: var(--space-1) 0; }
+    .faq-topics a:hover { color: var(--ink); border-bottom-color: var(--ink); }
 
-    /* 주제 묶음: 데스크톱은 왼쪽 제목, 오른쪽 질문 */
-    .faq-group { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; border-top: 1px solid var(--line); padding: 40px 0; scroll-margin-top: 80px; }
+    /* 주제 묶음: 넓은 화면은 왼쪽 제목, 오른쪽 질문 */
+    .faq-group { display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-3); border-top: 1px solid var(--line); padding: var(--space-4) 0; scroll-margin-top: 88px; }
     .faq-group[hidden] { display: none; } /* display: grid 가 hidden 을 이기지 않게 */
-    .faq-group h2 { font-size: 20px; margin: 0; }
-    .faq-group h2 span { display: block; font-size: 13px; color: var(--ink-soft); letter-spacing: 0.12em; margin-bottom: 8px; }
-    @media (max-width: 760px) { .faq-group { grid-template-columns: 1fr; gap: 8px; padding: 32px 0; } }
+    .faq-group h2 { margin: 0; }
+    .faq-group h2 span { display: block; font-family: var(--font); font-size: var(--text-xs); font-weight: 500; letter-spacing: 0.08em; color: var(--ink-soft); margin-bottom: var(--space-1); }
+    @media (max-width: 960px) { .faq-group { grid-template-columns: 1fr; gap: var(--space-1); } }
 
+    /* 펼침 목록 (DESIGN.md 다음에 정할 것: 펼침 목록 모양). 가는 선과 + 하나 */
     .faq-item { border-bottom: 1px solid var(--line); }
     .faq-item:first-child { border-top: 1px solid var(--line); }
-    @media (min-width: 761px) { .faq-item:first-child { border-top: 0; } .faq-item:first-child summary { padding-top: 0; } }
+    @media (min-width: 961px) { .faq-item:first-child { border-top: 0; } .faq-item:first-child summary { padding-top: 0; } }
     .faq-item summary {
-      list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
-      padding: 18px 0; font-size: 17px; color: var(--ink);
+      list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-2);
+      padding: var(--space-2) 0; min-height: 44px; font-size: var(--text-md); font-weight: 500; color: var(--ink);
     }
     .faq-item summary::-webkit-details-marker { display: none; }
-    .faq-item summary::after { content: "+"; color: var(--ink-soft); font-size: 20px; line-height: 1; transition: transform .3s; }
+    .faq-item summary::after { content: "+"; color: var(--ink-soft); font-size: var(--text-lg); line-height: 1; transition: transform .3s; }
     .faq-item[open] summary::after { transform: rotate(45deg); }
-    .faq-item summary:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
-    .faq-item .answer { padding: 0 32px 24px 0; max-width: 40em; }
+    .faq-item .answer { padding: 0 var(--space-4) var(--space-3) 0; max-width: var(--text-width); }
     .faq-item .answer p:last-child { margin-bottom: 0; }
     .faq-item .answer strong { color: var(--ink); font-weight: 500; }
 
-    .faq-empty { border-top: 1px solid var(--line); padding: 48px 0; }
-    .faq-empty p:first-child { color: var(--ink); font-size: 18px; }
+    .faq-empty { border-top: 1px solid var(--line); padding: var(--space-4) 0; }
+    .faq-empty p:first-child { color: var(--ink); font-size: var(--text-lg); }
 
-    .faq-contact { border-top: 1px solid var(--line); padding-top: 40px; }
+    .faq-contact { border-top: 1px solid var(--line); padding-top: var(--space-4); }
 
     @media (prefers-reduced-motion: reduce) { .faq-item summary::after { transition: none; } }
   </style>
@@ -79,7 +80,7 @@
       </nav>
     </section>
 
-    <section class="wrap section" style="padding-top:48px" id="faq-list">
+    <section class="wrap section" style="padding-top:var(--space-4)" id="faq-list">
       <div class="faq-group" id="order">
         <h2><span>01</span>주문과 배송</h2>
         <div>
