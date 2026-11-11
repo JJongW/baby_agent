@@ -59,4 +59,17 @@
         <nav class="footer-nav" aria-label="바닥 메뉴">${links}</nav>
       </div>`;
   }
+
+  // 사진이 다 받아지기 전에는 숨겼다가, 받아지면 서서히 나타나게 한다 (이슈 #62, 모양은 style.css의 img.is-loading)
+  // 이미 받아 둔 사진(complete)은 건드리지 않는다
+  // 제품 페이지처럼 DOMContentLoaded 때 사진을 그리는 페이지도 있어서, 그 뒤에 찾는다
+  const fadeInPhotos = () => document.querySelectorAll("img").forEach((img) => {
+    if (img.complete) return;
+    img.classList.add("is-loading");
+    const done = () => img.classList.remove("is-loading");
+    img.addEventListener("load", done, { once: true });
+    img.addEventListener("error", done, { once: true });
+  });
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fadeInPhotos);
+  else fadeInPhotos();
 })();
