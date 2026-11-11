@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>홈 | GYEOL</title>
+  <title>홈 | ONDO</title>
   <link rel="stylesheet" href="../../common/style.css">
   <!-- 이 페이지에만 필요한 모양은 여기 <style>에 쓴다. 색은 common/style.css 의 값(var(--ink) 등)만 쓴다 -->
   <style></style>
@@ -37,7 +37,7 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("featured").innerHTML =
-          GYEOL_PRODUCTS.filter((p) => p.featured).map(gyeolProductCard).join("");
+          ONDO_PRODUCTS.filter((p) => p.featured).map(ondoProductCard).join("");
       });
     </script>
   </main>

@@ -1,4 +1,4 @@
-/* 결(GYEOL) 공통 머리 메뉴와 바닥. 모든 페이지가 같은 것을 쓰도록 여기 한 곳에서 그린다.
+/* 온도(ONDO) 공통 머리 메뉴와 바닥. 모든 페이지가 같은 것을 쓰도록 여기 한 곳에서 그린다.
    페이지에 <header data-site-header></header>, <footer data-site-footer></footer> 를 두고 이 파일을 불러오면 채워진다.
    메뉴를 바꾸려면 PAGES만 고친다. 경로는 이 파일 위치 기준이라 어느 페이지에서 불러도 맞는다. */
 (function () {
@@ -22,7 +22,7 @@
     header.className = "site-header";
     header.innerHTML = `
       <div class="wrap">
-        <a class="logo" href="${new URL("pages/home/", root)}">GYEOL</a>
+        <a class="logo" href="${new URL("pages/home/", root)}">ONDO</a>
         <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav">메뉴</button>
         <nav class="nav" id="site-nav" aria-label="주 메뉴">${links}</nav>
       </div>`;
@@ -40,7 +40,7 @@
     footer.innerHTML = `
       <div class="wrap">
         <div>
-          <p class="logo">GYEOL</p>
+          <p class="logo">ONDO</p>
           <p>대나무 살과 한지로 만드는 빛</p>
           <p>수업 과제로 만든 가상 브랜드예요. 실제로 판매하지 않아요.</p>
         </div>
