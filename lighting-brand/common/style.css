@@ -129,3 +129,21 @@ p { margin: 0 0 var(--space-2); color: var(--ink-soft); }
 
 /* 아직 만들 곳 표시. 내용을 채우면 지운다 */
 .todo { border: 1px dashed var(--line); padding: var(--space-3); color: var(--ink-soft); font-size: var(--text-sm); border-radius: var(--radius); }
+
+/* 페이지 이동 효과 (이슈 #62): 다른 페이지로 넘어갈 때 앞 화면이 서서히 사라지고 다음 화면이 제자리에서 서서히 나타난다 (위아래로 움직이지 않는다).
+   브라우저 기본 기능(View Transitions)만 쓴다. 지원하지 않는 브라우저는 지금처럼 바로 넘어간다.
+   움직임 줄이기를 켠 사람에게는 효과를 끈다. */
+@view-transition { navigation: auto; }
+/* 메뉴(머리말)는 그대로 두고, 그 아래 내용만 바뀐다 */
+[data-site-header] { view-transition-name: site-header; }
+::view-transition-old(root) { animation: ondo-page-out 250ms ease both; }
+::view-transition-new(root) { animation: ondo-page-in 500ms ease 100ms both; }
+@keyframes ondo-page-out { to { opacity: 0; } }
+@keyframes ondo-page-in { from { opacity: 0; } }
+/* 사진은 다 받아진 뒤 서서히 나타난다. 받는 동안 사진 자리 색이 먼저 번쩍 보이지 않게 한다 (layout.js가 is-loading을 붙였다 뗀다) */
+img { transition: opacity 600ms ease; }
+img.is-loading { opacity: 0 !important; }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  img { transition: none; }
+}
