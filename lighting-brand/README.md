@@ -37,7 +37,7 @@ lighting-brand/
 0. 최신 main을 받고 Claude Code를 연다. Claude가 "본인은 누구신가요?"라고 물으면 이름을 답한다
 1. `pages/<내 페이지>/index.html`을 연다. 회색 점선 상자(`.todo`)가 PRD에 적힌 만들 곳이다. 채우면 상자를 지운다
 2. 사진 자리는 `<div class="ph">`. 사진이 생기면 `<img>`로 바꾼다 (사진 한 장 300KB 이하, 출처 기록)
-3. 내 페이지에만 필요한 모양은 그 파일 `<style>` 안에 쓴다. 색과 글꼴은 `var(--ink)`, `var(--paper)`처럼 공통 값만 쓴다
+3. 내 페이지에만 필요한 모양은 그 파일 `<style>` 안에 쓴다. 색과 글꼴은 `var(--ink)`, `var(--hanji)`처럼 공통 값만 쓴다. 값과 쓰는 규칙은 상경의 [디자인 규칙](pages/home/DESIGN.md)
 4. `<header data-site-header>`, `<footer data-site-footer>`, 맨 아래 `<script>` 두 줄은 지우지 않는다 (메뉴와 바닥이 사라진다)
 5. 공통 파일(`common/`)을 바꾸고 싶으면 신에게 말한다. 모든 페이지가 같이 바뀐다
 
