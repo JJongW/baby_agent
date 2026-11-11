@@ -25,10 +25,15 @@ lighting-brand/
     style.css             공통 스타일. 색, 글꼴, 여백 값은 맨 위 :root 에만 있다 (디자인: 어)
     layout.js             머리 메뉴와 바닥을 모든 페이지에 똑같이 그린다. 메뉴를 바꾸려면 PAGES만 고친다
     products.js           제품 목록과 제품 카드 모양. 홈과 제품 페이지가 같이 쓴다 (담당: 윤, 지금은 가짜 값)
-  pages/<페이지>/index.html  각자 맡은 페이지
+  CLAUDE.md               Claude가 먼저 읽는 규칙 (시작할 때 "본인은 누구신가요?"를 묻고, 내 폴더만 고친다)
+  pages/<페이지>/
+    index.html            각자 맡은 페이지
+    CLAUDE.md             이 페이지에서 만들 것 (Claude가 읽는다)
+    showcase.md           작품 게시. 다 만들면 채워 PR에 같이 올린다
 ```
 
 ## 내 페이지 만드는 법
+0. 최신 main을 받고 Claude Code를 연다. Claude가 "본인은 누구신가요?"라고 물으면 이름을 답한다
 1. `pages/<내 페이지>/index.html`을 연다. 회색 점선 상자(`.todo`)가 PRD에 적힌 만들 곳이다. 채우면 상자를 지운다
 2. 사진 자리는 `<div class="ph">`. 사진이 생기면 `<img>`로 바꾼다 (사진 한 장 300KB 이하, 출처 기록)
 3. 내 페이지에만 필요한 모양은 그 파일 `<style>` 안에 쓴다. 색과 글꼴은 `var(--ink)`, `var(--paper)`처럼 공통 값만 쓴다
