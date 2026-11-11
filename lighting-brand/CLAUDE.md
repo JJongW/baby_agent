@@ -16,7 +16,7 @@
 | 상경 | 홈 | `pages/home/` | `eo` |
 | 정연 | 제품 | `pages/product/` | `yoon` |
 | 신 | FAQ | `pages/faq/` | `shin` |
-| 지혜 | 스토리 | `pages/story/` | 확인 필요 (레포 사람 목록에 없음, 사용자에게 묻는다) |
+| 지혜 | 스토리 | `pages/story/` | `jihye` (깃허브 `Jihye-kr`) |
 | 지영 | 매거진 | `pages/magazine/` | `kwon` |
 
 ## 다른 건 건드리지 않는다

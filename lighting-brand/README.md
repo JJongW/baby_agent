@@ -10,7 +10,7 @@
 | 홈 | `pages/home/` | 상경 | `eo` (어) |
 | 제품 | `pages/product/` | 정연 | `yoon` (윤) |
 | FAQ | `pages/faq/` | 신 | `shin` (신) |
-| 스토리 | `pages/story/` | 지혜 | 김 |
+| 스토리 | `pages/story/` | 지혜 | `jihye` (깃허브 `Jihye-kr`) |
 | 매거진 | `pages/magazine/` | 지영 | `kwon` (권) |
 
 각자 자기 페이지 폴더 안에서만 작업하고, 자기 브랜치(`<사람>/<종류>-<주제>`)로 PR을 올린다.
