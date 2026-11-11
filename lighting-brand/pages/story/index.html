@@ -8,7 +8,12 @@
   <!-- 이 페이지에만 필요한 모양은 여기 <style>에 쓴다. 색은 common/style.css 의 값(var(--ink) 등)만 쓴다 -->
   <style>
     /* 시안(ONDO 스토리 v2.2)을 옮긴 것. 시안 색 이름은 공통 값으로: 한지 → --paper, 한지 짙음 → --paper-deep, 밤색 → --ink */
-    main { overflow-x: clip; word-break: keep-all; }
+    main { overflow-x: clip; word-break: keep-all; overflow-wrap: break-word; }
+    /* 줄바꿈: 제목, 인용, 짧은 설명은 줄 길이를 고르게, 본문은 끝줄에 한두 단어만 남지 않게 */
+    main h1, main h2, main h3, blockquote, .cap { text-wrap: balance; }
+    main p { text-wrap: pretty; }
+    /* 문장 하나를 한 덩어리로: 한 줄에 들어가는 문장은 중간에서 끊기지 않고, 문장과 문장 사이에서 줄이 바뀐다 */
+    .sent { display: inline-block; max-width: 100%; }
     .text { max-width: 640px; }
     .cap { font-size: 14px; line-height: 1.7; color: var(--ink-soft); margin: 0; }
     :focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
@@ -187,7 +192,7 @@
       <div class="copy wrap">
         <p class="eyebrow">1990 · 기원</p>
         <h2>강가의 등불에서</h2>
-        <p class="text">1990년 여름, 조각가 원티드는 강가에 매달린 한지 등불을 보았다. 화려한 불꽃보다 오래 남은 것은 종이 너머의 고요한 빛이었다. 그는 촛불 대신 전구를 넣고, 접을 수 있는 대나무 골조를 고안했다. 그리고 이 빛에 ONDO(온도)라는 이름을 붙였다. 빛의 밝기가 아니라 빛이 지닌 따뜻함을 가리키는 말이었다.</p>
+        <p class="text">1990년 여름, 조각가 원티드는 강가에 매달린 한지 등불을 보았다. 화려한 불꽃보다 오래 남은 것은 종이 너머의 고요한 빛이었다. 그는 촛불 대신 전구를 넣고, 접을 수 있는 대나무 골조를 고안했다. 그리고 이 빛에 ONDO(온도)라는 이름을 붙였다.</p>
         <p class="cap">초기 등 시제품, 1951년경.</p>
       </div>
     </section>
@@ -195,7 +200,7 @@
     <section class="scene short joined" style="--w:1600;--h:1190">
       <span class="shot" role="img" aria-label="검은 배경에 매달린, 구겨진 한지로 만든 각진 펜던트" style="background-image:url('images/archive-signed-pendant-1972.jpg')"></span>
       <div class="copy wrap">
-        <blockquote>빛은 종이를 지나며 표면이 되고, 그 표면은 방 안의 사람과 함께 숨을 쉰다.<cite>원티드</cite></blockquote>
+        <blockquote>빛은 종이를 지나며 표면이 되고,<br>그 표면은 방 안의 사람과 함께 숨을 쉰다.<cite>원티드</cite></blockquote>
         <p class="cap">서명과 '72가 적힌 하나뿐인 펜던트, 1972년경.</p>
       </div>
     </section>
@@ -386,6 +391,28 @@
     (function loop() { ry += .12; spin.style.setProperty("--ry", ry + "deg"); requestAnimationFrame(loop); })();
   })();
   (function () {
+    // 여러 문장인 본문을 문장마다 .sent로 감싼다 (글자만 있는 문단만. 문장 끝: . ? ! 뒤 띄어쓰기)
+    document.querySelectorAll("main p").forEach(function (p) {
+      if (p.children.length) return;
+      var parts = p.textContent.trim().split(/(?<=[.?!]["」]?)\s+/);
+      if (parts.length < 2 && p.textContent.indexOf(",") < 0) return;
+      p.textContent = "";
+      parts.forEach(function (t, i) {
+        var s = document.createElement("span");
+        s.className = "sent";
+        // 한 줄에 다 안 들어가는 긴 문장은 쉼표 자리에서 먼저 끊기게 쉼표 마디도 한 덩어리로
+        t.split(/(?<=,)\s+/).forEach(function (c, j, all) {
+          var m = document.createElement("span");
+          m.className = "sent"; m.textContent = c;
+          s.appendChild(m);
+          if (j < all.length - 1) s.appendChild(document.createTextNode(" "));
+        });
+        p.appendChild(s);
+        if (i < parts.length - 1) p.appendChild(document.createTextNode(" "));
+      });
+    });
+  })();
+  (function () {
     var els = document.querySelectorAll(".scene, .tile");
     if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
     var io = new IntersectionObserver(function (entries) {
@@ -399,7 +426,9 @@
   <script>
   // 스토리 페이지만: 공통 바닥(layout.js가 그림) 끝에 사진 출처를 붙인다 (lighting-brand/CLAUDE.md 예외 규칙)
   document.querySelector(".site-footer .wrap").insertAdjacentHTML("beforeend",
-    '<p class="credit">Isamu Noguchi의 Akari를 참고한 시안. 기록 사진: The Noguchi Museum, 「History of Akari Light Sculptures」. 첫 화면 펜던트 사진: 팀 제공.</p>');
+    '<p class="credit"><span class="sent">Isamu Noguchi의 Akari를 참고한 시안.</span> ' +
+    '<span class="sent"><span class="sent">기록 사진: The Noguchi Museum,</span> <span class="sent">「History of Akari Light Sculptures」.</span></span> ' +
+    '<span class="sent">첫 화면 펜던트 사진: 팀 제공.</span></p>');
   </script>
 </body>
 </html>
