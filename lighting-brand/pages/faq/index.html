@@ -231,8 +231,8 @@
   <script src="../../common/products.js"></script>
   <script src="../../common/layout.js"></script>
   <script>
-    // 검색: 띄어 쓴 낱말이 모두 들어간 질문만 남기고, 맞은 질문은 펼쳐 둔다.
-    // 검색을 지우면 처음처럼 모두 보이고, 검색 때문에 펼친 것만 다시 접는다.
+    // 검색: 띄어 쓴 낱말이 모두 들어간 질문만 남기고, 그중 첫 번째 질문 하나만 펼쳐 둔다.
+    // 검색을 지우면 처음처럼 모두 보이고 모두 접힌다.
     (function () {
       const input = document.getElementById("faq-q");
       const status = document.getElementById("faq-status");
@@ -241,27 +241,32 @@
       const items = [...document.querySelectorAll(".faq-item")];
       const norm = (s) => s.toLowerCase().replace(/\s+/g, " ");
       const text = new Map(items.map((d) => [d, norm(d.textContent)]));
-      const openedBySearch = new Set();
 
-      // 펼침과 접힘: 질문을 누르면 높이가 부드럽게 바뀐다. 움직임 줄이기를 켠 사람에게는 바로 열고 닫는다.
-      // 움직이는 도중에 다시 누르면 지금 높이에서 반대로 돌아간다
+      // 펼침과 접힘: 질문은 한 번에 하나만 펼쳐진다 (이슈 #71). 하나를 펼치면 펼쳐져 있던 다른 질문은 접힌다.
+      // 높이가 부드럽게 바뀌고, 움직이는 도중에 다시 누르면 지금 높이에서 반대로 돌아간다. 움직임 줄이기를 켠 사람에게는 바로 바꾼다
       const still = window.matchMedia("(prefers-reduced-motion: reduce)");
       const stop = (d) => { d.getAnimations().forEach((a) => a.cancel()); d.classList.remove("is-closing"); d.style.overflow = ""; };
+      const isOpen = (d) => d.open && !d.classList.contains("is-closing"); // 접히는 중이면 닫힌 것으로 본다
+      const toggle = (d, open) => {
+        if (isOpen(d) === open) return;
+        if (still.matches) { stop(d); d.open = open; return; }
+        const from = d.getBoundingClientRect().height;
+        stop(d);
+        d.open = open; // 도착할 높이를 재려고 잠깐 그 상태로 둔다 (그리기 전이라 화면에는 안 보인다)
+        const to = d.getBoundingClientRect().height;
+        d.open = true;
+        if (!open) d.classList.add("is-closing");
+        d.style.overflow = "hidden";
+        // fill: forwards = 끝난 높이를 붙잡아 둔다. 안 그러면 다 접힌 뒤 닫기 전 한 순간 다시 펼친 높이로 깜빡인다
+        const anim = d.animate({ height: [from + "px", to + "px"] }, { duration: 360, easing: "cubic-bezier(.2, .6, .2, 1)", fill: "forwards" });
+        anim.onfinish = () => { if (!open) d.open = false; stop(d); };
+      };
       for (const d of items) {
-        const summary = d.querySelector("summary");
-        summary.addEventListener("click", (e) => {
-          if (still.matches) return;
+        d.querySelector("summary").addEventListener("click", (e) => {
           e.preventDefault();
-          const from = d.getBoundingClientRect().height;
-          const closing = d.open && !d.classList.contains("is-closing");
-          stop(d);
-          d.open = !closing; // 도착할 높이를 재려고 잠깐 그 상태로 둔다 (그리기 전이라 화면에는 안 보인다)
-          const to = d.getBoundingClientRect().height;
-          d.open = true;
-          if (closing) d.classList.add("is-closing");
-          d.style.overflow = "hidden";
-          const anim = d.animate({ height: [from + "px", to + "px"] }, { duration: 360, easing: "cubic-bezier(.2, .6, .2, 1)" });
-          anim.onfinish = () => { if (closing) d.open = false; stop(d); };
+          const open = !isOpen(d);
+          if (open) items.forEach((o) => o !== d && toggle(o, false));
+          toggle(d, open);
         });
       }
 
@@ -277,9 +282,9 @@
           stop(d);
           const hit = words.every((w) => text.get(d).includes(w));
           d.hidden = !hit;
+          // 맞는 질문 중 첫 번째 하나만 펼친다 (한 번에 하나만). 검색을 지우면 모두 접힌다
+          d.open = Boolean(words.length && hit && found === 0);
           if (hit) found++;
-          if (words.length && hit && !d.open) { d.open = true; openedBySearch.add(d); }
-          if ((!words.length || !hit) && openedBySearch.has(d)) { d.open = false; openedBySearch.delete(d); }
         }
         for (const g of groups) g.hidden = !g.querySelector(".faq-item:not([hidden])");
         empty.hidden = !(words.length && found === 0);
