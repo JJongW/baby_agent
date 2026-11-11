@@ -5,39 +5,197 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>홈 | ONDO</title>
   <link rel="stylesheet" href="../../common/style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500&display=swap">
   <!-- 이 페이지에만 필요한 모양은 여기 <style>에 쓴다. 색은 common/style.css 의 값(var(--ink) 등)만 쓴다 -->
-  <style></style>
+  <style>
+    /* ───────────────────────────────────────────────────────────
+       DESIGN.md 시안 v3 미리 보기 (홈 페이지에만)
+       common/style.css 값은 임시값이라, 팀 상의 전에 시안이 실제로 어떻게 보이는지
+       홈에서 먼저 확인하려고 여기서 덮어쓴다. 시안이 확정되어 common에 들어가면
+       이 덮어쓰기 블록은 지운다.
+       ─────────────────────────────────────────────────────────── */
+    @font-face { font-family: "MaruBuri"; font-weight: 300; font-display: swap;
+      src: url("https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Light.woff2") format("woff2"); }
+    @font-face { font-family: "MaruBuri"; font-weight: 400; font-display: swap;
+      src: url("https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2") format("woff2"); }
+    @font-face { font-family: "MaruBuri"; font-weight: 600; font-display: swap;
+      src: url("https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-SemiBold.woff2") format("woff2"); }
+
+    :root {
+      /* 1. 색 (6개) */
+      --hanji: #FBF9F4;
+      --hanji-deep: #ECE5D8;
+      --ink: #24201D;
+      --ink-soft: #69625A;
+      --line: #E2D9CA;
+      --earth: #8A5A3C;
+      /* 공통 머리·바닥이 쓰는 옛 이름을 시안 값에 잇는다 */
+      --paper: var(--hanji);
+      --paper-deep: var(--hanji-deep);
+
+      /* 2. 글꼴 */
+      --font-title: "MaruBuri", "Noto Serif KR", serif;
+      --font: "IBM Plex Sans KR", "IBM Plex Sans", -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+
+      /* 3. 여백과 폭 */
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
+      --space-4: 40px;
+      --space-5: 64px;
+      --space-section: 144px;
+      --space: var(--space-section); /* 공통 .section 이 쓰는 이름 */
+      --gutter: 40px;
+      --page-width: 1200px;
+      --text-width: 640px;
+      --radius: 0;
+    }
+    @media (max-width: 640px) {
+      :root { --space-section: 88px; --gutter: 20px; }
+    }
+
+    /* 2. 글자 크기와 굵기 */
+    body { font-family: var(--font); font-size: 16px; line-height: 1.8; letter-spacing: -0.01em; }
+    h1 { font-family: var(--font-title); font-size: clamp(32px, 5vw, 52px); font-weight: 300; line-height: 1.4; letter-spacing: -0.03em; }
+    h2 { font-family: var(--font-title); font-size: clamp(24px, 3vw, 32px); font-weight: 400; line-height: 1.45; letter-spacing: -0.03em; }
+    h3 { font-size: 18px; font-weight: 500; line-height: 1.6; letter-spacing: -0.01em; }
+    p { margin: 0 0 var(--space-2); }
+    .eyebrow { font-family: var(--font); font-size: 12px; font-weight: 500; line-height: 1.5; letter-spacing: 0.08em;
+      color: var(--ink-soft); margin: 0 0 var(--space-2); }
+    .logo { font-family: var(--font-title); font-size: 20px; font-weight: 600; line-height: 1; letter-spacing: 0.16em; }
+    .nav { gap: var(--space-3); }
+    .nav a { font-family: var(--font-title); font-size: 15px; font-weight: 400; line-height: 1; letter-spacing: 0.04em; }
+    .site-footer { font-size: 14px; line-height: 1.7; }
+    h1, h2, p { word-break: keep-all; }
+
+    /* 5. 키보드 초점 표시 */
+    :focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
+    .is-dark :focus-visible { outline-color: var(--hanji); }
+    :focus:not(:focus-visible) { outline: none; }
+
+    /* 6. 공통 부품 */
+    .button { padding: 14px 28px; font-size: 14px; line-height: 1.7; border: 1px solid var(--ink); border-radius: 0; }
+    .button:hover { background: var(--ink); color: var(--hanji); }
+    .product-card .name { font-size: 16px; font-weight: 500; margin: var(--space-2) 0 var(--space-1); }
+    .product-card .meta { font-size: 14px; line-height: 1.7; }
+
+    /* 4. 사진이 아직 없을 때 */
+    .ph { background: var(--hanji-deep); font-size: 14px; border-radius: 0; }
+
+    /* 격자: 화면 폭 기준 640 / 960 */
+    .grid { gap: var(--space-4) var(--space-3); grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+    /* ─────────────── 여기부터 홈 페이지 배치 ─────────────── */
+
+    /* 첫 화면: 사진이 주인공. 화면 폭을 다 쓰고, 왼쪽 어두운 나무 면에 글을 얹는다 */
+    /* 높이를 화면 높이에 맞춰 줄이면 사진 위아래가 잘려서, 언제나 사진 비율(16:9) 그대로 둔다 */
+    .hero { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--ink); }
+    .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 70% center; }
+    .hero .wrap { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+    .hero-copy { max-width: 440px; }
+    .hero h1 { color: var(--hanji); margin-bottom: var(--space-3); }
+    .hero p { color: var(--hanji); margin-bottom: var(--space-4); }
+    .hero .button { border-color: var(--hanji); color: var(--hanji); }
+    .hero .button:hover { background: var(--hanji); color: var(--ink); }
+
+    /* 대표 제품: 카드 전체가 제품 페이지로 가는 링크 */
+    .card-link { display: block; }
+    .card-link:hover .name { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+
+    /* 섹션 머리: 이름 왼쪽, 더 보기 오른쪽 */
+    .section-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); margin-bottom: var(--space-4); }
+    .section-head .eyebrow { margin: 0; }
+
+    /* 글 속 링크: 먹색 글자, 1px 밑줄 (글자에서 4px 아래). 누르는 영역 44px */
+    .more { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; color: var(--ink);
+      text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+
+    /* 스토리 맛보기: 사진 넓게, 글은 좁게 */
+    .story { display: grid; grid-template-columns: 3fr 2fr; gap: var(--space-5); align-items: center; }
+    .story img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
+    .story p { max-width: var(--text-width); }
+    .story .more { margin-top: var(--space-2); }
+
+    /* 매거진: 글이 생기기 전까지 자리만 */
+    .mag .ph { aspect-ratio: 3 / 2; }
+    .mag h3 { margin: var(--space-2) 0 0; color: var(--ink-soft); font-weight: 400; }
+
+    /* 태블릿 이하: 사진이 낮아져 글이 등과 겹치므로, 사진은 16:9 그대로 두고 글은 사진 아래 한지 바탕에 둔다 */
+    @media (max-width: 960px) {
+      .story { grid-template-columns: 1fr; gap: var(--space-4); }
+      .hero { aspect-ratio: auto; background: none; overflow: visible; }
+      .hero img { position: static; height: auto; aspect-ratio: 16 / 9; }
+      .hero.is-dark :focus-visible { outline-color: var(--ink); }
+      .hero .wrap { padding-top: var(--space-4); }
+      .hero h1 { color: var(--ink); }
+      .hero p { color: var(--ink-soft); }
+      .hero .button { border-color: var(--ink); color: var(--ink); }
+      .hero .button:hover { background: var(--ink); color: var(--hanji); }
+    }
+    /* 휴대폰: 4:5로 잘라 조명이 크게 보이게 (DESIGN.md 4) */
+    @media (max-width: 640px) {
+      .hero img { aspect-ratio: 4 / 5; object-position: 80% center; }
+    }
+  </style>
 </head>
 <body data-page="home">
   <header data-site-header></header>
   <main>
     <!-- 담당: 상경(어). PRD 7.2 홈 -->
-    <section class="wrap section" style="padding-top:48px">
-      <div class="ph wide">첫 화면: 불 켜진 조명 사진</div>
-      <h1 style="margin-top:40px">대나무 살과 한지로 만드는 빛</h1>
-      <p>브랜드 한 줄 소개 자리</p>
-      <a class="button" href="../product/">제품 보기</a>
+    <section class="hero is-dark" aria-labelledby="hero-title">
+      <img src="../../images/concept/concept-T-01-hero.webp" width="1920" height="1080"
+        alt="어두운 방, 오래된 나무 탁자 위에서 빛나는 한지 테이블 등">
+      <div class="wrap">
+        <div class="hero-copy">
+          <h1 id="hero-title">대나무 살과 한지로 만드는 빛</h1>
+          <p>한 장씩 손으로 붙인 한지 너머로, 고르지 않은 빛이 방을 천천히 데운다.</p>
+          <a class="button" href="../product/">제품 보기</a>
+        </div>
+      </div>
     </section>
 
-    <section class="wrap section">
-      <p class="eyebrow">대표 제품</p>
+    <section class="wrap section" aria-labelledby="featured-title">
+      <div class="section-head">
+        <h2 class="eyebrow" id="featured-title">대표 제품</h2>
+        <a class="more" href="../product/">모든 제품</a>
+      </div>
       <div class="grid" id="featured"></div>
     </section>
 
-    <section class="wrap section">
-      <p class="eyebrow">스토리</p>
-      <div class="todo">스토리 맛보기 한 단락 + 스토리 페이지로 가는 링크</div>
+    <section class="wrap section" aria-labelledby="story-title">
+      <div class="story">
+        <img src="../../images/concept/concept-T-01-T-02.webp" width="1536" height="1024" loading="lazy"
+          alt="다다미 위, 나무 쟁반에 놓인 한지 등과 그 뒤의 둥근 한지 등">
+        <div>
+          <p class="eyebrow">스토리</p>
+          <h2 id="story-title">빛을 데우는 종이</h2>
+          <p>닥나무 껍질로 뜬 한지는 빛을 그대로 내보내지 않는다. 섬유 사이로 한 번 걸러, 낮고 따뜻하게 퍼뜨린다. 우리는 대나무 살을 하나씩 휘어 틀을 짜고, 그 위에 한지를 손으로 붙인다. 고르지 않은 결은 고치지 않고 그대로 둔다.</p>
+          <a class="more" href="../story/">만드는 이야기 읽기</a>
+        </div>
+      </div>
     </section>
 
-    <section class="wrap section">
-      <p class="eyebrow">매거진</p>
-      <div class="todo">최신 매거진 글 3개</div>
+    <section class="wrap section mag" aria-labelledby="mag-title">
+      <div class="section-head">
+        <h2 class="eyebrow" id="mag-title">매거진</h2>
+        <a class="more" href="../magazine/">모든 글</a>
+      </div>
+      <!-- 매거진 글이 생기면 최신 3개로 바꾼다 (지영과 글 데이터 위치를 정한 뒤) -->
+      <div class="grid">
+        <article><div class="ph">사진 준비 중</div><h3>글 준비 중</h3></article>
+        <article><div class="ph">사진 준비 중</div><h3>글 준비 중</h3></article>
+        <article><div class="ph">사진 준비 중</div><h3>글 준비 중</h3></article>
+      </div>
     </section>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("featured").innerHTML =
-          ONDO_PRODUCTS.filter((p) => p.featured).map(ondoProductCard).join("");
+        document.getElementById("featured").innerHTML = ONDO_PRODUCTS
+          .filter((p) => p.featured)
+          .map((p) => `<a class="card-link" href="../product/">${ondoProductCard(p)}</a>`)
+          .join("");
       });
     </script>
   </main>
