@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- ONDO 아이콘: 밤색(ink) 바탕에 줄에 매달린 한지 등 하나. 색은 common/style.css 토큰 값. 주석 안에 하이픈 두 개를 쓰면 SVG가 깨진다 -->
+  <rect width="64" height="64" fill="#24201D"/>
+  <line x1="32" y1="0" x2="32" y2="16" stroke="#ECE5D8" stroke-width="2"/>
+  <ellipse cx="32" cy="36" rx="20" ry="19" fill="#FBF9F4"/>
+  <!-- 대나무 살: 작게 보일 때는 묻히고 크게 보일 때만 드러난다 -->
+  <g fill="none" stroke="#E2D9CA" stroke-width="1.5">
+    <path d="M14.5 29 Q32 32 49.5 29"/>
+    <path d="M12.5 37 Q32 40 51.5 37"/>
+    <path d="M14.5 45 Q32 48 49.5 45"/>
+  </g>
+</svg>

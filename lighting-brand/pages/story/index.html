@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>스토리 | ONDO</title>
+  <link rel="icon" href="../../favicon.ico?v=3" sizes="16x16 32x32 48x48">
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png?v=2">
   <link rel="stylesheet" href="../../common/style.css">
   <!-- 이 페이지에만 필요한 모양은 여기 <style>에 쓴다. 색은 common/style.css 의 값(var(--ink) 등)만 쓴다 -->
   <style>
     /* 시안(ONDO 스토리 v2.2)을 옮긴 것. 시안 색 이름은 공통 값으로: 한지 → --paper, 한지 짙음 → --paper-deep, 밤색 → --ink */
     main { overflow-x: clip; word-break: keep-all; overflow-wrap: break-word; }
-    /* 불빛 색: 디자인 규칙에서 --glow를 뺐으니 새 색을 만들지 않고 공통 토큰 흙과 마른 대나무빛을 섞어 쓴다 */
-    main { --lamp: color-mix(in srgb, var(--earth) 55%, var(--hanji-deep)); }
     /* 줄바꿈: 제목, 인용, 짧은 설명은 줄 길이를 고르게, 본문은 끝줄에 한두 단어만 남지 않게 */
     main h1, main h2, main h3, blockquote, .cap { text-wrap: balance; }
     main p { text-wrap: pretty; }
@@ -40,17 +40,29 @@
     blockquote cite { display: block; margin-top: 16px; font-style: normal; font-size: 14px; font-weight: 400; }
 
     /* 처음 세 장면은 하나로 이어진다: 사진은 자르지 않고 제 비율로 오른쪽에 서고, 왼쪽과 위아래는 밤색으로 풀린다 */
-    .scene.joined { --pad: 88px; }
+    /* 사진 사이 여백은 없앤다: 맞닿는 위아래 가장자리만 살짝 밤색으로 풀어 세 장이 이어져 보이게 */
+    .scene.joined { --pad: 0px; }
     .scene.joined::before { content: ""; position: absolute; inset: 0 0 auto; height: var(--pad); z-index: -1; pointer-events: none;
       background: linear-gradient(to bottom, var(--ink), transparent); }
-    .scene.joined::after { background: linear-gradient(to top, var(--ink) 0, color-mix(in srgb, var(--ink) 90%, transparent) 10%, color-mix(in srgb, var(--ink) 50%, transparent) 34%, transparent 64%); }
+    .scene.joined::after { background: linear-gradient(to top, var(--ink) 0, transparent var(--pad)); }
+    .scene.hero::after { background: linear-gradient(to top, var(--ink) 0, transparent 8%); }
     .scene.joined .shot { left: auto; top: var(--pad); bottom: var(--pad); width: auto; max-width: 100%; aspect-ratio: var(--w) / var(--h);
       background-size: contain; background-position: right center;
-      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 28%); mask-image: linear-gradient(to right, transparent 0, #000 28%); }
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 28%), linear-gradient(to bottom, transparent 0, #000 6%, #000 94%, transparent);
+      mask-image: linear-gradient(to right, transparent 0, #000 28%), linear-gradient(to bottom, transparent 0, #000 6%, #000 94%, transparent);
+      -webkit-mask-composite: source-in; mask-composite: intersect; }
     .scene.joined.short { min-height: clamp(520px, 52vw, 720px); }
+    /* 두 번째 장면(기원)은 좌우를 바꾼다: 사진은 왼쪽, 오른쪽 가장자리가 밤색으로 풀리고 글은 오른쪽 절반 */
+    @media (min-width: 641px) {
+      #origin .shot { left: 0; right: auto; background-position: left center;
+        -webkit-mask-image: linear-gradient(to left, transparent 0, #000 28%), linear-gradient(to bottom, transparent 0, #000 6%, #000 94%, transparent);
+        mask-image: linear-gradient(to left, transparent 0, #000 28%), linear-gradient(to bottom, transparent 0, #000 6%, #000 94%, transparent); }
+      #origin .copy { padding-left: calc(50% + 24px); }
+    }
 
     /* 첫 화면: 세로 사진을 오른쪽 끝까지 세운다 */
-    .scene.hero { --pad: 0px; min-height: 0; height: clamp(600px, 66vw, 860px); }
+    /* 첫 화면은 들어왔을 때 화면을 꼭 채운다: 화면 높이 - 머리 메뉴(64px + 선 1px). 두 번째 사진은 스크롤해야 보인다 */
+    .scene.hero { --pad: 0px; min-height: 480px; height: calc(100vh - 65px); height: calc(100svh - 65px); }
     .scene.hero::before { display: none; }
 
     /* 첫 화면: 불 꺼진 사진 위로 불 켜진 사진이 천천히 겹쳐진다. 전구가 데워지듯 한 번 살짝 밝아졌다가 자리 잡는다 */
@@ -66,6 +78,7 @@
     /* 장면에 들어서면 사진이 천천히 제자리로, 글은 살짝 올라온다 */
     .scene .shot, .tile .shot { transform: scale(1.06); transition: transform 2.4s cubic-bezier(.2, .6, .2, 1); }
     .scene.in .shot, .tile.in .shot { transform: none; }
+    .scene.joined .shot { transform: none; transition: none; } /* 처음 세 장면(첫 화면, 기원, 인용) 사진은 크기가 변하지 않는다 */
     .scene .copy { transform: translateY(16px); transition: transform 1.2s cubic-bezier(.2, .6, .2, 1); }
     .scene.in .copy { transform: none; }
 
@@ -77,7 +90,7 @@
     .tile::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
       background: linear-gradient(to top, color-mix(in srgb, var(--ink) 85%, transparent) 0, transparent 40%); }
     .tile::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .6s ease;
-      background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--lamp) 18%, transparent), transparent 60%); }
+      background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--earth) 16%, transparent), transparent 60%); }
     .tile:hover::before { opacity: 1; }
     .tile .cap { position: absolute; left: 24px; right: 24px; bottom: 16px; color: var(--paper); transition: transform .5s ease; }
     .tile:hover .cap { transform: translateY(-8px); }
@@ -104,12 +117,12 @@
     /* 만드는 과정: 시간이 흐르며 가운데 3D 등이 한 단계씩 지어진다 */
     .process { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-top: 40px; }
     .lamp3d { position: relative; height: 420px; perspective: 900px; display: grid; place-items: center; }
-    /* 대나무 살 색: 새 색을 만들지 않고 불빛색과 보조 글자색을 섞은 갈색 */
-    .lamp3d { --bamboo: color-mix(in srgb, var(--lamp) 45%, var(--ink-soft));
+    /* 대나무 살 색과 불빛: 새 색을 만들지 않고 강조색 --earth를 섞어 쓴다 (v3에서 --glow가 빠짐) */
+    .lamp3d { --bamboo: color-mix(in srgb, var(--earth) 75%, var(--hanji-deep)); /* 대나무 살: 흙색에 한지색을 조금 섞은 갈색 */
       /* 한지 결: 휘어진 닥 섬유, 고르지 않은 두께(구름), 잔 티끌 세 겹. 색은 --ink-soft 값을 옅게 */
       --hanji-tex: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='turbulence' baseFrequency='.035' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .4 0 0 0 0 .36 -1 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .1 .45'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='4' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .4 0 0 0 0 .36 0 0 0 .5 -.18'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .4 0 0 0 0 .36 0 0 0 1.4 -.82'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23d)'/%3E%3C/svg%3E"); }
     .halo { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease;
-      background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--lamp) 35%, transparent), transparent 55%); }
+      background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--earth) 32%, transparent), transparent 55%); }
     .spin, .body { position: relative; width: 200px; height: 260px; transform-style: preserve-3d; }
     .spin { transform: rotateX(-14deg) rotateY(var(--ry, 0deg)); }
     .rib, .panel, .ring { position: absolute; backface-visibility: visible; }
@@ -127,7 +140,7 @@
     .s2 .ring { opacity: .7; }
     .s3 .panel { opacity: 1; }
     .s4 .body { animation: fold 2.4s cubic-bezier(.6, 0, .3, 1); }
-    .s4 .panel { background-color: color-mix(in srgb, var(--lamp) 28%, var(--paper)); transition-delay: 1.8s; }
+    .s4 .panel { background-color: color-mix(in srgb, var(--earth) 28%, var(--hanji)); transition-delay: 1.8s; }
     .s4 .halo { opacity: 1; transition-delay: 1.8s; }
     @keyframes fold { 0%, 100% { transform: none; } 35%, 55% { transform: scaleY(.06); } }
 
@@ -152,11 +165,12 @@
       .mosaic { grid-template-columns: 1fr 1fr; }
       .mosaic .tile:last-child { grid-column: 1 / -1; aspect-ratio: auto; height: 120vw; max-height: 560px; }
       /* 휴대폰: 사진을 화면 폭 그대로 위에 두고, 아래로 밤색에 풀린 뒤 글이 이어진다 */
-      .scene.joined, .scene.joined.short, .scene.hero { min-height: 0; height: auto; display: block; --pad: 64px; padding-top: var(--pad); }
-      .scene.hero { padding-top: 0; }
+      .scene.joined, .scene.joined.short, .scene.hero { min-height: 0; height: auto; display: block; --pad: 0px; padding-top: var(--pad); }
+      .scene.hero { padding-top: 0; min-height: calc(100vh - 65px); min-height: calc(100svh - 65px); }
       .scene.joined .shot { position: relative; display: block; width: 100%; height: auto; max-width: 100%; top: 0;
         background-size: 100% 100%;
-        -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent); mask-image: linear-gradient(to bottom, #000 70%, transparent); }
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 70%, transparent); mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 70%, transparent); }
+      .hero .shot { -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent); mask-image: linear-gradient(to bottom, #000 70%, transparent); }
       .hero .shot.on { position: absolute; top: 0; left: 0; }
       .scene.joined .copy { margin-top: -64px; position: relative; }
       .scene.joined::after { background: none; }
@@ -355,7 +369,7 @@
     body.innerHTML = html;
     var steps = [].slice.call(document.querySelectorAll(".steps li"));
     var bars = [].slice.call(document.querySelectorAll(".timeline i"));
-    var DUR = [4500, 4500, 4500, 6500]; // 단계마다 머무는 시간. 마지막은 접혔다 펴지며 불이 켜지는 시간까지
+    var DUR = [3500, 3500, 3500, 5500]; // 단계마다 머무는 시간. 마지막은 접혔다 펴지며 불이 켜지는 시간까지
     var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (still) { lamp.className = "lamp3d s1 s2 s3 s4"; return; }
 
@@ -378,7 +392,7 @@
       lamp.className = "lamp3d";
       steps.forEach(function (li) { li.classList.remove("on"); });
       bars.forEach(function (b) { b.className = ""; });
-      timer = setTimeout(function () { show(0); }, 1600);
+      timer = setTimeout(function () { show(0); }, 1200);
     }
     function sync() {
       if (inView && !timer) show(cur < 0 ? 0 : cur);
