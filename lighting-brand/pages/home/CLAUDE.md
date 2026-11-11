@@ -1,6 +1,6 @@
 # 홈 페이지: 상경 (어)
 
-공통 규칙은 [../../CLAUDE.md](../../CLAUDE.md). 이 폴더(`pages/home/`)만 고친다.
+공통 규칙은 [../../CLAUDE.md](../../CLAUDE.md). 이 폴더(`pages/home/`)와 홈 화면 파일 `pages/index.html`만 고친다. 홈 주소는 `/pages/`라서 화면 파일은 한 칸 위에 있다 (`pages/home/index.html`은 새 주소로 보내기만 한다).
 상경은 사이트 전체 **디자인 방향**도 정한다. 색, 글꼴, 여백을 바꾸고 싶으면 `common/style.css`의 `:root` 값 목록을 정리해 신(PO)에게 요청한다.
 
 ## 만들 것 (PRD 7.2 홈)
