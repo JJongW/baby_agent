@@ -13,7 +13,7 @@
 
 | 사람 | 페이지 | 고쳐도 되는 폴더 | 레포 폴더 이름 (브랜치 앞) |
 | --- | --- | --- | --- |
-| 상경 | 홈 | `pages/home/` | `eo` |
+| 상경 | 홈 | `pages/home/`, 홈 화면 파일 `pages/index.html` (주소 `/pages/`) | `eo` |
 | 정연 | 제품 | `pages/product/` | `yoon` |
 | 신 | FAQ | `pages/faq/` | `shin` |
 | 지혜 | 스토리 | `pages/story/` | `jihye` (깃허브 `Jihye-kr`) |

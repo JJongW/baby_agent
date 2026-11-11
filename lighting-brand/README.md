@@ -7,7 +7,7 @@
 
 | 페이지 | 폴더 | 맡은 사람 | 레포 폴더 이름 |
 | --- | --- | --- | --- |
-| 홈 | `pages/home/` | 상경 | `eo` (어) |
+| 홈 | `pages/home/`, 화면 파일은 `pages/index.html` (주소 `/pages/`) | 상경 | `eo` (어) |
 | 제품 | `pages/product/` | 정연 | `yoon` (윤) |
 | FAQ | `pages/faq/` | 신 | `shin` (신) |
 | 스토리 | `pages/story/` | 지혜 | `jihye` (깃허브 `Jihye-kr`) |

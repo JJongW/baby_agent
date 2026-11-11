@@ -3,7 +3,7 @@
    메뉴를 바꾸려면 PAGES만 고친다. 경로는 이 파일 위치 기준이라 어느 페이지에서 불러도 맞는다. */
 (function () {
   const PAGES = [
-    { key: "home", label: "홈", path: "pages/home/" },
+    { key: "home", label: "홈", path: "pages/" },
     { key: "product", label: "제품", path: "pages/product/" },
     { key: "story", label: "스토리", path: "pages/story/" },
     { key: "magazine", label: "매거진", path: "pages/magazine/" },
@@ -34,7 +34,7 @@
     header.className = "site-header";
     header.innerHTML = `
       <div class="wrap">
-        <a class="logo" href="${new URL("pages/home/", root)}">ONDO</a>
+        <a class="logo" href="${new URL("pages/", root)}">ONDO</a>
         <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav">메뉴</button>
         <nav class="nav" id="site-nav" aria-label="주 메뉴">${links}</nav>
       </div>`;
