@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- ONDO 아이콘: 밤(--ink) 바탕에 줄에 매달린 한지 등 하나. 색은 common/style.css 토큰 값 -->
+  <!-- ONDO 아이콘: 밤색(ink) 바탕에 줄에 매달린 한지 등 하나. 색은 common/style.css 토큰 값. 주석 안에 하이픈 두 개를 쓰면 SVG가 깨진다 -->
   <rect width="64" height="64" fill="#24201D"/>
   <line x1="32" y1="0" x2="32" y2="16" stroke="#ECE5D8" stroke-width="2"/>
   <ellipse cx="32" cy="36" rx="20" ry="19" fill="#FBF9F4"/>
