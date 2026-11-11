@@ -8,6 +8,9 @@
 - 고치는 곳은 그 사람의 것만: `.claude/agents/<사람>/`, `.claude/skills/<사람>-*/`, `members/<사람>/`
 - 다른 사람 폴더와 공통 파일(`README.md`, `CLAUDE.md`, `docs/`, `scripts/`, `.github/`)은 사용자가 분명히 요청했을 때만 고치고, PR 설명에 왜 고쳤는지 적는다
 
+## 조명 브랜드 페이지 (`lighting-brand/`)
+이 폴더 일이면 먼저 [lighting-brand/CLAUDE.md](lighting-brand/CLAUDE.md)를 읽고 따른다. 그 폴더 일은 위의 `members/<사람>/` 규칙 대신 그 파일의 페이지 폴더 규칙을 쓴다.
+
 ## 이름 규칙 (`scripts/check.sh`가 검사)
 - 에이전트: `.claude/agents/<사람>/<사람>-<이름>.md`, frontmatter `name`은 파일 이름과 같게, `description`은 꼭 쓴다
 - 스킬: `.claude/skills/<사람>-<이름>/SKILL.md`, frontmatter `name`은 폴더 이름과 같게
