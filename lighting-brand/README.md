@@ -25,6 +25,7 @@ lighting-brand/
     style.css             공통 스타일. 색, 글꼴, 여백 값은 맨 위 :root 에만 있다 (디자인: 어)
     layout.js             머리 메뉴와 바닥을 모든 페이지에 똑같이 그린다. 메뉴를 바꾸려면 PAGES만 고친다
     products.js           제품 목록과 제품 카드 모양. 홈과 제품 페이지가 같이 쓴다 (담당: 윤, 지금은 가짜 값)
+  images/                 공통 사진 (제품 켜짐, 꺼짐 한 쌍, 분위기 컷). 출처와 쓰는 법은 images/README.md
   CLAUDE.md               Claude가 먼저 읽는 규칙 (시작할 때 "본인은 누구신가요?"를 묻고, 내 폴더만 고친다)
   pages/<페이지>/
     index.html            각자 맡은 페이지
