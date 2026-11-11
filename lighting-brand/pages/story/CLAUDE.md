@@ -1,7 +1,7 @@
 # 스토리 페이지: 김지혜 (깃허브 `Jihye-kr`)
 
 공통 규칙은 [../../CLAUDE.md](../../CLAUDE.md). 이 폴더(`pages/story/`)만 고친다.
-브랜치 이름: `jihye/feat-lighting-story`. 지혜는 레포 `members/`에 폴더가 없다. 이 작업은 `pages/story/`만 쓰므로 만들지 않아도 된다.
+브랜치 이름: `jihye/feat-lighting-story`. 조명 작업은 `pages/story/`만 고친다. 지혜의 멤버 폴더 `members/jihye/`는 에이전트 작업용이라 여기서는 건드리지 않는다.
 
 ## 만들 것 (PRD 7.2 스토리)
 - 브랜드가 생긴 이야기 (가상)
