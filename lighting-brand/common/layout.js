@@ -13,6 +13,18 @@
   const root = new URL("../", document.currentScript.src);
   const current = document.body.dataset.page; // <body data-page="faq"> 처럼 각 페이지가 적는다
 
+  // 사이트 아이콘(파비콘): 파일은 사이트 맨 위에 있다. 각 페이지 <head>에 직접 적는 게 기본이다 (자바스크립트로 붙이면 Chrome이 늦게 알아챈다).
+  // 탭 아이콘은 어느 브라우저에서나 뜨는 favicon.ico를 쓴다 (favicon.svg는 원본 그림). 아이콘 그림을 바꾸면 ?v= 숫자를 올린다
+  // 여기서는 <head>에 적는 걸 잊은 새 페이지(예: 새 매거진 글)만 채워 준다
+  [["icon", "favicon.ico?v=3"], ["apple-touch-icon", "apple-touch-icon.png?v=2"]].forEach(([rel, file, type]) => {
+    if (document.head.querySelector(`link[rel="${rel}"]`)) return;
+    const link = document.createElement("link");
+    link.rel = rel;
+    link.href = new URL(file, root);
+    if (type) link.type = type;
+    document.head.appendChild(link);
+  });
+
   const links = PAGES.map((p) =>
     `<a href="${new URL(p.path, root)}"${p.key === current ? ' aria-current="page"' : ""}>${p.label}</a>`
   ).join("");

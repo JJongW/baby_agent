@@ -21,6 +21,7 @@
 ```
 lighting-brand/
   index.html              첫 주소(/)로 오면 홈으로 보낸다
+  favicon.ico             사이트 아이콘 (밤색 바탕에 매달린 한지 등, 16, 32, 48px). 각 페이지 <head>에 적는다. favicon.svg는 원본 그림, apple-touch-icon.png는 휴대폰 홈 화면용
   common/
     style.css             공통 스타일. 색, 글꼴, 여백 값은 맨 위 :root 에만 있다 (디자인: 어)
     layout.js             머리 메뉴와 바닥을 모든 페이지에 똑같이 그린다. 메뉴를 바꾸려면 PAGES만 고친다
