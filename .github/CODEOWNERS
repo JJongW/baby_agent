@@ -27,3 +27,8 @@
 /.claude/agents/eo/       @eosangkyung-jpg
 /.claude/skills/eo-*/     @eosangkyung-jpg
 /members/eo/              @eosangkyung-jpg
+
+# 김 (개발)
+/.claude/agents/jihye/    @Jihye-kr
+/.claude/skills/jihye-*/  @Jihye-kr
+/members/jihye/           @Jihye-kr
