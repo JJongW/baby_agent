@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>제품 | GYEOL</title>
+  <link rel="stylesheet" href="../../common/style.css">
+  <!-- 이 페이지에만 필요한 모양은 여기 <style>에 쓴다. 색은 common/style.css 의 값(var(--ink) 등)만 쓴다 -->
+  <style></style>
+</head>
+<body data-page="product">
+  <header data-site-header></header>
+  <main>
+    <!-- 담당: 정연(윤). PRD 7.2 제품 -->
+    <section class="wrap section" style="padding-top:48px">
+      <h1>제품</h1>
+      <div class="todo">종류 필터(테이블, 스탠드, 펜던트)와 가격순 정렬 자리</div>
+      <div class="grid" id="products" style="margin-top:32px"></div>
+    </section>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("products").innerHTML = GYEOL_PRODUCTS.map(gyeolProductCard).join("");
+      });
+    </script>
+  </main>
+  <footer data-site-footer></footer>
+  <script src="../../common/products.js"></script>
+  <script src="../../common/layout.js"></script>
+</body>
+</html>
