@@ -15,10 +15,13 @@
     /* 한국어 문장이 단어 중간에서 끊기지 않게 한다 */
     main { word-break: keep-all; overflow-wrap: break-word; }
 
-    /* 스크롤하면 공통 헤더(높이 64px) 바로 아래에 붙는다. 헤더(z-index 10)보다 아래에 깔린다 */
-    .bar { position: sticky; top: 64px; z-index: 5; background: var(--paper);
-      display: flex; justify-content: space-between; align-items: center; gap: 16px;
-      margin-top: 56px; padding: 4px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+    /* 스크롤하면 공통 헤더(높이 64px) 바로 아래에 붙는다. 헤더(z-index 10)보다 아래에 깔린다.
+       공통 헤더(.site-header)와 같은 모양: 화면 전체 폭, 반투명 바탕과 흐림, 아래 선 하나 */
+    .bar-sticky { position: sticky; top: 64px; z-index: 5; margin-top: 56px;
+      background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line); }
+    .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      padding-top: 4px; padding-bottom: 4px; font-size: 14px; }
     .bar .count { margin: 0; }
 
     /* 켜기, 끄기: 머리 메뉴처럼 글자와 밑줄만 쓴다 (시안 v3: 지금 상태는 --ink 글자와 1px 밑줄) */
@@ -58,7 +61,7 @@
     .info .meta { font-size: 14px; margin: 0; }
 
     @media (max-width: 760px) {
-      .bar { margin-top: 40px; }
+      .bar-sticky { margin-top: 40px; }
     }
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; }
@@ -69,15 +72,15 @@
   <header data-site-header></header>
   <main>
     <!-- 담당: 정연(윤). PRD 7.2 제품 -->
-    <section class="wrap section" style="padding-top:48px">
-      <div class="product-head">
-        <p class="eyebrow">Light sculptures</p>
-        <h1>제품</h1>
-        <p>빛의 밝기보다 빛이 지닌 따뜻함을 생각한다.<br>
-          나무 틀에 대나무 살을 감고, 한지를 한 장씩 손으로 붙여 만든다.</p>
-      </div>
+    <section class="wrap product-head" style="padding-top:48px">
+      <p class="eyebrow">Light sculptures</p>
+      <h1>제품</h1>
+      <p>빛의 밝기보다 빛이 지닌 따뜻함을 생각한다.<br>
+        나무 틀에 대나무 살을 감고, 한지를 한 장씩 손으로 붙여 만든다.</p>
+    </section>
 
-      <div class="bar">
+    <div class="bar-sticky">
+      <div class="wrap bar">
         <p class="count" id="count"></p>
         <div class="light" role="group" aria-label="조명">
           <button type="button" data-light="on" aria-pressed="true"><span>불 켜기</span></button>
@@ -85,7 +88,9 @@
           <button type="button" data-light="off" aria-pressed="false"><span>불 끄기</span></button>
         </div>
       </div>
+    </div>
 
+    <section class="wrap section" style="padding-top:0">
       <div class="lit" id="products"></div>
     </section>
 
