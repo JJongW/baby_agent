@@ -13,8 +13,10 @@
   const root = new URL("../", document.currentScript.src);
   const current = document.body.dataset.page; // <body data-page="faq"> 처럼 각 페이지가 적는다
 
-  // 사이트 아이콘(파비콘): 파일은 사이트 맨 위에 있다. favicon.ico는 브라우저가 알아서 찾고, 선명한 SVG와 휴대폰 홈 화면 아이콘만 여기서 붙인다
+  // 사이트 아이콘(파비콘): 파일은 사이트 맨 위에 있다. 각 페이지 <head>에 직접 적는 게 기본이다 (자바스크립트로 붙이면 Chrome이 늦게 알아챈다).
+  // 여기서는 <head>에 적는 걸 잊은 새 페이지(예: 새 매거진 글)만 채워 준다
   [["icon", "favicon.svg", "image/svg+xml"], ["apple-touch-icon", "apple-touch-icon.png"]].forEach(([rel, file, type]) => {
+    if (document.head.querySelector(`link[rel="${rel}"]`)) return;
     const link = document.createElement("link");
     link.rel = rel;
     link.href = new URL(file, root);
