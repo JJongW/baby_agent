@@ -18,3 +18,4 @@
 - 버튼은 키보드로도 누를 수 있고, 지금 상태를 알 수 있게 한다 (`<button aria-pressed="true|false">켜기</button>`)
 - 움직임 줄이기 설정을 켠 사람에게는 전환 없이 바로 바꾼다 (`@media (prefers-reduced-motion: reduce)`)
 - 사진: `images/products/<코드>-off.webp`, `<코드>-on.webp` 한 쌍을 겹쳐 두고 켜짐 사진의 투명도만 0에서 1로 바꾼다 (같은 구도라 겹친다). 사진이 아직 없는 제품은 CSS(밝기, 빛 번짐)로 효과를 낸다. 자세히는 `images/README.md`
+- 카드 사진 비율과 사진 비율을 맞춘다. 카드가 4:5면 `<코드>-on.webp`, 가로 3:2면 `<코드>-on-3x2.webp`. 비율이 다른 사진을 `object-fit: cover`로 넣으면 조명이 잘린다
