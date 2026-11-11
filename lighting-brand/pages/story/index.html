@@ -9,6 +9,8 @@
   <style>
     /* 시안(ONDO 스토리 v2.2)을 옮긴 것. 시안 색 이름은 공통 값으로: 한지 → --paper, 한지 짙음 → --paper-deep, 밤색 → --ink */
     main { overflow-x: clip; word-break: keep-all; overflow-wrap: break-word; }
+    /* 불빛 색: 디자인 규칙에서 --glow를 뺐으니 새 색을 만들지 않고 공통 토큰 흙과 마른 대나무빛을 섞어 쓴다 */
+    main { --lamp: color-mix(in srgb, var(--earth) 55%, var(--hanji-deep)); }
     /* 줄바꿈: 제목, 인용, 짧은 설명은 줄 길이를 고르게, 본문은 끝줄에 한두 단어만 남지 않게 */
     main h1, main h2, main h3, blockquote, .cap { text-wrap: balance; }
     main p { text-wrap: pretty; }
@@ -75,7 +77,7 @@
     .tile::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
       background: linear-gradient(to top, color-mix(in srgb, var(--ink) 85%, transparent) 0, transparent 40%); }
     .tile::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .6s ease;
-      background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--glow) 18%, transparent), transparent 60%); }
+      background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--lamp) 18%, transparent), transparent 60%); }
     .tile:hover::before { opacity: 1; }
     .tile .cap { position: absolute; left: 24px; right: 24px; bottom: 16px; color: var(--paper); transition: transform .5s ease; }
     .tile:hover .cap { transform: translateY(-8px); }
@@ -103,11 +105,11 @@
     .process { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-top: 40px; }
     .lamp3d { position: relative; height: 420px; perspective: 900px; display: grid; place-items: center; }
     /* 대나무 살 색: 새 색을 만들지 않고 불빛색과 보조 글자색을 섞은 갈색 */
-    .lamp3d { --bamboo: color-mix(in srgb, var(--glow) 45%, var(--ink-soft));
+    .lamp3d { --bamboo: color-mix(in srgb, var(--lamp) 45%, var(--ink-soft));
       /* 한지 결: 휘어진 닥 섬유, 고르지 않은 두께(구름), 잔 티끌 세 겹. 색은 --ink-soft 값을 옅게 */
       --hanji-tex: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='turbulence' baseFrequency='.035' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .4 0 0 0 0 .36 -1 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .1 .45'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='4' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .4 0 0 0 0 .36 0 0 0 .5 -.18'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .4 0 0 0 0 .36 0 0 0 1.4 -.82'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23d)'/%3E%3C/svg%3E"); }
     .halo { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease;
-      background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--glow) 35%, transparent), transparent 55%); }
+      background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--lamp) 35%, transparent), transparent 55%); }
     .spin, .body { position: relative; width: 200px; height: 260px; transform-style: preserve-3d; }
     .spin { transform: rotateX(-14deg) rotateY(var(--ry, 0deg)); }
     .rib, .panel, .ring { position: absolute; backface-visibility: visible; }
@@ -125,7 +127,7 @@
     .s2 .ring { opacity: .7; }
     .s3 .panel { opacity: 1; }
     .s4 .body { animation: fold 2.4s cubic-bezier(.6, 0, .3, 1); }
-    .s4 .panel { background-color: color-mix(in srgb, var(--glow) 28%, var(--paper)); transition-delay: 1.8s; }
+    .s4 .panel { background-color: color-mix(in srgb, var(--lamp) 28%, var(--paper)); transition-delay: 1.8s; }
     .s4 .halo { opacity: 1; transition-delay: 1.8s; }
     @keyframes fold { 0%, 100% { transform: none; } 35%, 55% { transform: scaleY(.06); } }
 
