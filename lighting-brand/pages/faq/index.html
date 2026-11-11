@@ -6,19 +6,250 @@
   <title>FAQ | ONDO</title>
   <link rel="stylesheet" href="../../common/style.css">
   <!-- 이 페이지에만 필요한 모양은 여기 <style>에 쓴다. 색은 common/style.css 의 값(var(--ink) 등)만 쓴다 -->
-  <style></style>
+  <style>
+    .faq-head { padding-top: 48px; }
+    .faq-head p { max-width: 36em; }
+
+    /* 검색칸: 밑줄 하나만 둔다 */
+    .faq-search { margin-top: 40px; max-width: 640px; }
+    .faq-search label { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 4px; }
+    .faq-search input {
+      width: 100%; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0; background: transparent;
+      font: inherit; font-size: 20px; color: var(--ink); padding: 8px 0; outline: none;
+    }
+    .faq-search input::placeholder { color: var(--line); }
+    .faq-search input::-webkit-search-cancel-button { filter: grayscale(1); cursor: pointer; } /* 기본 파란 × 를 먹색으로 */
+    .faq-search input:focus-visible { border-bottom-width: 2px; padding-bottom: 7px; }
+    .faq-status { font-size: 14px; color: var(--ink-soft); margin: 12px 0 0; min-height: 1.7em; }
+
+    .faq-topics { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 24px; font-size: 14px; }
+    .faq-topics a { color: var(--ink-soft); border-bottom: 1px solid transparent; }
+    .faq-topics a:hover, .faq-topics a:focus-visible { color: var(--ink); border-bottom-color: var(--ink); }
+
+    /* 주제 묶음: 데스크톱은 왼쪽 제목, 오른쪽 질문 */
+    .faq-group { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; border-top: 1px solid var(--line); padding: 40px 0; scroll-margin-top: 80px; }
+    .faq-group[hidden] { display: none; } /* display: grid 가 hidden 을 이기지 않게 */
+    .faq-group h2 { font-size: 20px; margin: 0; }
+    .faq-group h2 span { display: block; font-size: 13px; color: var(--ink-soft); letter-spacing: 0.12em; margin-bottom: 8px; }
+    @media (max-width: 760px) { .faq-group { grid-template-columns: 1fr; gap: 8px; padding: 32px 0; } }
+
+    .faq-item { border-bottom: 1px solid var(--line); }
+    .faq-item:first-child { border-top: 1px solid var(--line); }
+    @media (min-width: 761px) { .faq-item:first-child { border-top: 0; } .faq-item:first-child summary { padding-top: 0; } }
+    .faq-item summary {
+      list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+      padding: 18px 0; font-size: 17px; color: var(--ink);
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after { content: "+"; color: var(--ink-soft); font-size: 20px; line-height: 1; transition: transform .3s; }
+    .faq-item[open] summary::after { transform: rotate(45deg); }
+    .faq-item summary:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
+    .faq-item .answer { padding: 0 32px 24px 0; max-width: 40em; }
+    .faq-item .answer p:last-child { margin-bottom: 0; }
+    .faq-item .answer strong { color: var(--ink); font-weight: 500; }
+
+    .faq-empty { border-top: 1px solid var(--line); padding: 48px 0; }
+    .faq-empty p:first-child { color: var(--ink); font-size: 18px; }
+
+    .faq-contact { border-top: 1px solid var(--line); padding-top: 40px; }
+
+    @media (prefers-reduced-motion: reduce) { .faq-item summary::after { transition: none; } }
+  </style>
 </head>
 <body data-page="faq">
   <header data-site-header></header>
   <main>
     <!-- 담당: 신. PRD 7.2 FAQ -->
-    <section class="wrap section" style="padding-top:48px">
+    <section class="wrap faq-head">
+      <p class="eyebrow">FAQ</p>
       <h1>자주 묻는 질문</h1>
-      <div class="todo">검색칸 + 주제 4개(주문과 배송, 전구와 전기, 관리와 수리, 교환과 반품), 누르면 펼쳐지는 질문</div>
+      <p>ONDO는 수업 과제로 만든 가상 브랜드라 실제로 주문을 받지 않아요. 아래 답은 이런 브랜드라면 이렇게 하겠다는 약속이에요.</p>
+
+      <div class="faq-search" role="search">
+        <label for="faq-q">궁금한 낱말로 찾기</label>
+        <input id="faq-q" type="search" placeholder="전구, 배송, 먼지" autocomplete="off" aria-describedby="faq-status">
+        <p class="faq-status" id="faq-status" aria-live="polite"></p>
+      </div>
+
+      <nav class="faq-topics" aria-label="주제">
+        <a href="#order">주문과 배송</a>
+        <a href="#bulb">전구와 전기</a>
+        <a href="#care">관리와 수리</a>
+        <a href="#return">교환과 반품</a>
+      </nav>
+    </section>
+
+    <section class="wrap section" style="padding-top:48px" id="faq-list">
+      <div class="faq-group" id="order">
+        <h2><span>01</span>주문과 배송</h2>
+        <div>
+          <details class="faq-item">
+            <summary>주문하면 언제 받을 수 있나요?</summary>
+            <div class="answer">
+              <p>조명은 주문을 받은 뒤 손으로 한지를 붙여 만들어요. <strong>만드는 데 5~7일, 보낸 뒤 1~2일</strong>이 걸려 보통 주문하고 열흘 안에 받아요.</p>
+              <p>보내는 날에 문자로 송장 번호를 알려 드려요.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>배송비는 얼마예요?</summary>
+            <div class="answer">
+              <p>모든 조명은 <strong>배송비 무료</strong>예요. 제주와 섬 지역만 3,000원이 더 붙어요.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>선물 포장이 되나요?</summary>
+            <div class="answer">
+              <p>주문할 때 "선물 포장"을 고르면 한지로 싸고 손글씨 카드를 넣어 드려요. 포장비는 없어요.</p>
+              <p>선물로 보내면 상자 안에 가격이 적힌 종이를 넣지 않아요.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>펜던트 조명도 달아 주나요?</summary>
+            <div class="answer">
+              <p>설치는 해 드리지 않아요. 천장의 전기선에 연결해야 해서 <strong>전기 기사님께 맡기길 권해요.</strong> 상자 안 설명서에 연결 순서를 그림으로 넣어 두었어요.</p>
+              <p>천장 전기선이 없다면 콘센트에 꽂아 쓰는 줄 달린 펜던트로 바꿔 드릴 수 있어요.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="faq-group" id="bulb">
+        <h2><span>02</span>전구와 전기</h2>
+        <div>
+          <details class="faq-item">
+            <summary>전구는 어떤 걸 써요?</summary>
+            <div class="answer">
+              <p><strong>E26 소켓에 맞는 LED 전구, 전구색(2700K)</strong>을 써요. 밝기는 5~7W(옛 백열전구 40~60W쯤)가 알맞아요.</p>
+              <p>백열전구와 할로겐 전구는 뜨거워져 종이를 상하게 하니 쓰지 마세요.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>전구가 같이 들어 있나요?</summary>
+            <div class="answer">
+              <p>네, 모든 조명에 맞는 LED 전구가 하나씩 들어 있어요. 다 쓰면 근처 가게에서 파는 같은 규격 전구로 바꾸면 돼요.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>밝기를 조절할 수 있나요?</summary>
+            <div class="answer">
+              <p>줄에 달린 스위치는 켜고 끄기만 돼요. 더 은은하게 쓰고 싶으면 W가 낮은 전구로 바꿔 끼우세요. 색은 전구색(2700K)을 그대로 두어야 한지가 따뜻하게 보여요.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>종이라서 불이 붙을까 걱정돼요.</summary>
+            <div class="answer">
+              <p>LED 전구는 거의 뜨거워지지 않고, 전구와 종이 사이를 10cm 넘게 띄워 만들어요. 함께 드리는 전구를 쓰면 걱정하지 않아도 돼요.</p>
+              <p>다만 종이 위에 옷이나 천을 덮어 두지는 마세요.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="faq-group" id="care">
+        <h2><span>03</span>관리와 수리</h2>
+        <div>
+          <details class="faq-item">
+            <summary>먼지는 어떻게 닦아요?</summary>
+            <div class="answer">
+              <p>불을 끄고 식은 뒤 <strong>마른 붓이나 먼지떨이로 살살</strong> 털어 주세요. 물걸레와 세제는 한지를 울게 해서 쓰지 않아요.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>종이 색이 조금씩 누렇게 변해요.</summary>
+            <div class="answer">
+              <p>한지는 시간이 지나면 조금씩 따뜻한 색으로 바래요. 고장이 아니라 쓰는 사람의 시간이 묻는 거예요. ONDO는 이 변화를 아름답다고 생각해요.</p>
+              <p>천천히 바래길 바라면 햇빛이 바로 닿지 않는 곳에 두세요.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>종이가 찢어졌어요. 고칠 수 있나요?</summary>
+            <div class="answer">
+              <p>작은 구멍은 상자에 함께 넣은 <strong>수선용 한지 조각</strong>을 풀로 덧대면 돼요.</p>
+              <p>크게 찢어졌으면 갓만 따로 바꿀 수 있어요. 받은 날부터 1년 안에 만든 쪽 잘못으로 생긴 문제는 무료로 고쳐 드려요.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>욕실이나 습한 곳에 둬도 되나요?</summary>
+            <div class="answer">
+              <p>권하지 않아요. 습하면 한지가 늘어져 주름이 생겨요. 마르면 대부분 다시 팽팽해지지만, 물이 튀는 곳은 피해 주세요.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="faq-group" id="return">
+        <h2><span>04</span>교환과 반품</h2>
+        <div>
+          <details class="faq-item">
+            <summary>마음이 바뀌면 반품할 수 있나요?</summary>
+            <div class="answer">
+              <p>받은 날부터 <strong>7일 안</strong>이고 쓰지 않은 상태면 반품할 수 있어요. 오가는 배송비 6,000원은 보내는 분이 내요.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>사진과 조금 달라 보여요.</summary>
+            <div class="answer">
+              <p>손으로 만들어서 대나무 살 간격과 종이 결이 하나하나 조금씩 달라요. 같은 조명이 둘 없다는 뜻이라 불량으로 보지 않아요.</p>
+              <p>그래도 마음에 들지 않으면 7일 안에 반품할 수 있어요.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>찌그러지거나 찢어진 채로 왔어요.</summary>
+            <div class="answer">
+              <p>받은 날 상자와 조명 사진을 찍어 보내 주세요. 배송비 없이 새 조명으로 바꿔 드려요.</p>
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary>교환이나 반품은 어떻게 신청해요?</summary>
+            <div class="answer">
+              <p>주문 번호와 사진을 <strong>hello@ondo.example</strong>로 보내 주세요. 하루 안에 답하고, 가지러 갈 날을 정해 드려요.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="faq-empty" id="faq-empty" hidden>
+        <p>찾는 답이 없어요.</p>
+        <p>다른 낱말로 찾아보거나, 위 주제를 눌러 전체 질문을 보세요.</p>
+      </div>
+    </section>
+
+    <section class="wrap faq-contact">
+      <h2>찾는 답이 없나요?</h2>
+      <p>hello@ondo.example 로 물어보세요. 하루 안에 답해요.</p>
     </section>
   </main>
   <footer data-site-footer></footer>
   <script src="../../common/products.js"></script>
   <script src="../../common/layout.js"></script>
+  <script>
+    // 검색: 띄어 쓴 낱말이 모두 들어간 질문만 남기고, 맞은 질문은 펼쳐 둔다.
+    // 검색을 지우면 처음처럼 모두 보이고, 검색 때문에 펼친 것만 다시 접는다.
+    (function () {
+      const input = document.getElementById("faq-q");
+      const status = document.getElementById("faq-status");
+      const empty = document.getElementById("faq-empty");
+      const groups = [...document.querySelectorAll(".faq-group")];
+      const items = [...document.querySelectorAll(".faq-item")];
+      const norm = (s) => s.toLowerCase().replace(/\s+/g, " ");
+      const text = new Map(items.map((d) => [d, norm(d.textContent)]));
+      const openedBySearch = new Set();
+
+      input.addEventListener("input", () => {
+        const words = norm(input.value).trim().split(" ").filter(Boolean);
+        let found = 0;
+        for (const d of items) {
+          const hit = words.every((w) => text.get(d).includes(w));
+          d.hidden = !hit;
+          if (hit) found++;
+          if (words.length && hit && !d.open) { d.open = true; openedBySearch.add(d); }
+          if ((!words.length || !hit) && openedBySearch.has(d)) { d.open = false; openedBySearch.delete(d); }
+        }
+        for (const g of groups) g.hidden = !g.querySelector(".faq-item:not([hidden])");
+        empty.hidden = !(words.length && found === 0);
+        status.textContent = words.length ? (found ? `${found}개 찾았어요` : "") : "";
+      });
+    })();
+  </script>
 </body>
 </html>
