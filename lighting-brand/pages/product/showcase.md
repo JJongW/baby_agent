@@ -31,7 +31,10 @@ PRD 7.2 제품 기능 중 한 것에 `x`를 친다.
 ## 사진, 글 출처
 | 파일 | 출처 (AI 도구 이름 또는 무료 사진 주소) |
 | --- | --- |
-|  |  |
+| `images/products/T-01-on.webp`, `T-01-off.webp` | ChatGPT 이미지 생성, `images/products/` |
+| `images/products/T-02-on.webp`, `T-02-off.webp` | ChatGPT 이미지 생성, `images/products/` |
+| `images/products/S-01-on.webp`, `S-01-off.webp` | ChatGPT 이미지 생성, `images/products/` |
+| `images/products/P-02-on.webp`, `P-02-off.webp` | ChatGPT 이미지 생성, `images/products/` |
 
 ## 남은 일
 (2차에 할 것)
