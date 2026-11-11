@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="../../common/style.css">
   <!-- 이 페이지에만 필요한 모양은 여기 <style>에 쓴다. 색은 common/style.css 의 값(var(--ink) 등)만 쓴다 -->
   <style>
-    /* 켜기, 끄기는 카드 안 사진(켜짐, 꺼짐 한 쌍)만 바꾼다. 페이지 바탕은 그대로 둔다 (디자인 규칙 시안 v3)
+    /* 켜기, 끄기는 카드 안 사진(켜짐, 꺼짐 한 쌍)만 바꾼다. 페이지 바탕은 그대로 둔다
        색은 common/style.css 의 값만 쓴다. 공통 값이 바뀌면 이 페이지도 따라 바뀐다 */
 
     /* 페이지 제목: FAQ 페이지와 같은 구조 (eyebrow → h1 → 설명문, 세로로 쌓고 설명문은 36em까지) */
@@ -24,7 +24,7 @@
       padding-top: 4px; padding-bottom: 4px; font-size: 14px; }
     .bar .count { margin: 0; }
 
-    /* 켜기, 끄기: 머리 메뉴처럼 글자와 밑줄만 쓴다 (시안 v3: 지금 상태는 --ink 글자와 1px 밑줄) */
+    /* 켜기, 끄기: 머리 메뉴처럼 글자와 밑줄만 쓴다. 지금 상태는 --ink 글자와 1px 밑줄 */
     .light { display: flex; align-items: center; gap: 12px; }
     .light .divider { color: var(--line); }
     .light button { min-height: 44px; padding: 0 2px; background: none; border: 0; cursor: pointer;
@@ -49,7 +49,7 @@
     .thumb .on { opacity: 0; }
     .lit .thumb .on { opacity: 1; }
 
-    /* 사진이 없는 제품: 같은 비율의 자리에 "사진 준비 중" (시안 v3 사진 쓰는 법) */
+    /* 사진이 없는 제품: 같은 비율의 자리에 "사진 준비 중" */
     .thumb .pending { display: none; position: absolute; inset: 0; place-items: center;
       font-size: 14px; color: var(--ink-soft); }
     .thumb.no-photo img { display: none; }
