@@ -31,6 +31,7 @@
 - 정적 사이트다: HTML, CSS, 조금의 JavaScript. 빌드 도구나 프레임워크를 들이지 않는다
 - 각 페이지 `index.html`의 `<header data-site-header>`, `<footer data-site-footer>`, 맨 아래 `<script>` 두 줄은 지우지 않는다
 - 사진: Noguchi, Akari 등 실제 브랜드의 사진, 이름, 글을 쓰지 않는다. AI로 만든 이미지나 무료 사진만, 출처를 `showcase.md`에 적는다. 한 장 300KB 이하
+  - 예외: 스토리 페이지(`pages/story/`)는 참고한 실제 브랜드의 기록 사진을 쓸 수 있다. 대신 그 페이지 바닥(footer)에 사진 출처를 꼭 적고, `showcase.md`에도 적는다. 사진은 `pages/story/images/`에 둔다
 - 휴대폰 폭(375px)에서 옆으로 밀리지 않게 한다. 버튼과 링크는 키보드로도 쓸 수 있게 한다
 
 ## 다 됐다고 말하기 전에
