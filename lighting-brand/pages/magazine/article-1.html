@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>퇴근 후 한 시간, 방의 불을 낮추는 일 | 매거진 | ONDO</title>
+  <link rel="stylesheet" href="../../common/style.css">
+  <!-- 글 3편이 같은 모양을 쓴다. 고치면 article-1, 2, 3.html 세 파일을 같이 고친다. 색은 공통 값만 쓴다 -->
+  <style>
+    .article-head, .hero, .article-body, .article-nav { max-width: 1000px; margin-left: auto; margin-right: auto; padding-left: var(--gutter); padding-right: var(--gutter); }
+    .article-head { padding-top: 48px; }
+    .article-head h1 { font-size: clamp(26px, 4vw, 40px); margin-bottom: 16px; max-width: 18em; }
+    .article-head .summary { font-size: 17px; margin: 0; }
+    .hero { margin-top: 48px; }
+    .hero img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); background: var(--paper-deep); }
+    .article-body { padding-top: var(--space); }
+
+    /* 사진과 글을 좌우로 나란히. .flip 이면 글이 왼쪽, 사진이 오른쪽 */
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; margin-bottom: var(--space); }
+    .row.flip .row-photo { order: 2; }
+    .row-photo img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius); background: var(--paper-deep); }
+    .row-text { max-width: 30em; }
+    .row-text h2 { font-size: 20px; margin: 40px 0 12px; }
+    .row-text h2:first-child { margin-top: 0; }
+    .row-text p, .row-text li { color: var(--ink); line-height: 1.9; }
+    .row-text ol { padding-left: 1.4em; margin: 0 0 16px; }
+    .row-text li { margin-bottom: 8px; }
+    @media (max-width: 760px) {
+      .row { grid-template-columns: 1fr; gap: 24px; }
+      .row.flip .row-photo { order: 0; }
+    }
+
+    .closing { max-width: 640px; margin: 0 auto; text-align: center; color: var(--ink); font-size: 18px; }
+    .article-nav { margin-top: var(--space); padding-top: 32px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .article-nav a { padding: 8px 0; border-bottom: 1px solid transparent; }
+    .article-nav a:hover { border-bottom-color: var(--ink); }
+    .article-nav a:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+  </style>
+</head>
+<body data-page="magazine">
+  <header data-site-header></header>
+  <main>
+    <article>
+      <div class="article-head">
+        <p class="eyebrow">공간 꾸미기</p>
+        <h1>퇴근 후 한 시간, 방의 불을 낮추는 일</h1>
+        <p class="summary">천장등을 끄고 작은 불빛 하나만 켜 보는 저녁.</p>
+      </div>
+
+      <div class="hero">
+        <img src="../../images/concept/concept-T-01.webp" width="1536" height="1024"
+             alt="어두운 방의 나무 탁자 위에서 한지 조명 하나가 켜져 있고, 옆에 책과 찻잔이 놓여 있다">
+      </div>
+
+      <div class="article-body">
+        <!-- 사진 왼쪽, 글 오른쪽 -->
+        <div class="row">
+          <div class="row-photo">
+            <img src="images/article-1-bedside.webp" width="1200" height="1500" loading="lazy"
+                 alt="침대 옆 나무 협탁 위에서 켜진 돔 모양의 한지 조명, 옆에 책 한 권이 놓여 있고 베개 쪽으로 빛이 번져 있다">
+          </div>
+          <div class="row-text">
+            <p>집에 들어오면 습관처럼 천장등부터 켜요. 방은 환해지지만, 하루의 피로도 그대로 드러나요. 오늘은 스위치를 누르는 대신 작은 조명 하나만 켜 보세요.</p>
+            <h2>낮은 곳에 하나</h2>
+            <p>책상이나 침대 옆처럼 눈높이보다 낮은 자리가 좋아요. 벽에서 한 뼘쯤 떨어뜨리면 빛이 벽을 타고 번져요. 한지를 지나 나온 빛은 방 전체를 밝히지 않고, 닿는 곳까지만 가만히 스며요.</p>
+          </div>
+        </div>
+
+        <!-- 글 왼쪽, 사진 오른쪽 -->
+        <div class="row flip">
+          <div class="row-photo">
+            <img src="images/article-1-corner.webp" width="1200" height="1500" loading="lazy"
+                 alt="어두운 방 구석 마룻바닥 위에서 켜진 돔 모양의 한지 조명, 옆에 찻잔 하나가 놓여 있다">
+          </div>
+          <div class="row-text">
+            <h2>어두운 곳은 어두운 대로</h2>
+            <p>불빛이 닿지 않는 구석은 그대로 두어도 돼요. 밝기가 낮아지면 말소리도 조금 낮아지고, 방은 오히려 넓어 보여요. 차를 한 잔 두고, 퇴근 후 한 시간만 그렇게 지내 보세요.</p>
+          </div>
+        </div>
+
+        <p class="closing">오늘 밤은 불을 하나만 켜 보세요.</p>
+      </div>
+
+      <nav class="article-nav" aria-label="글 이동">
+        <a href="index.html">← 목록으로 돌아가기</a>
+        <a href="article-2.html">다음 글 → 이 년째 한지 조명과 사는 사람</a>
+      </nav>
+    </article>
+  </main>
+  <footer data-site-footer></footer>
+  <script src="../../common/products.js"></script>
+  <script src="../../common/layout.js"></script>
+</body>
+</html>

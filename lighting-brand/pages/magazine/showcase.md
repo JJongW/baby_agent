@@ -29,7 +29,11 @@ PRD 7.2 매거진 기능 중 한 것에 `x`를 친다.
 ## 사진, 글 출처
 | 파일 | 출처 (AI 도구 이름 또는 무료 사진 주소) |
 | --- | --- |
-|  |  |
+| `images/article-1-bedside.webp` | Higgsfield AI (Nano Banana Pro). 원본 `m1-2.png`에서 오른쪽 아래 표시를 잘라 내고 4:5로 맞춤 |
+| `images/article-1-corner.webp` | Higgsfield AI (Nano Banana Pro). 원본 `m1-1.png`에서 같은 방식으로 자름 |
+| `images/article-2-reading.webp` | Higgsfield AI (Nano Banana Pro). 원본 `m2-1.png`에서 같은 방식으로 자름 |
+| `images/article-3-dusting.webp` | Google Gemini (Nano Banana). 오른쪽 아래 표시를 잘라 내고 3:2로 맞춤 |
+| `../../images/...` (공통 사진, 나머지 글 사진) | ChatGPT 이미지 생성 (`lighting-brand/images/README.md`) |
 
 ## 남은 일
 (2차에 할 것)
