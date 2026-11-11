@@ -27,15 +27,18 @@
       font-size: var(--text-sm); }
     .bar .count { margin: 0; }
 
-    /* 켜기, 끄기: 머리 메뉴처럼 글자와 밑줄만 쓴다. 지금 상태는 --ink 글자와 1px 밑줄 */
-    .light { display: flex; align-items: center; gap: var(--space-2); }
-    .light .divider { color: var(--line); }
-    .light button { min-height: 44px; padding: 0; background: none; border: 0; cursor: pointer;
-      font: inherit; color: var(--ink-soft); }
-    .light button span { padding: var(--space-1) 0; border-bottom: 1px solid transparent; transition: color .15s ease, border-color .15s ease; }
-    .light button:hover { color: var(--ink); }
-    .light button[aria-pressed="true"] { color: var(--ink); }
-    .light button[aria-pressed="true"] span { border-bottom-color: var(--ink); }
+    /* 켜기, 끄기: 벽 스위치처럼 토글 하나 (이슈 #69). 각진 틀 안에서 손잡이가 옆으로 움직인다.
+       꺼짐: 손잡이 왼쪽, 틀은 비어 있음 / 켜짐: 손잡이 오른쪽, 틀이 먹색으로 채워짐. 색은 토큰만 */
+    .light { display: flex; align-items: center; gap: var(--space-1); min-height: 44px; padding: 0;
+      background: none; border: 0; cursor: pointer; font: inherit; color: var(--ink-soft); }
+    .light .track { position: relative; width: 40px; height: 22px; border: 1px solid var(--ink); border-radius: var(--radius);
+      background: transparent; transition: background-color .25s ease; }
+    .light .knob { position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; background: var(--ink);
+      transition: transform .25s cubic-bezier(.2, .6, .2, 1), background-color .25s ease; }
+    .light[aria-checked="true"] .track { background: var(--ink); }
+    .light[aria-checked="true"] .knob { transform: translateX(18px); background: var(--hanji); }
+    .light .state { min-width: 2.5em; text-align: left; color: var(--ink); }
+    .light:hover .track { box-shadow: 0 0 0 1px var(--ink); }
 
     /* 2x2 그리드. 카드 사이 가로 --space-3, 줄 사이 --space-4. 휴대폰은 1열 */
     #products { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4) var(--space-3); margin-top: var(--space-4); }
@@ -92,11 +95,11 @@
     <div class="bar-sticky">
       <div class="wrap bar">
         <p class="count" id="count"></p>
-        <div class="light" role="group" aria-label="조명">
-          <button type="button" data-light="on" aria-pressed="true"><span>불 켜기</span></button>
-          <span class="divider" aria-hidden="true">|</span>
-          <button type="button" data-light="off" aria-pressed="false"><span>불 끄기</span></button>
-        </div>
+        <button type="button" class="light" id="light" role="switch" aria-checked="true" aria-label="조명">
+          <span aria-hidden="true">조명</span>
+          <span class="track" aria-hidden="true"><span class="knob"></span></span>
+          <span class="state" aria-hidden="true">켜짐</span>
+        </button>
       </div>
     </div>
 
@@ -153,13 +156,14 @@
           if (img.complete && img.naturalWidth === 0) fail();
         });
 
-        // 모든 카드를 한 번에 켜고 끈다. 바뀌는 건 카드 안의 사진뿐이다 (켜진 사진의 투명도 0 ↔ 1)
-        const buttons = document.querySelectorAll("[data-light]");
-        buttons.forEach((b) => b.addEventListener("click", () => {
-          const on = b.dataset.light === "on";
-          buttons.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+        // 스위치 하나로 모든 카드를 한 번에 켜고 끈다. 바뀌는 건 카드 안의 사진뿐이다 (켜진 사진의 투명도 0 ↔ 1)
+        const light = document.getElementById("light");
+        light.addEventListener("click", () => {
+          const on = light.getAttribute("aria-checked") !== "true";
+          light.setAttribute("aria-checked", String(on));
+          light.querySelector(".state").textContent = on ? "켜짐" : "꺼짐";
           list.classList.toggle("lit", on);
-        }));
+        });
       });
     </script>
   </main>
