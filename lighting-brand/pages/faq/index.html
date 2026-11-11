@@ -20,7 +20,9 @@
       width: 100%; min-height: 44px; border: 0; border-bottom: 1px solid var(--ink-soft); border-radius: var(--radius); background: transparent;
       font: inherit; font-size: var(--text-lg); color: var(--ink); padding: var(--space-1) 0;
     }
-    .faq-search input:focus { border-bottom-color: var(--ink); }
+    /* 누르면 생기던 네모 테두리(공통 초점 표시)를 빼고, 밑줄이 짙고 두꺼워지는 것으로 초점을 보인다 (DESIGN.md 5: 초점 표시를 지우지 않는다) */
+    .faq-search input { transition: border-color .3s, box-shadow .3s; }
+    .faq-search input:focus, .faq-search input:focus-visible { outline: none; border-bottom-color: var(--ink); box-shadow: 0 1px 0 var(--ink); }
     .faq-search input::placeholder { color: var(--ink-soft); opacity: .6; }
     .faq-search input::-webkit-search-cancel-button { filter: grayscale(1); cursor: pointer; } /* 기본 파란 × 를 먹색으로 */
     .faq-status { font-size: var(--text-sm); color: var(--ink-soft); margin: var(--space-1) 0 0; min-height: 1.7em; }
@@ -47,6 +49,7 @@
     .faq-item summary::-webkit-details-marker { display: none; }
     .faq-item summary::after { content: "+"; color: var(--ink-soft); font-size: var(--text-lg); line-height: 1; transition: transform .3s; }
     .faq-item[open] summary::after { transform: rotate(45deg); }
+    .faq-item.is-closing summary::after { transform: none; } /* 접히는 동안 +가 먼저 돌아온다 */
     .faq-item .answer { padding: 0 var(--space-4) var(--space-3) 0; max-width: var(--text-width); }
     .faq-item .answer p:last-child { margin-bottom: 0; }
     .faq-item .answer strong { color: var(--ink); font-weight: 500; }
@@ -56,7 +59,9 @@
 
     .faq-contact { border-top: 1px solid var(--line); padding-top: var(--space-4); }
 
-    @media (prefers-reduced-motion: reduce) { .faq-item summary::after { transition: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .faq-item summary::after, .faq-search input { transition: none; }
+    }
   </style>
 </head>
 <body data-page="faq">
@@ -238,10 +243,38 @@
       const text = new Map(items.map((d) => [d, norm(d.textContent)]));
       const openedBySearch = new Set();
 
+      // 펼침과 접힘: 질문을 누르면 높이가 부드럽게 바뀐다. 움직임 줄이기를 켠 사람에게는 바로 열고 닫는다.
+      // 움직이는 도중에 다시 누르면 지금 높이에서 반대로 돌아간다
+      const still = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const stop = (d) => { d.getAnimations().forEach((a) => a.cancel()); d.classList.remove("is-closing"); d.style.overflow = ""; };
+      for (const d of items) {
+        const summary = d.querySelector("summary");
+        summary.addEventListener("click", (e) => {
+          if (still.matches) return;
+          e.preventDefault();
+          const from = d.getBoundingClientRect().height;
+          const closing = d.open && !d.classList.contains("is-closing");
+          stop(d);
+          d.open = !closing; // 도착할 높이를 재려고 잠깐 그 상태로 둔다 (그리기 전이라 화면에는 안 보인다)
+          const to = d.getBoundingClientRect().height;
+          d.open = true;
+          if (closing) d.classList.add("is-closing");
+          d.style.overflow = "hidden";
+          const anim = d.animate({ height: [from + "px", to + "px"] }, { duration: 360, easing: "cubic-bezier(.2, .6, .2, 1)" });
+          anim.onfinish = () => { if (closing) d.open = false; stop(d); };
+        });
+      }
+
+      // 검색 결과가 바뀔 때만 보이는 결과를 서서히 띄운다 (같은 결과면 글자를 더 쳐도 깜빡이지 않는다)
+      let lastResult = "";
+      const fadeIn = (els) => { if (!still.matches) els.forEach((el) => el.animate(
+        [{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], { duration: 400, easing: "ease" })); };
+
       input.addEventListener("input", () => {
         const words = norm(input.value).trim().split(" ").filter(Boolean);
         let found = 0;
         for (const d of items) {
+          stop(d);
           const hit = words.every((w) => text.get(d).includes(w));
           d.hidden = !hit;
           if (hit) found++;
@@ -251,6 +284,9 @@
         for (const g of groups) g.hidden = !g.querySelector(".faq-item:not([hidden])");
         empty.hidden = !(words.length && found === 0);
         status.textContent = words.length ? (found ? `${found}개 찾았어요` : "") : "";
+        const result = items.map((d) => (d.hidden ? 0 : 1)).join("");
+        if (result !== lastResult) fadeIn([...groups, empty].filter((el) => !el.hidden));
+        lastResult = result;
       });
     })();
   </script>
