@@ -66,7 +66,7 @@
     .scene.hero::before { display: none; }
 
     /* 첫 화면: 불 꺼진 사진 위로 불 켜진 사진이 천천히 겹쳐진다. 전구가 데워지듯 한 번 살짝 밝아졌다가 자리 잡는다 */
-    .hero .shot.on { opacity: 0; animation: lampOn 4s cubic-bezier(.45, 0, .25, 1) .6s forwards; }
+    .hero .shot.on { opacity: 0; animation: lampOn 2.8s cubic-bezier(.45, 0, .25, 1) .4s forwards; }
     @keyframes lampOn {
       0% { opacity: 0; filter: brightness(.92); }
       14% { opacity: .16; }
