@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>이 년째 한지 조명과 사는 사람, 정하은 | 매거진 | ONDO</title>
+  <link rel="stylesheet" href="../../common/style.css">
+  <!-- 글 3편이 같은 모양을 쓴다. 고치면 article-1, 2, 3.html 세 파일을 같이 고친다. 색은 공통 값만 쓴다 -->
+  <style>
+    .article-head, .hero, .article-body, .article-nav { max-width: 1000px; margin-left: auto; margin-right: auto; padding-left: var(--gutter); padding-right: var(--gutter); }
+    .article-head { padding-top: 48px; }
+    .article-head h1 { font-size: clamp(26px, 4vw, 40px); margin-bottom: 16px; max-width: 18em; }
+    .article-head .summary { font-size: 17px; margin: 0; }
+    .hero { margin-top: 48px; }
+    .hero img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); background: var(--paper-deep); }
+    .article-body { padding-top: var(--space); }
+
+    /* 사진과 글을 좌우로 나란히. .flip 이면 글이 왼쪽, 사진이 오른쪽 */
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; margin-bottom: var(--space); }
+    .row.flip .row-photo { order: 2; }
+    .row-photo img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius); background: var(--paper-deep); }
+    .row-text { max-width: 30em; }
+    .row-text h2 { font-size: 20px; margin: 40px 0 12px; }
+    .row-text h2:first-child { margin-top: 0; }
+    .row-text p, .row-text li { color: var(--ink); line-height: 1.9; }
+    .row-text ol { padding-left: 1.4em; margin: 0 0 16px; }
+    .row-text li { margin-bottom: 8px; }
+    @media (max-width: 760px) {
+      .row { grid-template-columns: 1fr; gap: 24px; }
+      .row.flip .row-photo { order: 0; }
+    }
+
+    .closing { max-width: 640px; margin: 0 auto; text-align: center; color: var(--ink); font-size: 18px; }
+    .article-nav { margin-top: var(--space); padding-top: 32px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .article-nav a { padding: 8px 0; border-bottom: 1px solid transparent; }
+    .article-nav a:hover { border-bottom-color: var(--ink); }
+    .article-nav a:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+
+    /* 인터뷰 글에만 */
+    .qa { margin: 0; }
+    .qa dt { color: var(--ink-soft); font-size: 15px; margin-top: 32px; }
+    .qa dt:first-child { margin-top: 0; }
+    .qa dd { margin: 8px 0 0; color: var(--ink); line-height: 1.9; }
+    .intro { color: var(--ink-soft) !important; margin-bottom: 40px; }
+    .note { max-width: 640px; margin: 24px auto 0; text-align: center; font-size: 14px; }
+  </style>
+</head>
+<body data-page="magazine">
+  <header data-site-header></header>
+  <main>
+    <article>
+      <div class="article-head">
+        <p class="eyebrow">인터뷰</p>
+        <h1>이 년째 한지 조명과 사는 사람, 정하은</h1>
+        <p class="summary">조명 하나와 이 년을 지낸 저녁을 묻는 짧은 대화.</p>
+      </div>
+
+      <div class="hero">
+        <img src="../../images/concept/concept-T-01-T-02.webp" width="1536" height="1024"
+             alt="다다미 바닥 위에 한지 조명 두 개가 켜져 있고, 창가에 마른 가지가 놓여 있다">
+      </div>
+
+      <div class="article-body">
+        <!-- 글 왼쪽, 사진 오른쪽 -->
+        <div class="row flip">
+          <div class="row-photo">
+            <img src="images/article-2-reading.webp" width="1200" height="1500" loading="lazy"
+                 alt="켜진 둥근 한지 조명 곁에서 펼친 책의 책장을 넘기는 손, 옆에 머그컵이 놓여 있다">
+          </div>
+          <div class="row-text">
+            <p class="intro">정하은 님은 작은 집에 혼자 살아요. 창가와 방 구석에 한지 조명을 하나씩 두고 이 년째 쓰고 있어요. 퇴근하면 천장등보다 조명부터 켜요.</p>
+            <dl class="qa">
+              <dt>주로 언제 켜세요?</dt>
+              <dd>집에 오면 가방을 내려놓고 바로 켜요. 천장등은 거의 안 켜게 됐어요. 빛이 닿는 곳까지만 밝으니까, 저절로 그 안에 앉게 돼요.</dd>
+              <dt>쓰면서 달라진 점이 있나요?</dt>
+              <dd>저녁이 느려졌어요. 휴대폰을 내려놓고 책을 펴는 날이 늘었어요. 불을 끄고 나서도 방에 빛이 조금 남아 있는 것 같아요.</dd>
+            </dl>
+          </div>
+        </div>
+
+        <!-- 사진 왼쪽, 글 오른쪽 -->
+        <div class="row">
+          <div class="row-photo">
+            <img src="../../images/products/T-01-off.webp" width="1200" height="1500" loading="lazy"
+                 alt="불이 꺼진 돔 모양의 한지 테이블 조명이 나무 탁자 위에 놓여 있다">
+          </div>
+          <div class="row-text">
+            <dl class="qa">
+              <dt>낮에는 어떤가요?</dt>
+              <dd>꺼져 있을 때도 좋아요. 창으로 들어온 햇빛에 한지 결이 보여요. 이 년 전보다 조금 누래졌는데, 그게 마음에 들어요.</dd>
+              <dt>아쉬운 점이 있다면요?</dt>
+              <dd>켜 두면 끄기 아까워서 늦게 자는 날이 있어요. 그게 제일 큰 문제예요.</dd>
+            </dl>
+          </div>
+        </div>
+
+        <p class="closing">켜 두면 저녁이 길어져요.</p>
+        <p class="note">이 인터뷰는 가상 브랜드를 위해 지어낸 글이에요. 인물도 가상이에요.</p>
+      </div>
+
+      <nav class="article-nav" aria-label="글 이동">
+        <a href="index.html">← 목록으로 돌아가기</a>
+        <a href="article-3.html">다음 글 → 누렇게 바래는 것도 조명의 시간입니다</a>
+      </nav>
+    </article>
+  </main>
+  <footer data-site-footer></footer>
+  <script src="../../common/products.js"></script>
+  <script src="../../common/layout.js"></script>
+</body>
+</html>

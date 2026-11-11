@@ -7,38 +7,39 @@
   <link rel="stylesheet" href="../../common/style.css">
   <!-- 이 페이지에만 필요한 모양은 여기 <style>에 쓴다. 색은 common/style.css 의 값(var(--ink) 등)만 쓴다 -->
   <style>
-    /* 켜기, 끄기는 카드 안 사진(켜짐, 꺼짐 한 쌍)만 바꾼다. 페이지 바탕은 그대로 둔다
-       색은 common/style.css 의 값만 쓴다. 공통 값이 바뀌면 이 페이지도 따라 바뀐다 */
+    /* 값은 모두 common/style.css 토큰 (DESIGN.md). 화면 폭 기준은 640px, 960px 두 개
+       켜기, 끄기는 카드 안 사진(켜짐, 꺼짐 한 쌍)만 바꾼다. 페이지 바탕은 그대로 둔다 */
 
-    /* 페이지 제목: FAQ 페이지와 같은 구조 (eyebrow → h1 → 설명문, 세로로 쌓고 설명문은 36em까지) */
-    .product-head p { max-width: 36em; }
+    /* 페이지 제목: FAQ 페이지와 같은 구조 (eyebrow → h1 → 설명문) */
+    .product-head { padding-top: var(--space-4); }
+    .product-head p { max-width: var(--text-width); }
     /* 한국어 문장이 단어 중간에서 끊기지 않게 한다 */
     main { word-break: keep-all; overflow-wrap: break-word; }
 
     /* 스크롤하면 공통 헤더(높이 64px) 바로 아래에 붙는다. 헤더(z-index 10)보다 아래에 깔린다.
        공통 헤더(.site-header)와 같은 모양: 화면 전체 폭, 반투명 바탕과 흐림, 아래 선 하나 */
-    .bar-sticky { position: sticky; top: 64px; z-index: 5; margin-top: 56px;
-      background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px);
+    .bar-sticky { position: sticky; top: 64px; z-index: 5; margin-top: var(--space-5);
+      background: color-mix(in srgb, var(--hanji) 92%, transparent); backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--line); }
-    .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px;
-      padding-top: 4px; padding-bottom: 4px; font-size: 14px; }
+    .bar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2);
+      font-size: var(--text-sm); }
     .bar .count { margin: 0; }
 
     /* 켜기, 끄기: 머리 메뉴처럼 글자와 밑줄만 쓴다. 지금 상태는 --ink 글자와 1px 밑줄 */
-    .light { display: flex; align-items: center; gap: 12px; }
+    .light { display: flex; align-items: center; gap: var(--space-2); }
     .light .divider { color: var(--line); }
-    .light button { min-height: 44px; padding: 0 2px; background: none; border: 0; cursor: pointer;
+    .light button { min-height: 44px; padding: 0; background: none; border: 0; cursor: pointer;
       font: inherit; color: var(--ink-soft); }
-    .light button span { padding: 4px 0; border-bottom: 1px solid transparent; transition: color .15s ease, border-color .15s ease; }
+    .light button span { padding: var(--space-1) 0; border-bottom: 1px solid transparent; transition: color .15s ease, border-color .15s ease; }
     .light button:hover { color: var(--ink); }
     .light button[aria-pressed="true"] { color: var(--ink); }
     .light button[aria-pressed="true"] span { border-bottom-color: var(--ink); }
-    .light button:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
 
-    /* 2x2 그리드. 카드 비율은 사진 비율(RATIO, 아래 스크립트)을 따른다: 4:5 또는 가로 3:2 */
-    #products { display: grid; grid-template-columns: repeat(2, 1fr); gap: 56px 32px; margin-top: 40px; }
-    @media (max-width: 640px) { #products { grid-template-columns: 1fr; gap: 40px; } }
-    .card .thumb { aspect-ratio: 4 / 5; background: var(--paper-deep); border-radius: var(--radius);
+    /* 2x2 그리드. 카드 사이 가로 --space-3, 줄 사이 --space-4. 휴대폰은 1열 */
+    #products { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4) var(--space-3); margin-top: var(--space-4); }
+    @media (max-width: 640px) { #products { grid-template-columns: 1fr; } }
+    /* 카드 비율은 사진 비율(RATIO, 아래 스크립트)을 따른다: 4:5 또는 가로 3:2 */
+    .card .thumb { aspect-ratio: 4 / 5; background: var(--hanji-deep); border-radius: var(--radius);
       position: relative; overflow: hidden; }
     #products.ratio-3x2 .card .thumb { aspect-ratio: 3 / 2; }
     /* 3:2 칸인데 3:2 사진이 아직 없는 제품(S-01)은 4:5 사진을 자르지 않고 칸 가운데에 둔다 */
@@ -51,17 +52,19 @@
 
     /* 사진이 없는 제품: 같은 비율의 자리에 "사진 준비 중" */
     .thumb .pending { display: none; position: absolute; inset: 0; place-items: center;
-      font-size: 14px; color: var(--ink-soft); }
+      font-size: var(--text-sm); color: var(--ink-soft); }
     .thumb.no-photo img { display: none; }
     .thumb.no-photo .pending { display: grid; }
 
-    .info { padding-top: 16px; }
-    .info .code { font-size: 12px; letter-spacing: .08em; margin: 0 0 8px; }
-    .info .name { font-size: 20px; font-weight: 400; margin: 0 0 8px; color: var(--ink); }
-    .info .meta { font-size: 14px; margin: 0; }
+    /* 제품 카드 글자 (DESIGN.md 제품 카드: 사진 → 이름 --text-md 500 → 크기·가격 --text-sm 옅은 먹) */
+    .info { padding-top: var(--space-2); }
+    .info .code { font-size: var(--text-xs); line-height: 1.5; letter-spacing: .08em; margin: 0 0 var(--space-1); }
+    .info .name { font-family: var(--font); font-size: var(--text-md); font-weight: 500; line-height: 1.6;
+      letter-spacing: -0.01em; margin: 0 0 var(--space-1); color: var(--ink); }
+    .info .meta { font-size: var(--text-sm); line-height: 1.7; margin: 0; }
 
-    @media (max-width: 760px) {
-      .bar-sticky { margin-top: 40px; }
+    @media (max-width: 640px) {
+      .bar-sticky { margin-top: var(--space-4); }
     }
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; }
@@ -72,7 +75,7 @@
   <header data-site-header></header>
   <main>
     <!-- 담당: 정연(윤). PRD 7.2 제품 -->
-    <section class="wrap product-head" style="padding-top:48px">
+    <section class="wrap product-head">
       <p class="eyebrow">Light sculptures</p>
       <h1>제품</h1>
       <p>빛의 밝기보다 빛이 지닌 따뜻함을 생각한다.<br>
