@@ -92,10 +92,9 @@
     /* ─────────────── 여기부터 홈 페이지 배치 ─────────────── */
 
     /* 첫 화면: 사진이 주인공. 화면 폭을 다 쓰고, 왼쪽 어두운 나무 면에 글을 얹는다 */
-    /* 높이: 화면 높이에서 머리 메뉴(64px)와 아래 섹션이 살짝 보일 만큼(160px)을 뺀다.
-       16:9보다 길어지지 않고, 너무 낮은 창에서는 480px 아래로 줄지 않는다.
-       사진은 위아래가 잘리므로 기준을 세로 가운데에 두어 손잡이부터 받침까지 보이게 한다 */
-    .hero { position: relative; height: clamp(480px, calc(100svh - 64px - 160px), 56.25vw);
+    /* 높이: 스크롤하기 전 첫 화면을 사진이 꽉 채운다 (화면 높이 − 머리 메뉴 64px). 이슈 #60
+       너무 낮은 창에서는 480px 아래로 줄지 않는다. 사진은 화면 비율에 맞춰 잘리고, 기준은 등(오른쪽)에 둔다 */
+    .hero { position: relative; height: max(480px, calc(100svh - 64px));
       overflow: hidden; background: var(--ink); }
     .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 70% 50%; }
     /* 제목 위치와 크기는 첫 커밋(#49)과 같다: 왼쪽 어두운 나무 면, 세로 가운데, 큰 제목(--title-xl) */
@@ -141,19 +140,18 @@
     .article-link h3 { margin: 0; }
     .article-link:hover h3 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 
-    /* 태블릿 이하: 사진이 낮아져 글이 등과 겹치므로, 사진은 16:9 그대로 두고 글은 사진 아래 한지 바탕에 둔다 */
     @media (max-width: 960px) {
       .story { grid-template-columns: 1fr; gap: var(--space-4); }
-      .hero { height: auto; background: none; overflow: visible; }
-      .hero img { position: static; height: auto; aspect-ratio: 16 / 9; }
-      .hero .wrap { padding-top: var(--space-4); }
+    }
+    /* 태블릿 이하이거나 화면이 세로로 길 때: 등이 사진 대부분을 채워 글이 겹친다.
+       그래서 글은 사진 아래 한지 바탕에 두고, 사진이 남은 높이를 다 채워 첫 화면을 꽉 채운다 */
+    @media (max-width: 960px), (max-aspect-ratio: 1/1) {
+      .hero { display: flex; flex-direction: column; background: none; }
+      .hero img { position: static; flex: 1 1 auto; min-height: 0; height: auto; object-position: 72% center; }
+      .hero .wrap { flex: none; width: 100%; height: auto; padding-top: var(--space-4); padding-bottom: var(--space-4); }
       .hero h1 { color: var(--ink); }
       .hero.is-dark :focus-visible { outline-color: var(--ink); }
       .hero-link { color: var(--ink); }
-    }
-    /* 휴대폰: 4:5로 잘라 조명이 크게 보이게 (DESIGN.md 4) */
-    @media (max-width: 640px) {
-      .hero img { aspect-ratio: 4 / 5; object-position: 80% center; }
     }
   </style>
 </head>
