@@ -6,31 +6,335 @@
   <title>스토리 | ONDO</title>
   <link rel="stylesheet" href="../../common/style.css">
   <!-- 이 페이지에만 필요한 모양은 여기 <style>에 쓴다. 색은 common/style.css 의 값(var(--ink) 등)만 쓴다 -->
-  <style></style>
+  <style>
+    /* 시안(ONDO 스토리 v2.2)을 옮긴 것. 시안 색 이름은 공통 값으로: 한지 → --paper, 한지 짙음 → --paper-deep, 밤색 → --ink */
+    main { overflow-x: clip; word-break: keep-all; }
+    .text { max-width: 640px; }
+    .cap { font-size: 14px; line-height: 1.7; color: var(--ink-soft); margin: 0; }
+    :focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
+    .scene :focus-visible { outline-color: var(--paper); }
+
+    /* 사진 층 */
+    .shot { position: absolute; inset: 0; z-index: -2; background-size: cover; background-repeat: no-repeat; }
+
+    /* 장면: 어두운 사진 구역. 글자는 한지색 하나만 */
+    .scene { position: relative; isolation: isolate; overflow: hidden; background: var(--ink); color: var(--paper);
+      display: grid; align-content: end; min-height: clamp(560px, 66vw, 860px); }
+    .scene.short { min-height: clamp(480px, 50vw, 680px); }
+    .scene::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+      background: linear-gradient(to top, color-mix(in srgb, var(--ink) 92%, transparent) 0, color-mix(in srgb, var(--ink) 55%, transparent) 32%, transparent 64%); }
+    .scene p, .scene .eyebrow, .scene .cap { color: var(--paper); }
+    .copy { width: 100%; padding-top: 64px; padding-bottom: 64px; display: grid; gap: 16px; justify-items: start; }
+    .copy > * { margin: 0; }
+    .copy .cap { margin-top: 8px; }
+    .scene h1 { font-weight: 300; font-size: clamp(32px, 4.4vw, 52px); line-height: 1.4; }
+    .scene h2 { font-weight: 400; }
+    blockquote { font-size: 18px; font-weight: 500; line-height: 1.6; max-width: 26em; }
+    blockquote cite { display: block; margin-top: 16px; font-style: normal; font-size: 14px; font-weight: 400; }
+
+    /* 처음 세 장면은 하나로 이어진다: 사진은 자르지 않고 제 비율로 오른쪽에 서고, 왼쪽과 위아래는 밤색으로 풀린다 */
+    .scene.joined { --pad: 88px; }
+    .scene.joined::before { content: ""; position: absolute; inset: 0 0 auto; height: var(--pad); z-index: -1; pointer-events: none;
+      background: linear-gradient(to bottom, var(--ink), transparent); }
+    .scene.joined::after { background: linear-gradient(to top, var(--ink) 0, color-mix(in srgb, var(--ink) 90%, transparent) 10%, color-mix(in srgb, var(--ink) 50%, transparent) 34%, transparent 64%); }
+    .scene.joined .shot { left: auto; top: var(--pad); bottom: var(--pad); width: auto; max-width: 100%; aspect-ratio: var(--w) / var(--h);
+      background-size: contain; background-position: right center;
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 28%); mask-image: linear-gradient(to right, transparent 0, #000 28%); }
+    .scene.joined.short { min-height: clamp(520px, 52vw, 720px); }
+
+    /* 첫 화면: 세로 사진을 오른쪽 끝까지 세운다 */
+    .scene.hero { --pad: 0px; min-height: 0; height: clamp(600px, 66vw, 860px); }
+    .scene.hero::before { display: none; }
+
+    /* 첫 화면: 불 꺼진 사진 위로 불 켜진 사진이 천천히 겹쳐진다. 전구가 데워지듯 한 번 살짝 밝아졌다가 자리 잡는다 */
+    .hero .shot.on { opacity: 0; animation: lampOn 4s cubic-bezier(.45, 0, .25, 1) .6s forwards; }
+    @keyframes lampOn {
+      0% { opacity: 0; filter: brightness(.92); }
+      14% { opacity: .16; }
+      20% { opacity: .1; }
+      78% { opacity: .97; filter: brightness(1.03); }
+      100% { opacity: 1; filter: brightness(1); }
+    }
+
+    /* 장면에 들어서면 사진이 천천히 제자리로, 글은 살짝 올라온다 */
+    .scene .shot, .tile .shot { transform: scale(1.06); transition: transform 2.4s cubic-bezier(.2, .6, .2, 1); }
+    .scene.in .shot, .tile.in .shot { transform: none; }
+    .scene .copy { transform: translateY(16px); transition: transform 1.2s cubic-bezier(.2, .6, .2, 1); }
+    .scene.in .copy { transform: none; }
+
+    /* 이어 붙인 사진: 틈 없이, 4:5 셋 */
+    .band { padding-top: 40px; padding-bottom: 24px; }
+    .band .eyebrow { margin: 0; }
+    .mosaic { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .tile { position: relative; isolation: isolate; overflow: hidden; aspect-ratio: 4 / 5; margin: 0; background: var(--ink); }
+    .tile::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+      background: linear-gradient(to top, color-mix(in srgb, var(--ink) 85%, transparent) 0, transparent 40%); }
+    .tile::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .6s ease;
+      background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--glow) 18%, transparent), transparent 60%); }
+    .tile:hover::before { opacity: 1; }
+    .tile .cap { position: absolute; left: 24px; right: 24px; bottom: 16px; color: var(--paper); transition: transform .5s ease; }
+    .tile:hover .cap { transform: translateY(-8px); }
+
+    /* 넘기는 사진: 가운데 사진은 정면, 옆 사진은 원통 둘레를 따라 비스듬히 돌아 들어간다 */
+    .carousel { padding-top: 64px; padding-bottom: 40px; overflow: hidden; }
+    .stage3d { --hgt: clamp(280px, 34vw, 440px); position: relative; height: var(--hgt); perspective: 1400px;
+      touch-action: pan-y; cursor: grab; user-select: none; }
+    .stage3d:active { cursor: grabbing; }
+    .slide { position: absolute; left: 50%; top: 0; margin: 0; height: var(--hgt); aspect-ratio: var(--w) / var(--h); max-width: 86vw;
+      transform-style: preserve-3d; backface-visibility: hidden;
+      transition: transform .9s cubic-bezier(.22, .7, .2, 1), opacity .9s ease, filter .9s ease; }
+    .slide img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+    .cbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 24px; }
+    .cbar .cap { min-width: 0; }
+    .cnav { display: flex; align-items: center; gap: 8px; }
+    .arrow { width: 44px; height: 44px; display: inline-grid; place-items: center; padding: 0; color: var(--ink-soft);
+      background: none; border: 0; cursor: pointer; transition: color .3s, transform .3s; }
+    .arrow:hover { color: var(--ink); }
+    #cprev:hover { transform: translateX(-3px); }
+    #cnext:hover { transform: translateX(3px); }
+    .arrow:disabled { color: var(--line); cursor: default; transform: none; }
+
+    /* 재료, 만드는 과정, 만드는 사람: 한지 바탕에서 읽는 글 */
+    .cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px 48px; margin-top: 40px; }
+    .cols h3 { margin-bottom: 8px; }
+    .steps { list-style: none; padding: 0; margin: 40px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
+      counter-reset: step; }
+    .steps li { counter-increment: step; border-top: 1px solid var(--line); padding-top: 16px; }
+    .steps li::before { content: "0" counter(step); display: block; font-size: 13px; letter-spacing: .12em; color: var(--ink-soft); margin-bottom: 8px; }
+    .steps h3 { margin-bottom: 8px; }
+
+    @media (max-width: 900px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) {
+      .cols, .steps { grid-template-columns: 1fr; }
+      .mosaic { grid-template-columns: 1fr 1fr; }
+      .mosaic .tile:last-child { grid-column: 1 / -1; aspect-ratio: auto; height: 120vw; max-height: 560px; }
+      /* 휴대폰: 사진을 화면 폭 그대로 위에 두고, 아래로 밤색에 풀린 뒤 글이 이어진다 */
+      .scene.joined, .scene.joined.short, .scene.hero { min-height: 0; height: auto; display: block; --pad: 64px; padding-top: var(--pad); }
+      .scene.hero { padding-top: 0; }
+      .scene.joined .shot { position: relative; display: block; width: 100%; height: auto; max-width: 100%; top: 0;
+        background-size: 100% 100%;
+        -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent); mask-image: linear-gradient(to bottom, #000 70%, transparent); }
+      .hero .shot.on { position: absolute; top: 0; left: 0; }
+      .scene.joined .copy { margin-top: -64px; position: relative; }
+      .scene.joined::after { background: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero .shot.on { animation: none; opacity: 1; }
+      .slide { transition: none; }
+      .scene .shot, .tile .shot, .scene .copy { transform: none !important; transition: none; }
+    }
+
+    /* 바닥 사진 출처 (스토리 페이지만) */
+    .site-footer .credit { flex-basis: 100%; max-width: 640px; font-size: 13px; }
+  </style>
 </head>
 <body data-page="story">
   <header data-site-header></header>
-  <main>
+  <main id="top">
     <!-- 담당: 지혜(김). PRD 7.2 스토리 -->
-    <section class="wrap section" style="padding-top:48px">
-      <h1>스토리</h1>
-      <div class="todo">브랜드가 생긴 이야기</div>
+    <section class="scene joined hero" style="--w:1200;--h:1500" aria-label="스토리 첫 화면">
+      <span class="shot off" role="img" aria-label="어두운 방, 나무 탁자 위에 매달린 한지 펜던트에 천천히 불이 들어온다" style="background-image:url('images/hero-pendant-off.webp')"></span>
+      <span class="shot on" aria-hidden="true" style="background-image:url('images/hero-pendant-on.webp')"></span>
+      <div class="copy wrap">
+        <p class="eyebrow">Story · 브랜드 이야기</p>
+        <h1>밝기가 아니라,<br>빛이 지닌 온도</h1>
+      </div>
     </section>
-    <section class="wrap section">
+
+    <section class="scene joined" id="origin" style="--w:1243;--h:1600">
+      <span class="shot" role="img" aria-label="어두운 방에 놓인 초기 종이 등 시제품 여러 개" style="background-image:url('images/archive-early-prototypes-1951.jpg')"></span>
+      <div class="copy wrap">
+        <p class="eyebrow">1990 · 기원</p>
+        <h2>강가의 등불에서</h2>
+        <p class="text">1990년 여름, 조각가 원티드는 강가에 매달린 한지 등불을 보았다. 화려한 불꽃보다 오래 남은 것은 종이 너머의 고요한 빛이었다. 그는 촛불 대신 전구를 넣고, 접을 수 있는 대나무 골조를 고안했다. 그리고 이 빛에 ONDO(온도)라는 이름을 붙였다. 빛의 밝기가 아니라 빛이 지닌 따뜻함을 가리키는 말이었다.</p>
+        <p class="cap">초기 등 시제품, 1951년경.</p>
+      </div>
+    </section>
+
+    <section class="scene short joined" style="--w:1600;--h:1190">
+      <span class="shot" role="img" aria-label="검은 배경에 매달린, 구겨진 한지로 만든 각진 펜던트" style="background-image:url('images/archive-signed-pendant-1972.jpg')"></span>
+      <div class="copy wrap">
+        <blockquote>빛은 종이를 지나며 표면이 되고, 그 표면은 방 안의 사람과 함께 숨을 쉰다.<cite>원티드</cite></blockquote>
+        <p class="cap">서명과 '72가 적힌 하나뿐인 펜던트, 1972년경.</p>
+      </div>
+    </section>
+
+    <div class="band wrap"><p class="eyebrow">ONDO 이전, 빛을 다룬 작업들</p></div>
+    <div class="mosaic">
+      <figure class="tile"><span class="shot" role="img" aria-label="석고로 만든 둥근 형태가 막대에 매달린 풍향계 조각" style="background-image:url('images/archive-musical-weathervane-1933.jpg');background-position:center"></span><figcaption class="cap">Musical Weathervane, 1933. 석고, 전기 부품.</figcaption></figure>
+      <figure class="tile"><span class="shot" role="img" aria-label="곡면 천장에 조명이 숨어 있는 건물 로비" style="background-image:url('images/archive-magic-chef-ceiling.jpg');background-position:center"></span><figcaption class="cap">Magic Chef 빌딩 로비의 천장.</figcaption></figure>
+      <figure class="tile"><span class="shot" role="img" aria-label="나무 다리 셋 위에 원통형 갓을 얹은 등" style="background-image:url('images/archive-three-legged-lamp.jpg');background-position:center"></span><figcaption class="cap">Three Legged Lamp. 나무와 반투명 갓.</figcaption></figure>
+    </div>
+
+    <section class="scene" id="craft">
+      <span class="shot" role="img" aria-label="공방 바닥에 앉아 한지를 자르는 장인" style="background-image:url('images/archive-ozeki-workshop-1978.jpg');background-position:center"></span>
+      <div class="copy wrap">
+        <p class="eyebrow">제작</p>
+        <h2>손으로 만드는 빛</h2>
+        <p class="text">ONDO는 지금도 솔결지업사의 장인들이 만든다. 나무 틀에 가는 대나무 살을 감고, 그 위에 한지를 한 장씩 손으로 붙인다. 완성된 등은 납작하게 접혀 상자에 담기고, 펼치는 순간 다시 조각이 된다.</p>
+        <p class="cap">오제키 공방의 장인이 한지를 자르고 있다, 1978.</p>
+      </div>
+    </section>
+
+    <section class="carousel" aria-roledescription="carousel" aria-label="상자, 잡지, 브로슈어 사진">
+      <div class="stage3d" tabindex="0" aria-live="polite">
+        <figure class="slide" data-cap="납작한 상자와 조립 부품." style="--w:800;--h:634" aria-roledescription="slide" aria-label="1 / 4"><img src="images/archive-flat-box-parts.jpg" alt="납작한 상자와 등의 부품을 펼쳐 놓은 모습" draggable="false"></figure>
+        <figure class="slide" data-cap="1952년 잡지 특집 「New Shapes for Lighting」." style="--w:728;--h:1000" aria-roledescription="slide" aria-label="2 / 4"><img src="images/archive-magazine-1952.jpg" alt="조명 특집 기사가 실린 잡지 지면" draggable="false"></figure>
+        <figure class="slide" data-cap="홍보 브로슈어, 1950–60년대." style="--w:800;--h:815" aria-roledescription="slide" aria-label="3 / 4"><img src="images/archive-brochure-1.jpg" alt="여러 등의 모양을 선으로 그려 놓은 브로슈어" draggable="false"></figure>
+        <figure class="slide" data-cap="홍보 브로슈어, 1950–60년대." style="--w:800;--h:815" aria-roledescription="slide" aria-label="4 / 4"><img src="images/archive-brochure-2.jpg" alt="등의 조립 방법을 설명하는 브로슈어 지면" draggable="false"></figure>
+      </div>
+      <div class="cbar wrap">
+        <p class="cap" id="ccap">납작한 상자와 조립 부품.</p>
+        <div class="cnav">
+          <button type="button" class="arrow" id="cprev" aria-label="이전 사진"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M20 12H4M10 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1"/></svg></button>
+          <button type="button" class="arrow" id="cnext" aria-label="다음 사진"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRD 7.2에서 더한 것: 재료, 만드는 과정, 만드는 사람 -->
+    <section class="wrap section" id="material" aria-labelledby="material-title">
       <p class="eyebrow">재료</p>
-      <div class="todo">한지, 대나무 살, 왜 이 재료인지</div>
+      <h2 id="material-title">빛을 가리지 않고, 거르는 재료</h2>
+      <div class="cols">
+        <div>
+          <h3>한지</h3>
+          <p>닥나무 껍질의 긴 섬유가 얽혀 있어, 전구의 날카로운 빛을 고르게 흩어 부드럽게 만든다. 질겨서 오래 쓰고, 해가 지나면 빛깔이 조금씩 누렇게 익는다. 그 변화도 등의 일부로 본다.</p>
+        </div>
+        <div>
+          <h3>대나무 살</h3>
+          <p>가볍고, 휘었다가도 제자리로 돌아온다. 그래서 등을 납작하게 접었다가 다시 펼 수 있다. 살 굵기가 조금씩 달라 한 등 안에서도 빛의 결이 다르게 맺힌다.</p>
+        </div>
+      </div>
     </section>
-    <section class="wrap section">
+
+    <section class="wrap section" id="process" aria-labelledby="process-title" style="padding-top:0">
       <p class="eyebrow">만드는 과정</p>
-      <div class="todo">3~5단계, 사진과 짧은 글</div>
+      <h2 id="process-title">등 하나에 네 단계, 꼬박 이틀</h2>
+      <ol class="steps">
+        <li><h3>대나무 살 다듬기</h3><p>대나무를 가늘게 쪼개 살로 깎는다. 굵기가 조금씩 다른 살을 손끝으로 골라 한 등에 모은다.</p></li>
+        <li><h3>틀에 살 감기</h3><p>나무 틀에 살을 나선으로 감아 등의 모양을 잡는다. 감는 간격이 빛의 결이 된다.</p></li>
+        <li><h3>한지 붙이기</h3><p>한지를 한 장씩 풀로 붙인다. 종이가 겹친 자리는 불을 켜면 조금 더 짙게 드러난다.</p></li>
+        <li><h3>말리고 접기</h3><p>하루를 말린 뒤 틀을 빼고, 납작하게 접어 상자에 담는다. 펼치는 순간 다시 등이 된다.</p></li>
+      </ol>
     </section>
-    <section class="wrap section">
+
+    <section class="wrap section" id="maker" aria-labelledby="maker-title" style="padding-top:0">
       <p class="eyebrow">만드는 사람</p>
-      <div class="todo">만드는 사람 소개</div>
+      <h2 id="maker-title">한결, 등을 감는 사람</h2>
+      <p class="text">스무 해 넘게 솔결지업사에서 대나무 살을 감아 왔다. 처음 다섯 해는 살만 깎았다고 한다. "살이 고르지 않아야 빛이 살아요. 너무 반듯하면 종이가 숨을 못 쉬어요." 지금은 새 형태를 처음 감아 보는 일을 맡고 있다.</p>
+      <p class="cap">ONDO와 원티드, 한결은 수업 과제로 만든 가상의 브랜드와 인물이다.</p>
+    </section>
+
+    <section class="scene" id="life">
+      <span class="shot" role="img" aria-label="흰 벽돌 벽 앞에 둥근 펜던트와 스탠드가 놓인 전시" style="background-image:url('images/archive-display-1950s.jpg');background-position:center"></span>
+      <div class="copy wrap">
+        <p class="eyebrow">생활</p>
+        <h2>생활 속의 조각</h2>
+        <p class="text">원티드에게 ONDO는 미술관이 아닌 누구의 집에나 놓일 수 있는 조각이었다. 그는 이를 "생활 속의 조각"이라 불렀다. 시간이 흐르며 한지는 조금씩 구겨지고 바래지만, 그 변화 또한 작품의 일부가 된다.</p>
+        <p class="cap">1950년대 초 펜던트와 플로어 등 전시.</p>
+      </div>
+    </section>
+
+    <section class="scene" id="today">
+      <span class="shot" role="img" aria-label="체크무늬 벽과 나무 바닥 사이에 켜진 등들이 놓인 전시장" style="background-image:url('images/archive-space-of-akari-1985.jpg');background-position:center"></span>
+      <div class="copy wrap">
+        <p class="eyebrow">오늘</p>
+        <h2>오늘의 ONDO</h2>
+        <p class="text">원티드가 남긴 백여 가지의 형태는 지금도 같은 공방에서, 같은 방식으로 만들어지고 있다. 기능과 예술, 전통과 실험의 경계에서 ONDO는 여전히 방 안의 온도를 바꾼다.</p>
+        <p class="cap">「Space of Akari and Stone」, 세이부 미술관, 1985.</p>
+      </div>
+    </section>
+
+    <section class="wrap section" aria-labelledby="close-title">
+      <p class="eyebrow">Next</p>
+      <h2 id="close-title">방 안의 온도를 바꾸는 등</h2>
+      <p class="text">대나무 살과 한지로 만든 ONDO의 등을 제품 페이지에서 만나 보세요.</p>
+      <a class="button" href="../product/">제품 보기</a>
     </section>
   </main>
   <footer data-site-footer></footer>
+  <script>
+  (function () {
+    var stage = document.querySelector(".stage3d");
+    if (!stage) return;
+    var slides = [].slice.call(stage.querySelectorAll(".slide"));
+    var cap = document.getElementById("ccap");
+    var prev = document.getElementById("cprev"), next = document.getElementById("cnext");
+    var cur = 0, n = slides.length;
+    function place() {
+      var gap = Math.min(stage.clientWidth * 0.3, 340);
+      slides.forEach(function (el, i) {
+        var d = i - cur, a = Math.abs(d);
+        var x = d * gap, ry = Math.max(-60, Math.min(60, -d * 38)), z = -a * 180;
+        el.style.transform = "translateX(-50%) translateX(" + x + "px) translateZ(" + z + "px) rotateY(" + ry + "deg)";
+        el.style.opacity = a > 2 ? 0 : (a === 0 ? 1 : (a === 1 ? .55 : .2));
+        el.style.filter = a === 0 ? "none" : "brightness(.92)";
+        el.style.zIndex = 10 - a;
+        el.setAttribute("aria-hidden", a === 0 ? "false" : "true");
+      });
+      cap.textContent = slides[cur].dataset.cap;
+      prev.disabled = cur === 0; next.disabled = cur === n - 1;
+    }
+    function go(i) { cur = Math.max(0, Math.min(n - 1, i)); place(); }
+    prev.addEventListener("click", function () { go(cur - 1); });
+    next.addEventListener("click", function () { go(cur + 1); });
+    slides.forEach(function (el, i) { el.addEventListener("click", function () { if (!moved) go(i); }); });
+    stage.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") { go(cur - 1); e.preventDefault(); }
+      if (e.key === "ArrowRight") { go(cur + 1); e.preventDefault(); }
+    });
+    var sx = null, moved = false;
+    stage.addEventListener("pointerdown", function (e) { sx = e.clientX; moved = false; });
+    window.addEventListener("pointerup", function (e) {
+      if (sx === null) return;
+      var dx = e.clientX - sx; sx = null;
+      if (Math.abs(dx) > 40) { moved = true; go(cur + (dx < 0 ? 1 : -1)); setTimeout(function () { moved = false; }, 0); }
+    });
+    window.addEventListener("resize", place);
+    place();
+
+    // 화면 가운데에 오면 4.5초마다 저절로 다음 사진으로. 마우스를 올리거나 직접 넘기면 잠시 멈춘다
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var timer = null, inView = false, hold = false, holdTimer = null;
+    function tick() { go(cur === n - 1 ? 0 : cur + 1); }
+    function sync() {
+      var run = inView && !hold && !document.hidden;
+      if (run && !timer) timer = setInterval(tick, 4500);
+      if (!run && timer) { clearInterval(timer); timer = null; }
+    }
+    function pause(ms) {
+      hold = true; sync(); clearTimeout(holdTimer);
+      if (ms) holdTimer = setTimeout(function () { hold = false; sync(); }, ms);
+    }
+    var box = stage.closest(".carousel");
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es) { inView = es[0].isIntersecting; sync(); },
+        { rootMargin: "-35% 0px -35% 0px" }).observe(box);
+    }
+    box.addEventListener("mouseenter", function () { pause(0); });
+    box.addEventListener("mouseleave", function () { hold = false; sync(); });
+    box.addEventListener("focusin", function () { pause(0); });
+    box.addEventListener("focusout", function () { hold = false; sync(); });
+    box.addEventListener("pointerdown", function (e) { if (e.pointerType !== "mouse") pause(8000); });
+    box.addEventListener("click", function () { if (timer) { clearInterval(timer); timer = null; sync(); } });
+    document.addEventListener("visibilitychange", sync);
+  })();
+  (function () {
+    var els = document.querySelectorAll(".scene, .tile");
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+    }, { threshold: 0.18 });
+    els.forEach(function (e) { io.observe(e); });
+  })();
+  </script>
   <script src="../../common/products.js"></script>
   <script src="../../common/layout.js"></script>
+  <script>
+  // 스토리 페이지만: 공통 바닥(layout.js가 그림) 끝에 사진 출처를 붙인다 (lighting-brand/CLAUDE.md 예외 규칙)
+  document.querySelector(".site-footer .wrap").insertAdjacentHTML("beforeend",
+    '<p class="credit">Isamu Noguchi의 Akari를 참고한 시안. 기록 사진: The Noguchi Museum, 「History of Akari Light Sculptures」. 첫 화면 펜던트 사진: 팀 제공.</p>');
+  </script>
 </body>
 </html>
