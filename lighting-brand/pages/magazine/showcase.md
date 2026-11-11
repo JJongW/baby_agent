@@ -32,6 +32,8 @@ PRD 7.2 매거진 기능 중 한 것에 `x`를 친다.
 | `images/article-1-bedside.webp` | Higgsfield AI (Nano Banana Pro). 원본 `m1-2.png`에서 오른쪽 아래 표시를 잘라 내고 4:5로 맞춤 |
 | `images/article-1-corner.webp` | Higgsfield AI (Nano Banana Pro). 원본 `m1-1.png`에서 같은 방식으로 자름 |
 | `images/article-2-reading.webp` | Higgsfield AI (Nano Banana Pro). 원본 `m2-1.png`에서 같은 방식으로 자름 |
+| `images/article-2-daylight.webp` | Dreamina (Nano Banana 2.1). 원본에서 3:2로 잘라 사용 |
+| `images/article-3-aged-paper.webp` | Google Gemini (Nano Banana). 오른쪽 아래 표시를 잘라 내고 4:5로 맞춤 |
 | `images/article-3-dusting.webp` | Google Gemini (Nano Banana). 오른쪽 아래 표시를 잘라 내고 3:2로 맞춤 |
 | `../../images/...` (공통 사진, 나머지 글 사진) | ChatGPT 이미지 생성 (`lighting-brand/images/README.md`) |
 
