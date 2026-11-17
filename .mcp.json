@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${GITHUB_PAT}",
+        "X-MCP-Toolsets": "context,repos,issues,pull_requests"
+      }
+    },
+    "notion": {
+      "type": "http",
+      "url": "https://mcp.notion.com/mcp"
+    },
+    "team": {
+      "command": "python",
+      "args": ["team/mcp/server.py"]
+    }
+  }
+}

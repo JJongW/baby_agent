@@ -35,6 +35,12 @@ scripts/check.sh                    이름 규칙 검사 (PR 전에 각자 돌�
 에이전트 파일은 `members/` 안이 아니라 `.claude/agents/<사람>/`에 둔다.
 Claude Code는 레포 루트의 `.claude/agents/` 아래만 읽고, `members/<사람>/.claude/`처럼 안쪽 폴더는 읽지 않는다 (2026-11-05 Claude Code 2.1.318로 확인).
 
+## 7조 조 과제 (`team/`)
+
+D25부터 이 레포를 7조(신 PO, 노 개발, 윤 개발, 권 디자인, 어 디자인) P2 레포로 이어서 쓴다.
+조원 모두 같은 MCP 세트(github, notion, team)를 쓰고, Claude Code를 열면 "누구세요?"를 물은 뒤 그 사람의 할 일로 바로 시작한다.
+처음 받는 순서와 구조도는 [team/README.md](team/README.md).
+
 ## 처음 받았을 때
 
 ```bash
