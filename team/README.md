@@ -96,7 +96,7 @@ github MCP 는 일부러 없다. 깃허브에 쓰는 일(PR, 이슈, 댓글, 머
 | Mac 에 `python` 이 없음 (`command not found`) | 내 PC 에만: `claude mcp add --scope local team -- python3 team/mcp/server.py` (`.mcp.json` 은 그대로) |
 | `pip install` 때 다른 패키지와 버전 충돌 경고 (예: fastapi 와 starlette) | 기본 파이썬에 깔지 말고 전용 가상환경으로: `python3 -m venv ~/.venvs/team-mcp` → `~/.venvs/team-mcp/bin/pip install -r team/mcp/requirements.txt` → 내 PC 에만 `claude mcp add --scope local team -- ~/.venvs/team-mcp/bin/python team/mcp/server.py` (Windows 는 `Scripts\python.exe`) |
 | team 이 "깃허브 읽기 한도에 걸렸어요" | 토큰 없이 같은 와이파이에서 시간당 60번. 안내된 시간만큼 기다린다 (team 은 1분 동안 같은 걸 다시 안 읽는다) |
-| `git push` 가 403, permission denied | 신의 협업자 초대 메일을 수락했는지. git 로그인은 평소 쓰던 것 (Claude 에 토큰을 주지 않는다) |
+| `git push` 가 403, permission denied | 다른 깃허브 계정으로 로그인돼 있는지. 협업자는 모두 수락돼 있다 (11/17). 그래도 안 되면 신에게. Claude 에 토큰을 주지 않는다 |
 | PR 링크를 열었는데 "There isn't anything to compare" | push 가 안 됐다 → `git push -u origin <브랜치>` 다시 |
 | notion "Needs authentication" | `/mcp` → notion → Authenticate, 또는 `claude mcp login notion` |
 | team 이 "NOTION_TOKEN 이 필요해요" | 토큰이 없어도 일은 된다 (Claude 가 notion MCP 로 읽는다). 넣으려면 [docs/tokens.md](docs/tokens.md) |
