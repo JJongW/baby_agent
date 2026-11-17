@@ -5,6 +5,7 @@
 
 ## 순서
 1. (#1) 팀 도구 틀 PR 머지 → 조원에게 "pull 받고 claude 열기" 알리기
+   조원 4명을 레포 협업자로 초대 (Settings → Collaborators. `git push` 용). **깃허브 토큰은 아무에게도 만들게 하거나 받지 않는다**
 2. (#2) 노션 페이지 만들기. Claude Code에서 `/mcp` → notion → Authenticate 먼저
    (#14) 노션 읽기 통합 만들기 → 조 페이지에 연결 → 조원에게 `NOTION_TOKEN` DM (`team/docs/tokens.md`)
 3. 조원 Lv1 연결 확인을 받는다 (모두 같은 답이 나오는지)
@@ -17,20 +18,22 @@
 노션 협업 보드 (#2): 설계는 `team/docs/notion-board.md`. 그 파일의 "만드는 말"을 쓴다.
 
 회의록 → 이슈 (#3):
+(한 번에: `/mcp__team__meeting_to_issues`)
 ```
 notion "회의록" DB 의 11/17 킥오프와 team 의 list_tasks 를 같이 보고, 할 일마다 깃허브 이슈를 만들려고 해.
 표로 먼저 보여 줘: 제목("[T번호] 할 일"), 본문(완료 기준), 라벨(개발/디자인/PO), 담당자(tasks.csv 의 담당자).
-"만들어" 하면 그때 만들고, 만든 이슈 링크를 notion "할 일" DB 의 같은 번호 줄 "이슈" 칸에 적어 줘. 라벨이 없으면 라벨부터.
+좋다고 하면 할 일마다 team github_link(번호) 로 이슈 만들기 링크를 줘 (이슈는 내가 깃허브 화면에서 만든다).
+"만들었어" 하면 team link_status 로 이슈를 찾아 링크를 notion "할 일" DB 의 같은 번호 줄 "이슈" 칸에 적어 줘.
 ```
 노션 배정 맞추기 (tasks.csv 가 바뀔 때마다): `/mcp__team__sync_board`. 내 할 일 상태는 `/mcp__team__my_board 신`.
 백로그 (#4):
 ```
-team 의 progress 와 github 열린 이슈로 MVP 우선순위 표를 만들어 notion "직군 문서" 아래 "백로그" 로 써 줘.
+team 의 progress 와 link_status(열린 이슈)로 MVP 우선순위 표를 만들어 notion "직군 문서" 아래 "백로그" 로 써 줘.
 높은 2개 이슈에 "우선" 라벨. 먼저 보여 줘.
 ```
 주간 진행:
 ```
-team progress, github 오늘 닫힌 이슈, 머지된 PR 로 notion "주간 진행" 에 "11/17" 정리. 먼저 보여 줘.
+team report 의 오늘 닫힌 이슈, 머지된 PR 로 notion "주간 진행" 에 "11/17" 정리. 먼저 보여 줘.
 ```
 
 ## 하지 말 것

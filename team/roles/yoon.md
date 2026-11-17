@@ -11,11 +11,11 @@
 
 ## 바로 쓸 말
 ```
-team 으로 내 할 일(담당자: uyeon0) 보여 주고, github 에서 나에게 배정된 이슈와 맞춰 봐.
+team 으로 내 할 일(담당자: uyeon0) 보여 주고, team link_status 로 내 이슈, PR 과 맞춰 봐.
 ```
 ```
 내 이슈 #__ 하자. 노션 할 일 DB 의 내 7번 줄을 '진행 중'으로 바꾸고, 새 브랜치 yoon/docs-team-setup 에서
-team/README.md 의 "처음 받으면" 을 내가 막힌 곳 기준으로 고쳐 커밋, 푸시하고 github 로 PR (Closes #__). 먼저 보여 줘.
+team/README.md 의 "처음 받으면" 을 내가 막힌 곳 기준으로 고쳐 커밋, 푸시하고 team github_link 로 PR 만들기 링크 줘 (PR 은 내가 화면에서). 먼저 보여 줘.
 ```
 데스크톱 연결 (Mac 예시, Windows 는 `C:\\Users\\...` 와 `python`):
 ```json
