@@ -111,9 +111,18 @@ def read_csv(path: Path) -> list[dict]:
         return [{k.strip(): (v or "").strip() for k, v in row.items() if k} for row in csv.DictReader(f)]
 
 
+def is_draft(t: dict) -> bool:
+    """tasks.csv 배정 칸이 '초안'이면 조 회의에서 아직 정하지 않은 예시 배정이다."""
+    return t.get("배정", "") == "초안"
+
+
+DRAFT_NOTE = "※ [초안] 줄은 조 회의 전 예시 배정이에요. 시작하지 말고, PO(신)가 회의에서 정해 '확정'으로 바꿀 때까지 기다려요."
+
+
 def task_line(t: dict) -> str:
-    """할 일 한 줄을 사람이 읽기 좋은 모양으로."""
-    return f"#{t.get('번호')} [{t.get('상태')}] {t.get('할 일')} | {t.get('직군')} | @{t.get('담당자')} | 마감 {t.get('마감')}"
+    """할 일 한 줄을 사람이 읽기 좋은 모양으로. 배정이 초안이면 앞에 [초안]."""
+    draft = "[초안] " if is_draft(t) else ""
+    return f"{draft}#{t.get('번호')} [{t.get('상태')}] {t.get('할 일')} | {t.get('직군')} | @{t.get('담당자')} | 마감 {t.get('마감')}"
 
 
 def find_member(who: str) -> dict | None:
@@ -172,9 +181,11 @@ def whoami(who: str = "") -> str:
         f"조 과제 역할: {m['조과제역할']}",
         f"브랜치 이름: {m['폴더']}/<종류>-<주제>",
         "",
-        f"맡은 할 일 {len(mine)}개 중 남은 것 {len(todo)}개 {note}:",
+        f"맡은 할 일 {len(mine)}개 중 남은 것 {len(todo)}개 {note.splitlines()[0]}:",
     ]
     out += [f"- {task_line(t)}" for t in mine] or ["- (없음)"]
+    if any(is_draft(t) for t in mine):
+        out.append(DRAFT_NOTE)
 
     # 역할 안내문: 폴더 이름이 영어 소문자일 때만 파일을 연다 (엉뚱한 경로를 막는다)
     folder = m["폴더"]
@@ -415,7 +426,9 @@ def link_text(assignee: str = "") -> str:
 
         # 엇갈린 곳 찾기
         ev, why = evidence(link, t.get("담당자", ""))
-        if not issue and state != "완료":
+        if not issue and is_draft(t):
+            flags.append(f"#{no}: 배정 초안이라 이슈는 조 회의에서 정한 뒤에 만들어요")
+        elif not issue and state != "완료":
             flags.append(f"#{no}: 이슈가 없어요 (PO 가 [T{no}] 이슈를 만들면 이어져요)")
         if ev and rank(ev) > rank(state):
             flags.append(f"#{no}: 깃허브는 '{ev}'({why})인데 상태는 '{state}' (신 노트북의 서기가 노션에 옮길 것)")
@@ -473,6 +486,8 @@ def github_link(task: str, branch: str = "") -> str:
     row = next((t for t in read_csv(TASKS_CSV) if t.get("번호") == no), None)
     if not row:
         return f"할 일 #{no} 이 tasks.csv 에 없어요. PO 에게 배정을 먼저 부탁하세요."
+    if is_draft(row):
+        return f"할 일 #{no} 은 배정 초안이에요 (조 회의 전). 링크는 PO 가 회의에서 정해 tasks.csv 배정을 '확정'으로 바꾼 뒤에 드려요."
     title = f"[T{no}] {row.get('할 일', '')}"
     try:
         issue = (github_links().get(no) or {}).get("issue")
@@ -623,7 +638,15 @@ def notion_rows() -> dict[str, dict] | None:
 
 
 def live_tasks() -> tuple[list[dict], str]:
-    """tasks.csv 의 할 일에 노션 할 일 DB 의 지금 상태를 덮어 돌려준다. 두 번째 값은 상태를 어디서 읽었는지."""
+    """tasks.csv 의 할 일에 노션 할 일 DB 의 지금 상태를 덮어 돌려준다. 두 번째 값은 상태를 어디서 읽었는지
+    (초안 배정이 있으면 그 안내도 붙인다)."""
+    tasks, note = _live_tasks()
+    if any(is_draft(t) for t in tasks):
+        note += "\n" + DRAFT_NOTE
+    return tasks, note
+
+
+def _live_tasks() -> tuple[list[dict], str]:
     tasks = read_csv(TASKS_CSV)
     try:
         board = notion_rows()
@@ -834,6 +857,7 @@ RULES = (
     "배정(번호, 할 일, 담당, 마감)의 원본은 team/tasks.csv, 상태의 지금 값은 노션 할 일 DB 이고, "
     "세 곳은 할 일 번호로 잇는다 (이슈 제목 [T번호], 노션 할 일 DB 번호). "
     "노션 할 일 DB 는 inbox 에 나온 칸만 고친다 (줄 추가, 담당, 마감은 PO 의 sync_board). "
+    "tasks.csv 배정이 '초안'인 줄([초안])은 조 회의 전 예시라 시작을 권하지 않고, 이슈, PR 링크도 만들지 않는다. "
     "도구로 확인 못 한 건 지어내지 않는다."
 )
 
@@ -845,7 +869,7 @@ def next_steps(who: str) -> str:
         f"{who} 기준으로 지금 무엇을 하면 되는지 알려 줘. shin-team-orchestrator 에이전트가 있으면 그 에이전트에게 맡기고, "
         f"없으면 직접: team whoami('{who}') → team progress → team link_status('{who}') → team notion_board('{who}') "
         "→ (notion 이 붙어 있으면) '스탠드업' DB 의 내 최근 줄. "
-        "결과: 조 진행 현황 한 줄, 내 지금 할 일 1~3개(왜 지금인지), 엇갈린 곳, 노션이 늦은 칸과 그걸 바꿀 깃허브 할 일(/시작 댓글, PR), "
+        "결과: 조 진행 현황 한 줄, 내 지금 할 일 1~3개(왜 지금인지. [초안] 배정은 할 일로 권하지 말고 회의 전이라고만 알린다), 엇갈린 곳, 노션이 늦은 칸과 그걸 바꿀 깃허브 할 일(/시작 댓글, PR), "
         "1번을 시작할 프롬프트. 신(PO)이면 inbox 에 옮길 것이 있는지도. " + RULES
     )
 
@@ -922,7 +946,7 @@ def meeting_to_issues() -> str:
     """노션 회의록의 할 일을 깃허브 이슈로 (PO 용, notion + team → 깃허브 화면)."""
     return (
         "notion '회의록' DB 의 가장 최근 회의(team search_notion 으로 찾아도 된다)와 team list_tasks, team link_status 를 같이 보고, "
-        "이슈가 없는 할 일마다 깃허브 이슈 초안을 표로 보여 줘: 제목 '[T번호] 할 일', 본문(완료 기준), "
+        "이슈가 없고 배정이 '확정'인 할 일마다 깃허브 이슈 초안을 표로 보여 줘 ([초안] 줄은 조 회의 전이라 빼고, 몇 개 뺐는지만 알려 줘): 제목 '[T번호] 할 일', 본문(완료 기준), "
         "라벨(개발/디자인/PO), 담당자(tasks.csv 의 깃허브 아이디). 회의록에는 있는데 tasks.csv 에 없는 할 일은 따로 알려 줘 "
         "(배정은 PO 가 tasks.csv 에 먼저). 내가 좋다고 하면 할 일마다 team github_link(번호) 로 이슈 만들기 링크를 줘 "
         "(이슈는 내가 깃허브 화면에서 만든다). 내가 '만들었어' 하면 team link_status 로 이슈를 찾아 "
