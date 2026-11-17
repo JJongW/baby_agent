@@ -77,6 +77,12 @@
   body[data-os="mac"] [data-only="mac"], body[data-os="win"] [data-only="win"] { display: block; }
   body[data-os="mac"] span[data-only="mac"], body[data-os="win"] span[data-only="win"] { display: inline; }
   td:first-child, th:first-child { white-space: nowrap; }
+  .map { padding: 16px 16px 12px; position: relative; left: 50%; transform: translateX(-50%); width: min(1080px, calc(100vw - 32px)); }
+  .maphead { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; justify-content: space-between; }
+  .maphead a { font-size: 14px; font-weight: 500; }
+  /* 구조도 화면은 그림을 폭에 맞춰 키운다(그림 비율 0.9, 머리줄과 여백 약 150px). 안쪽 스크롤 없이 다 보이게
+     높이를 폭에서 계산한다. 구조도를 다시 그려 비율이 바뀌면 0.9 를 다시 잰다 */
+  .map iframe { display: block; width: 100%; height: calc((min(1080px, 100vw - 32px) - 128px) * 0.9 + 150px); border: 1px solid var(--line); border-radius: 10px; margin-top: 8px; background: var(--card); }
   @media (max-width: 640px) {
     .flow { grid-template-columns: 1fr; } header h1 { font-size: 25px; }
     .card { padding: 16px; } .step { grid-template-columns: 24px minmax(0, 1fr); gap: 10px; }
@@ -108,6 +114,15 @@
       <div><b>team</b> 내 PC 에서 실행 <span class="pill">읽기 전용</span><br>명단, 할 일, 진행률, 문서 찾기, 세 곳 맞춰 보기</div>
     </div>
   </div>
+
+  <section class="card map" aria-label="한 장 그림">
+    <div class="maphead">
+      <h2>🗺️ 한 장 그림 <small>세 도구가 어떻게 같이 도나</small></h2>
+      <a href="docs/architecture.html" target="_blank" rel="noopener">새 창으로 크게 보기 ↗</a>
+    </div>
+    <p class="note">상자를 누르면 설명이 나와요. 아래 카드에 "세션을 열면", "일을 끝내면(finish)", "권한"이 정리돼 있어요.</p>
+    <iframe src="docs/architecture.html" title="7조 팀 도구 구조도"></iframe>
+  </section>
 
   <section class="card step" data-step="1">
     <input type="checkbox" aria-label="1번 완료">

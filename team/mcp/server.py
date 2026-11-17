@@ -68,6 +68,8 @@ TODO_DB_NAME = "할 일"  # 노션 허브 아래 할 일 DB 이름에 들어가�
 MAX_NOTION_PAGES = 8  # search_notion 이 본문까지 읽는 페이지 수 (느려지지 않게)
 # 이슈 제목 앞의 할 일 번호 표시: "[T3] 할 일 이름"
 TASK_TAG = re.compile(r"^\s*\[T(\d+)\]")
+# PR 본문에서 이슈를 닫는 말 (깃허브와 같은 규칙): Closes #3, fixes #3, Resolved #3
+CLOSING = r"\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)"
 # 인터넷 문제(연결, 시간 초과, 401/404)와 응답 해석 문제는 멈추지 않고 이유를 돌려준다
 NET_ERRORS = (OSError, ValueError)
 
@@ -272,7 +274,8 @@ def github_issues() -> list[dict]:
 def github_links() -> dict[str, dict]:
     """깃허브 이슈와 PR 을 할 일 번호로 묶는다: 번호 → {'issue': 이슈 또는 None, 'prs': [PR, 새것부터]}.
 
-    이슈는 제목 앞 [T번호] 로, PR 은 본문의 '#이슈번호' 나 제목의 [T번호] 로 잇는다.
+    이슈는 제목 앞 [T번호] 로, PR 은 본문의 'Closes #이슈번호'(Fixes, Resolves 도) 나 제목의 [T번호] 로 잇는다.
+    본문에 이슈 번호가 그냥 적혀 있는 것(예: '이슈 #75 확인')은 잇지 않는다. 깃허브가 이슈를 닫는 규칙과 같다.
     """
     items = github_issues()
     links: dict[str, dict] = {}
@@ -282,7 +285,8 @@ def github_links() -> dict[str, dict]:
             links[tag.group(1)] = {"issue": i, "prs": []}
     for p in (i for i in items if "pull_request" in i):
         body = p.get("body") or ""
-        nos = {no for no, link in links.items() if link["issue"] and re.search(rf"#{link['issue']['number']}\b", body)}
+        nos = {no for no, link in links.items()
+               if link["issue"] and re.search(rf"{CLOSING}\s*:?\s+#{link['issue']['number']}\b", body, re.IGNORECASE)}
         tag = TASK_TAG.match(p.get("title", ""))
         if tag:
             nos.add(tag.group(1))
@@ -315,7 +319,7 @@ def evidence(link: dict | None) -> tuple[str, str]:
 def link_status(assignee: str = "") -> str:
     """할 일과 깃허브 이슈, PR 을 할 일 번호로 맞춰 보고 엇갈린 곳을 알려 준다.
 
-    이슈 제목 앞의 [T번호] 로 할 일과 이슈를 잇고, PR 은 본문의 '#이슈번호' 나 제목의 [T번호] 로 잇는다.
+    이슈 제목 앞의 [T번호] 로 할 일과 이슈를 잇고, PR 은 본문의 'Closes #이슈번호' 나 제목의 [T번호] 로 잇는다.
     알려 주는 것: 이슈가 없는 할 일, PR 이 머지됐거나 이슈가 닫혔는데 상태가 '완료'가 아닌 할 일,
     PR 이 열렸는데 상태가 '할 일'인 할 일, '완료'인데 이슈가 열린 할 일, 리뷰를 기다리는 PR.
     assignee 로 한 사람만 볼 수 있다 (깃허브 아이디, 이름, 폴더). 깃허브를 읽지 못하면 이유를 돌려준다.
