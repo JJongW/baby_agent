@@ -6,6 +6,7 @@
 ## 순서
 1. (#1) 팀 도구 틀 PR 머지 → 조원에게 "pull 받고 claude 열기" 알리기
 2. (#2) 노션 페이지 만들기. Claude Code에서 `/mcp` → notion → Authenticate 먼저
+   (#14) 노션 읽기 통합 만들기 → 조 페이지에 연결 → 조원에게 `NOTION_TOKEN` DM (`team/docs/tokens.md`)
 3. 조원 Lv1 연결 확인을 받는다 (모두 같은 답이 나오는지)
 4. (#3) 회의록 → 이슈 (화면 공유로 모두 보기)
 5. (#4) 백로그 + 우선 라벨 2개
@@ -21,7 +22,7 @@ notion "회의록" DB 의 11/17 킥오프와 team 의 list_tasks 를 같이 보�
 표로 먼저 보여 줘: 제목("[T번호] 할 일"), 본문(완료 기준), 라벨(개발/디자인/PO), 담당자(tasks.csv 의 담당자).
 "만들어" 하면 그때 만들고, 만든 이슈 링크를 notion "할 일" DB 의 같은 번호 줄 "이슈" 칸에 적어 줘. 라벨이 없으면 라벨부터.
 ```
-노션 동기화 (tasks.csv 가 바뀔 때마다): `team/docs/notion-board.md` 의 "동기화" 말.
+노션 배정 맞추기 (tasks.csv 가 바뀔 때마다): `/mcp__team__sync_board`. 내 할 일 상태는 `/mcp__team__my_board 신`.
 백로그 (#4):
 ```
 team 의 progress 와 github 열린 이슈로 MVP 우선순위 표를 만들어 notion "직군 문서" 아래 "백로그" 로 써 줘.
