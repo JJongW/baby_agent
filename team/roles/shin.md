@@ -5,7 +5,7 @@
 
 ## 순서
 1. (#1) 팀 도구 틀 PR 머지 → 조원에게 "pull 받고 claude 열기" 알리기
-   조원 4명을 레포 협업자로 초대 (Settings → Collaborators. `git push` 용). **깃허브 토큰은 아무에게도 만들게 하거나 받지 않는다**
+   협업자 초대는 4명 모두 수락돼 있다 (11/17 확인). **깃허브 토큰은 아무에게도 만들게 하거나 받지 않는다**
 2. (#2) 노션 페이지 만들기. Claude Code에서 `/mcp` → notion → Authenticate 먼저
    (#14) 노션 읽기 통합 만들기 → 조 페이지에 연결 → 조원에게 `NOTION_TOKEN` DM (`team/docs/tokens.md`)
 3. 조원 Lv1 연결 확인을 받는다 (모두 같은 답이 나오는지)
