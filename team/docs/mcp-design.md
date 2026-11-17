@@ -31,7 +31,7 @@ baby_agent (레포)
 
 ## 오케스트레이터를 에이전트로 둔 이유
 - 세 곳을 읽는 일은 길고 결과는 짧다. 서브에이전트가 읽고 요약만 돌려주면 메인 세션의 맥락이 깨끗하다
-- `tools` 에 읽기 도구 이름만 적어(team 7개, github 이슈/PR/커밋 읽기, notion 검색/읽기) 쓰기가 아예 불가능하다. 비워 두면 쓰기 도구까지 물려받는다
+- `tools` 에 읽기 도구 이름만 적어(team 8개, github 이슈/PR/커밋 읽기, notion 검색/읽기) 쓰기가 아예 불가능하다. 비워 두면 쓰기 도구까지 물려받는다
 - 레포 이름 규칙상 에이전트는 사람 폴더 아래에 둬야 해서 PO 인 `shin` 아래에 두고, 조원 모두 부른다
 
 사람마다 다른 CLAUDE.md 를 두지 않고, 명단과 역할 파일을 데이터로 둔 이유: 배정이 바뀌어도 PO 가 `tasks.csv` 와 `roles/` 만 고치면 모두의 세션이 다음 pull 부터 따라온다.
@@ -53,7 +53,7 @@ github 와 notion 은 이미 공식 서버가 있어서 다시 만들지 않는�
 - 노션에서 누가 무엇을 고치면 되는지 (`notion_board`: 담당자가 내 줄에서 고칠 것, PO 가 맞출 것)
 - 노션과 깃허브를 같이 써야 하는 일의 순서 (명령 틀)
 
-### 도구 7개
+### 도구 8개
 | 도구 | 하는 일 | 워크북 이름 |
 | --- | --- | --- |
 | `whoami(who)` | 조원 찾기 + 역할 + 할 일 + 역할 안내문. 비우면 명단 | (우리 조 추가) |
@@ -61,13 +61,15 @@ github 와 notion 은 이미 공식 서버가 있어서 다시 만들지 않는�
 | `progress()` | 직군별, 사람별 진행률 | 진행률 |
 | `search_docs(keyword)` | docs, roles, AGENTS.md, README, tasks.csv 에서 키워드 줄 찾기 (최대 30) | 문서_찾기 |
 | `link_status(assignee)` | 깃허브 이슈, PR 을 읽어(GET 만) 할 일 번호와 맞추고 엇갈린 곳 알리기 | (우리 조 추가) |
+| `report(assignee)` | 진행률 + 할 일마다 노션 상태, 이슈, PR 을 한 번에 읽은 보고. `finish` 의 마지막 단계 | (우리 조 추가) |
 | `notion_board(assignee)` | 노션 할 일 DB 를 읽어 "담당자가 내 줄에서 고칠 것"(깃허브 근거보다 늦은 상태, 비어 있는 이슈, PR 칸)과 "PO 가 맞출 것"(없는 줄, 담당, 마감)을 노션 링크와 함께 | (우리 조 추가) |
 | `search_notion(keyword)` | 조 노션 페이지(통합이 연결된 곳만)에서 키워드 줄 찾기 (최대 8페이지, 30줄) | 문서_찾기의 노션판 |
 
-### 명령 틀 5개 (MCP Prompts, Claude Code 에서 `/mcp__team__이름`)
+### 명령 틀 6개 (MCP Prompts, Claude Code 에서 `/mcp__team__이름`)
 | 명령 틀 | 쓰는 곳 | 하는 일 |
 | --- | --- | --- |
 | `next_steps(who)` | team + github + notion | 내 진행 현황과 지금 할 일 1~3개 (오케스트레이터에게 맡김) |
+| `finish(who, task)` | team → github → notion → team | 일을 끝내면 PR 올리기, 노션 내 줄 기록, report 로 보고. 한 표로 한 번 확인받고 이어서 (각자) |
 | `my_board(who)` | team + github → notion | 노션 할 일 DB 의 내 줄(상태, 이슈, PR)을 지금 상태로 (각자) |
 | `standup(who)` | team + github → notion | 오늘 한 일, 다음 할 일, 막힌 것을 노션 스탠드업 DB 에 내 줄로 |
 | `sync_board()` | team + github → notion | tasks.csv 배정에 맞춰 노션 할 일 DB 의 줄, 담당, 마감 맞추기 (PO) |

@@ -1,5 +1,7 @@
 # team — 7조 조 과제 틀과 도구
 
+> **처음 받았으면 [START.html](START.html) 부터** (Mac `open team/START.html`, Windows `start team\START.html`). 10분 따라 하면 준비 끝.
+
 서비스를 만들기 전에, 조원 5명이 같은 MCP 세트와 같은 규칙으로 일하기 위한 폴더.
 터미널에서 `claude` 를 열면 "누구세요?"를 묻고, `shin-team-orchestrator` 가 github, notion, team 을 같이 읽어 진행 현황과 내 다음 할 일을 알려 준다.
 할 일을 시작하거나 끝내면 Claude 에게 말만 하면 된다. 노션 할 일 DB 의 **내 줄**을 Claude 가 맞춰 준다 (먼저 보여 주고).
@@ -13,7 +15,8 @@
 | `tasks.csv` | 할 일 배정 (번호, 할 일, 직군, 담당자, 마감). PO 만 PR 로. `상태` 열은 노션을 못 읽을 때 쓰는 처음 값 |
 | `roles/<폴더>.md` | 사람별 오늘 순서, 바로 쓸 말, 하지 말 것 |
 | `docs/` | 회의록, 설계 문서, 노션 보드 설계, 구조도 |
-| `mcp/server.py` | team MCP 서버 (읽기 전용 도구 7개 + 명령 틀 5개) |
+| `START.html` | 처음 받으면 가장 먼저 여는 안내 페이지 (준비, 토큰, MCP 연결, 매일 쓰는 말) |
+| `mcp/server.py` | team MCP 서버 (읽기 전용 도구 8개 + 명령 틀 6개) |
 
 | 이름 | 폴더 | 직군 | 조 과제 역할 |
 | --- | --- | --- | --- |
@@ -103,5 +106,5 @@ MCP 서버는 Claude Code 에 "어디에 무엇이 있는지"를 적어 두면 �
 ```bash
 npx @modelcontextprotocol/inspector python team/mcp/server.py
 ```
-도구 7개(`whoami`, `list_tasks`, `progress`, `search_docs`, `link_status`, `notion_board`, `search_notion`)와 Prompts 탭의 명령 틀 5개(`next_steps`, `my_board`, `standup`, `sync_board`, `meeting_to_issues`)가 보이고 눌러지면 정상.
+도구 8개(`whoami`, `list_tasks`, `progress`, `search_docs`, `link_status`, `report`, `notion_board`, `search_notion`)와 Prompts 탭의 명령 틀 6개(`next_steps`, `finish`, `my_board`, `standup`, `sync_board`, `meeting_to_issues`)가 보이고 눌러지면 정상.
 `NOTION_TOKEN` 없이 `notion_board` 를 누르면 토큰 안내가 나와야 정상이다. 설계와 "만들지 않은 도구"는 [docs/mcp-design.md](docs/mcp-design.md).

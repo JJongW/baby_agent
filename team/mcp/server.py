@@ -10,9 +10,11 @@
 - link_status   : 깃허브 이슈, PR 을 직접 읽어 할 일 번호와 맞춰 보고 엇갈린 곳을 알려 준다
 - notion_board  : 노션 할 일 DB 를 읽어 "담당자가 내 줄에서 고칠 것", "PO 가 맞출 것"을 만든다
 - search_notion : 조 노션 페이지에서 키워드 줄을 찾는다 (노션까지 포함한 문서 찾기)
+- report        : 진행률 + 할 일마다 노션 상태, 이슈, PR 을 한 번에 읽은 보고
 
 명령 틀 (Prompts, Claude Code 에서 /mcp__team__이름 으로 부른다)
-- next_steps, my_board, standup, sync_board, meeting_to_issues
+- next_steps, finish, my_board, standup, sync_board, meeting_to_issues
+  finish: 일을 끝내면 github(PR) → notion(내 줄) → team report 보고를 한 번 확인하고 이어서
   team 이 읽은 것으로 github, notion MCP 를 어떻게 쓸지 순서를 만들어 준다.
 
 어디가 원본인가
@@ -190,6 +192,10 @@ def progress() -> str:
 
     스탠드업, 주간 진행 보고, 백로그 우선순위를 정할 때 쓴다. 상태는 노션의 지금 값 (못 읽으면 tasks.csv).
     """
+    return progress_text()
+
+
+def progress_text() -> str:
     tasks, note = live_tasks()
     if not tasks:
         return "team/tasks.csv 에 할 일이 없어요."
@@ -314,6 +320,10 @@ def link_status(assignee: str = "") -> str:
     PR 이 열렸는데 상태가 '할 일'인 할 일, '완료'인데 이슈가 열린 할 일, 리뷰를 기다리는 PR.
     assignee 로 한 사람만 볼 수 있다 (깃허브 아이디, 이름, 폴더). 깃허브를 읽지 못하면 이유를 돌려준다.
     """
+    return link_text(assignee)
+
+
+def link_text(assignee: str = "") -> str:
     tasks, note = live_tasks()
     tasks = for_assignee(tasks, assignee)
     if not tasks:
@@ -351,6 +361,17 @@ def link_status(assignee: str = "") -> str:
     return "\n".join(
         [f"레포 {REPO} 기준 ({len(tasks)}개 할 일) {note}"] + lines + ["", "엇갈린 곳, 기다리는 것"] + (flags or ["없음"])
     )
+
+
+@mcp.tool(annotations=READ_ONLY_WEB)
+def report(assignee: str = "") -> str:
+    """세 곳(team 할 일, 노션 상태, 깃허브 이슈와 PR)을 한 번에 읽어 진행 보고를 만든다.
+
+    일을 끝내고 PR 과 노션 기록을 마친 직후, 스탠드업과 주간 진행을 쓰기 전, "지금 조 어디까지 왔어?"에 쓴다.
+    위: 조 전체 진행률(직군별, 사람별). 아래: assignee 의 할 일마다 상태, 이슈, PR 과 엇갈린 곳
+    (assignee 를 비우면 조 전체 할 일). 읽기만 한다.
+    """
+    return "\n".join(["## 조 진행률", progress_text(), "", "## 할 일과 깃허브", link_text(assignee)])
 
 
 # ---------- 노션 읽기 (통합 토큰 NOTION_TOKEN, 노션 쪽 권한은 "Read content" 만) ----------
@@ -622,6 +643,22 @@ def my_board(who: str) -> str:
         "내가 확인하면 notion 으로 그 줄의 그 칸만 고쳐 줘. 다른 사람 줄, 담당, 마감, 할 일 이름, 새 줄 만들기는 하지 마. "
         "고친 뒤 team notion_board 를 한 번 더 불러 '없음'이 되었는지 보여 줘. "
         "NOTION_TOKEN 이 없어서 notion_board 가 안 되면 notion 으로 '할 일' DB 를 직접 읽어 같은 비교를 해. " + RULES
+    )
+
+
+@mcp.prompt()
+def finish(who: str, task: str) -> str:
+    """일을 끝냈을 때: 깃허브에 PR 올리기 → 노션 내 줄 기록 → team 으로 보고 (한 번 확인하고 이어서)."""
+    return (
+        f"{who} 가 할 일 #{task} 을 끝냈어. 아래 1~3을 먼저 한 표로 보여 주고(무엇을, 어디에, 어떤 값으로), "
+        "내가 '응' 하면 1~3을 멈추지 말고 이어서 해 줘.\n"
+        "1) github: 지금 브랜치와 바뀐 파일 확인 (main 이면 브랜치 <폴더>/<종류>-<주제> 부터) → bash scripts/check.sh 통과 → "
+        f"커밋 '<종류>(<폴더>): 한 줄 요약' → push → PR (레포 PR 템플릿, 본문에 'Closes #이슈번호'. 이슈는 제목이 [T{task}] 인 것, "
+        "team link_status 로 찾는다. 이슈가 없으면 멈추고 PO 에게 알리라고 말해). 머지와 이슈 닫기는 하지 않는다\n"
+        f"2) notion: '할 일' DB 의 번호 {task} 줄(내 줄)의 상태를 '진행 중'(PR 리뷰 대기)으로, PR 칸에 PR 링크, 이슈 칸이 비었으면 이슈 링크. "
+        "PR 이 이미 머지됐으면 상태는 '완료'. 다른 칸, 다른 줄은 건드리지 않는다\n"
+        f"3) team report('{who}') 를 불러 세 줄로 보고: 올린 것(PR 링크), 노션에서 바뀐 것, 조 진행률과 내 다음 할 일 1개.\n"
+        "check.sh 가 실패하거나 도구가 실패하면 거기서 멈추고 이유를 보여 줘. " + RULES
     )
 
 
