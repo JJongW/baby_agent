@@ -38,7 +38,7 @@ Claude Code는 레포 루트의 `.claude/agents/` 아래만 읽고, `members/<�
 ## 7조 조 과제 (`team/`)
 
 D25부터 이 레포를 7조(신 PO, 노 개발, 윤 개발, 권 디자인, 어 디자인) P2 레포로 이어서 쓴다.
-조원 모두 같은 MCP 세트(github, notion, team)를 쓰고, Claude Code를 열면 "누구세요?"를 물은 뒤 그 사람의 할 일로 바로 시작한다.
+조원 모두 같은 MCP 세트(notion, team)를 쓰고, 깃허브는 team 이 토큰 없이 읽기만 하며, Claude Code를 열면 "누구세요?"를 물은 뒤 그 사람의 할 일로 바로 시작한다.
 **처음 받았으면 [team/START.html](team/START.html) 을 브라우저로 먼저 연다** (Mac `open team/START.html`, Windows `start team\START.html`). 자세한 안내와 구조도는 [team/README.md](team/README.md).
 
 ## 처음 받았을 때

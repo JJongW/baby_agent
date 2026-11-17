@@ -13,7 +13,7 @@ team MCP 서버(`team/mcp/server.py`)가 안전한지 확인하고, 도구 하�
 | --- | --- | --- |
 | 1 | 쓰기, 지우기, 파일 저장 코드가 없고, 깃허브, 노션에는 읽기 요청만 | `write`, `unlink`, `open(..., "w")`, `PATCH`, `pages` 검색 |
 | 2 | 경로가 파일 위치(`__file__`) 기준 | `TEAM_DIR` 정의 확인 |
-| 3 | 도구 8개, 명령 틀 6개가 보이고 눌러진다. `NOTION_TOKEN` 없이 `notion_board` 는 안내만 | `npx @modelcontextprotocol/inspector python team/mcp/server.py` |
+| 3 | 도구 9개, 명령 틀 6개가 보이고 눌러진다. `github_link` 는 링크 글자만 만든다. `NOTION_TOKEN` 없이 `notion_board` 는 안내만 | `npx @modelcontextprotocol/inspector python team/mcp/server.py` |
 | 4 | 없는 담당자 → 빈 결과 (에러로 멈추지 않음) | Inspector 에서 `list_tasks(assignee="nobody")` |
 | 5 | 설명만 읽어도 무엇을 하는지 안다 | Inspector Tools 탭의 설명 |
 

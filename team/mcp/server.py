@@ -1,6 +1,7 @@
 """7조 team MCP 서버 (읽기 전용).
 
-조원 모두가 같은 질문에 같은 답을 받게 하는 우리 조 전용 도구 상자이자, github 와 notion 을 잇는 허브다.
+조원 모두가 같은 질문에 같은 답을 받게 하는 우리 조 전용 도구 상자이자, 깃허브(읽기만)와 notion 을 잇는 허브다.
+조원은 깃허브 토큰이 없다. 공개 레포라 team 이 토큰 없이 읽고, PR, 이슈, 머지는 사람이 깃허브 화면에서 한다.
 
 도구 (Tools)
 - whoami        : 지금 세션의 사람이 누구인지 찾고, 그 사람의 역할과 할 일을 돌려준다
@@ -11,11 +12,12 @@
 - notion_board  : 노션 할 일 DB 를 읽어 "담당자가 내 줄에서 고칠 것", "PO 가 맞출 것"을 만든다
 - search_notion : 조 노션 페이지에서 키워드 줄을 찾는다 (노션까지 포함한 문서 찾기)
 - report        : 진행률 + 할 일마다 노션 상태, 이슈, PR 을 한 번에 읽은 보고
+- github_link   : 깃허브 화면에서 PR, 이슈를 만들 때 쓰는 미리 채운 링크 (버튼은 사람이 누른다)
 
 명령 틀 (Prompts, Claude Code 에서 /mcp__team__이름 으로 부른다)
 - next_steps, finish, my_board, standup, sync_board, meeting_to_issues
-  finish: 일을 끝내면 github(PR) → notion(내 줄) → team report 보고를 한 번 확인하고 이어서
-  team 이 읽은 것으로 github, notion MCP 를 어떻게 쓸지 순서를 만들어 준다.
+  finish: 일을 끝내면 git push → PR 링크(사람이 만듦) → notion(내 줄) → team report 보고
+  team 이 읽은 것으로 notion MCP 를 어떻게 쓸지 순서를 만들어 준다.
 
 어디가 원본인가
 - 배정(번호, 할 일, 직군, 담당자, 마감): team/tasks.csv. PO 만 PR 로 고친다
@@ -24,6 +26,7 @@
 - 세 곳을 잇는 열쇠는 할 일 번호: tasks.csv 번호 = 이슈 제목 앞 [T번호] = 노션 할 일 DB 번호
 
 읽기만 한다. 파일을 쓰거나 지우는 코드, 깃허브와 노션에 쓰는 요청은 일부러 없다.
+github_link 도 링크 글자만 만든다. 깃허브에 무언가 만드는 건 그 링크를 연 사람이다.
 노션 쓰기는 각자 로그인한 notion MCP 로, 사용자가 확인한 뒤에 한다.
 
 도구 이름은 영어로 쓴다. Claude API 의 도구 이름은 영어, 숫자, _, - 만 쓸 수 있어서
@@ -37,7 +40,9 @@ import csv
 import json
 import os
 import re
+import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -256,19 +261,36 @@ def search_docs(keyword: str) -> str:
 
 # ---------- 깃허브 읽기 (GET 만) ----------
 
-def github_issues() -> list[dict]:
-    """우리 조 레포의 이슈와 PR 을 최근 100개까지 읽는다 (GET 만, 새것부터).
+GH_TTL = 60  # 초. 토큰 없이 읽으면 같은 인터넷(IP)에서 시간당 60번이라, 1분 안의 같은 요청은 기억해 둔 걸 쓴다
+_gh_cache: dict[str, tuple[float, list]] = {}
 
-    GITHUB_PAT 가 있으면 같이 보내고(비공개 레포, 요청 한도), 없으면 공개 레포로 읽는다.
-    토큰 값은 어디에도 출력하지 않는다.
+
+def github_issues() -> list[dict]:
+    """우리 조 레포의 이슈와 PR 을 최근 100개까지 읽는다 (GET 만, 새것부터, 1분 기억).
+
+    공개 레포라 토큰 없이 읽는다. 조원은 깃허브 토큰이 없다.
+    GITHUB_PAT 는 선택이다 (PO 가 읽기 한도를 늘리고 싶을 때, 권한을 하나도 켜지 않은 토큰). 토큰 값은 어디에도 출력하지 않는다.
     """
+    now = time.time()
+    hit = _gh_cache.get(REPO)
+    if hit and now - hit[0] < GH_TTL:
+        return hit[1]
     url = f"https://api.github.com/repos/{REPO}/issues?state=all&per_page=100"
     req = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json", "User-Agent": "team-mcp"})
     token = os.environ.get("GITHUB_PAT", "").strip()
     if token:
         req.add_header("Authorization", f"Bearer {token}")
-    with urllib.request.urlopen(req, timeout=10) as res:
-        return json.loads(res.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=10) as res:
+            items = json.loads(res.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        if e.code in (403, 429) and e.headers.get("X-RateLimit-Remaining") == "0":
+            reset = e.headers.get("X-RateLimit-Reset", "")
+            wait = f" 약 {max(1, round((int(reset) - now) / 60))}분 뒤에 풀려요." if reset.isdigit() else ""
+            raise ValueError("깃허브 읽기 한도에 걸렸어요 (토큰 없이 같은 인터넷에서 시간당 60번)." + wait) from None
+        raise
+    _gh_cache[REPO] = (now, items)
+    return items
 
 
 def github_links() -> dict[str, dict]:
@@ -336,7 +358,7 @@ def link_text(assignee: str = "") -> str:
     try:
         links = github_links()
     except NET_ERRORS as e:
-        return f"깃허브({REPO})를 읽지 못했어요: {e}. 인터넷, GITHUB_PAT, 레포 이름(TEAM_REPO)을 확인해 주세요."
+        return f"깃허브({REPO})를 읽지 못했어요: {e} 인터넷과 레포 이름(TEAM_REPO)을 확인해 주세요."
 
     lines, flags = [], []
     for t in tasks:
@@ -376,6 +398,57 @@ def report(assignee: str = "") -> str:
     (assignee 를 비우면 조 전체 할 일). 읽기만 한다.
     """
     return "\n".join(["## 조 진행률", progress_text(), "", "## 할 일과 깃허브", link_text(assignee)])
+
+
+PR_TEMPLATE = TEAM_DIR.parent / ".github" / "pull_request_template.md"
+BRANCH_OK = re.compile(r"[A-Za-z0-9._/-]+")
+
+
+@mcp.tool(annotations=READ_ONLY_WEB)
+def github_link(task: str, branch: str = "") -> str:
+    """깃허브 화면에서 PR 이나 이슈를 만들 때 쓰는, 내용이 미리 채워진 링크를 만든다. Claude 는 깃허브에 쓰지 않는다.
+
+    branch 를 주면 (각자, 일을 끝내고 push 한 뒤): 그 브랜치의 PR 만들기 링크.
+      제목 '[T번호] 할 일', 본문 첫 줄 'Closes #이슈번호' + 레포 PR 템플릿.
+    branch 를 비우면 (PO): 그 할 일의 이슈 만들기 링크. 제목 '[T번호] 할 일', 담당자, 라벨(직군).
+    링크를 연 사람이 내용을 확인하고 버튼(Create pull request, Submit new issue)을 누른다. 읽기만 한다.
+    """
+    no = task.strip().lstrip("#Tt")
+    row = next((t for t in read_csv(TASKS_CSV) if t.get("번호") == no), None)
+    if not row:
+        return f"할 일 #{no} 이 tasks.csv 에 없어요. PO 에게 배정을 먼저 부탁하세요."
+    title = f"[T{no}] {row.get('할 일', '')}"
+    try:
+        issue = (github_links().get(no) or {}).get("issue")
+        gh_note = ""
+    except NET_ERRORS as e:
+        issue, gh_note = None, f"(깃허브를 못 읽어 이슈 번호를 확인하지 못했어요: {e})"
+    enc = lambda d: urllib.parse.urlencode(d, quote_via=urllib.parse.quote)
+
+    if not branch.strip():
+        if issue:
+            return f"#{no} 은 이미 이슈가 있어요: {issue['html_url']}"
+        body = f"할 일 #{no} (team/tasks.csv)\n\n## 완료 기준\n- "
+        query = {"title": title, "body": body, "assignees": row.get("담당자", ""), "labels": row.get("직군", "")}
+        url = f"https://github.com/{REPO}/issues/new?" + enc({k: v for k, v in query.items() if v})
+        return "\n".join(x for x in [
+            f"이슈 만들기 링크 (#{no}): {url}",
+            "열어서 내용을 확인하고 'Submit new issue' 를 누르세요. 라벨이 레포에 없으면 깃허브가 빼고 만들어요.", gh_note] if x)
+
+    branch = branch.strip()
+    if branch in ("main", "master") or not BRANCH_OK.fullmatch(branch):
+        return f"브랜치 이름이 이상해요: {branch!r}. main 이 아닌 <폴더>/<종류>-<주제> 브랜치에서 push 한 뒤 다시 불러 주세요."
+    template = PR_TEMPLATE.read_text(encoding="utf-8") if PR_TEMPLATE.exists() else ""
+    template = "\n".join(line for line in template.splitlines() if line.strip() != "Closes #")
+    closes = f"Closes #{issue['number']}" if issue else ""
+    body = "\n\n".join(x for x in [closes, template] if x)
+    url = (f"https://github.com/{REPO}/compare/main...{urllib.parse.quote(branch, safe='/')}?quick_pull=1&"
+           + enc({"title": title, "body": body}))
+    lines = [f"PR 만들기 링크 (#{no}, 브랜치 {branch}): {url}",
+             "열어서 내용을 확인하고 'Create pull request' 를 누르세요. 머지는 리뷰 1명 승인 뒤 사람이 해요."]
+    if not issue:
+        lines.append(f"[T{no}] 이슈가 아직 없어요. 제목의 [T{no}] 로 할 일과 이어지지만, PO 에게 이슈를 부탁하세요. {gh_note}".strip())
+    return "\n".join(lines)
 
 
 # ---------- 노션 읽기 (통합 토큰 NOTION_TOKEN, 노션 쪽 권한은 "Read content" 만) ----------
@@ -618,7 +691,8 @@ def search_notion(keyword: str) -> str:
 # ---------- 명령 틀 (Prompts): team 이 읽은 것으로 github, notion 을 같이 쓰는 순서 ----------
 # 공통 규칙: 쓰기 전에 먼저 보여 주고 확인받기. 배정은 tasks.csv, 상태는 노션. 번호로 잇기.
 RULES = (
-    "지킬 것: 이슈, PR, 댓글, 노션 쓰기는 먼저 표로 보여 주고 내가 확인하면 한다. "
+    "지킬 것: 깃허브에는 Claude 가 쓰지 않는다. PR, 이슈, 댓글, 머지는 사람이 깃허브 화면에서 하고, "
+    "Claude 는 team github_link 로 미리 채운 링크만 준다. 노션 쓰기는 먼저 표로 보여 주고 내가 확인하면 한다. "
     "배정(번호, 할 일, 담당, 마감)의 원본은 team/tasks.csv, 상태의 지금 값은 노션 할 일 DB 이고, "
     "세 곳은 할 일 번호로 잇는다 (이슈 제목 [T번호], 노션 할 일 DB 번호). "
     "노션 할 일 DB 는 내 줄의 상태, 이슈, PR 칸만 고친다 (줄 추가, 담당, 마감은 PO). "
@@ -628,7 +702,7 @@ RULES = (
 
 @mcp.prompt()
 def next_steps(who: str) -> str:
-    """내 진행 현황과 지금 할 일 1~3개 (team + github + notion)."""
+    """내 진행 현황과 지금 할 일 1~3개 (team + notion)."""
     return (
         f"{who} 기준으로 지금 무엇을 하면 되는지 알려 줘. shin-team-orchestrator 에이전트가 있으면 그 에이전트에게 맡기고, "
         f"없으면 직접: team whoami('{who}') → team progress → team link_status('{who}') → team notion_board('{who}') "
@@ -639,7 +713,7 @@ def next_steps(who: str) -> str:
 
 @mcp.prompt()
 def my_board(who: str) -> str:
-    """노션 할 일 DB 의 내 줄을 지금 상태로 맞추기 (team + github → notion, 각자)."""
+    """노션 할 일 DB 의 내 줄을 지금 상태로 맞추기 (team → notion, 각자)."""
     return (
         f"{who} 의 노션 할 일 줄을 최신으로 맞춰 줘. team notion_board('{who}') 의 '담당자가 노션 내 줄에서 고칠 것'과 "
         "이번 대화에서 내가 말한 변화(예: '9번 시작했어' → 진행 중, '10번 끝났어' → 완료)를 합쳐 "
@@ -652,26 +726,28 @@ def my_board(who: str) -> str:
 
 @mcp.prompt()
 def finish(who: str, task: str) -> str:
-    """일을 끝냈을 때: 깃허브에 PR 올리기 → 노션 내 줄 기록 → team 으로 보고 (한 번 확인하고 이어서)."""
+    """일을 끝냈을 때: push → PR 링크(사람이 만듦) → 노션 내 줄 기록 → team 으로 보고."""
     return (
         f"{who} 가 할 일 #{task} 을 끝냈어. 아래 1~3을 먼저 한 표로 보여 주고(무엇을, 어디에, 어떤 값으로), "
-        "내가 '응' 하면 1~3을 멈추지 말고 이어서 해 줘.\n"
-        "1) github: 지금 브랜치와 바뀐 파일 확인 (main 이면 브랜치 <폴더>/<종류>-<주제> 부터) → bash scripts/check.sh 통과 → "
-        f"커밋 '<종류>(<폴더>): 한 줄 요약' → push → PR (레포 PR 템플릿, 본문에 'Closes #이슈번호'. 이슈는 제목이 [T{task}] 인 것, "
-        "team link_status 로 찾는다. 이슈가 없으면 멈추고 PO 에게 알리라고 말해). 머지와 이슈 닫기는 하지 않는다\n"
-        f"2) notion: '할 일' DB 의 번호 {task} 줄(내 줄)의 상태를 '진행 중'(PR 리뷰 대기)으로, PR 칸에 PR 링크, 이슈 칸이 비었으면 이슈 링크. "
+        "내가 '응' 하면 1을 하고, 내가 PR 을 만들었다고 하면 2~3을 멈추지 말고 이어서 해 줘.\n"
+        "1) git: 지금 브랜치와 바뀐 파일 확인 (main 이면 브랜치 <폴더>/<종류>-<주제> 부터) → bash scripts/check.sh 통과 → "
+        "커밋 '<종류>(<폴더>): 한 줄 요약' → git push (내 git 로그인으로) → "
+        f"team github_link('{task}', '<브랜치>') 로 PR 만들기 링크를 받아 보여 주고, 내가 열어서 'Create pull request' 를 누를 때까지 기다린다. "
+        "Claude 는 깃허브에 PR, 이슈, 댓글을 직접 만들지 않는다\n"
+        f"2) 내가 '만들었어' 하면 team link_status('{who}') 로 그 PR 을 찾고, notion '할 일' DB 의 번호 {task} 줄(내 줄)의 "
+        "상태를 '진행 중'(PR 리뷰 대기)으로, PR 칸에 PR 링크, 이슈 칸이 비었으면 이슈 링크. "
         "PR 이 이미 머지됐으면 상태는 '완료'. 다른 칸, 다른 줄은 건드리지 않는다\n"
         f"3) team report('{who}') 를 불러 세 줄로 보고: 올린 것(PR 링크), 노션에서 바뀐 것, 조 진행률과 내 다음 할 일 1개.\n"
-        "check.sh 가 실패하거나 도구가 실패하면 거기서 멈추고 이유를 보여 줘. " + RULES
+        "check.sh, push, 도구가 실패하면 거기서 멈추고 이유를 보여 줘. " + RULES
     )
 
 
 @mcp.prompt()
 def standup(who: str) -> str:
-    """하루 끝 스탠드업 한 줄을 노션 스탠드업 DB 에 (team + github → notion)."""
+    """하루 끝 스탠드업 한 줄을 노션 스탠드업 DB 에 (team → notion)."""
     return (
         f"{who} 의 오늘 스탠드업을 써 줘. team whoami('{who}') 와 team link_status('{who}') 로 오늘 바뀐 할 일, "
-        "github 로 오늘 내가 올리거나 리뷰한 PR, 머지된 PR 을 보고 오늘 한 일, 다음 할 일, 막힌 것을 한 줄씩 정리해서 "
+        "내 PR(열림, 머지됨)을 보고, 오늘 리뷰한 PR 은 나에게 물어서 오늘 한 일, 다음 할 일, 막힌 것을 한 줄씩 정리해서 "
         f"notion '스탠드업' DB 에 내 줄 하나로 넣어 줘 (제목 '오늘날짜 {who}', 날짜 오늘, 사람 {who}). "
         f"team notion_board('{who}') 에 내 줄에서 고칠 것이 있으면 같이 보여 줘. 다른 사람 줄은 건드리지 마. " + RULES
     )
@@ -679,7 +755,7 @@ def standup(who: str) -> str:
 
 @mcp.prompt()
 def sync_board() -> str:
-    """tasks.csv 배정에 맞춰 노션 할 일 DB 를 맞추기 (PO 용, team + github → notion)."""
+    """tasks.csv 배정에 맞춰 노션 할 일 DB 를 맞추기 (PO 용, team → notion)."""
     return (
         "team notion_board() 의 'PO 가 맞출 것'을 표로 보여 줘 (노션에 없는 줄, 담당, 마감이 다른 줄, tasks.csv 에 없는 노션 줄). "
         "새 줄은 tasks.csv 의 번호, 할 일, 직군, 담당(이름), 마감(올해 날짜), 상태(tasks.csv 처음 값)로, "
@@ -690,12 +766,14 @@ def sync_board() -> str:
 
 @mcp.prompt()
 def meeting_to_issues() -> str:
-    """노션 회의록의 할 일을 깃허브 이슈로 (PO 용, notion + team → github)."""
+    """노션 회의록의 할 일을 깃허브 이슈로 (PO 용, notion + team → 깃허브 화면)."""
     return (
         "notion '회의록' DB 의 가장 최근 회의(team search_notion 으로 찾아도 된다)와 team list_tasks, team link_status 를 같이 보고, "
         "이슈가 없는 할 일마다 깃허브 이슈 초안을 표로 보여 줘: 제목 '[T번호] 할 일', 본문(완료 기준), "
         "라벨(개발/디자인/PO), 담당자(tasks.csv 의 깃허브 아이디). 회의록에는 있는데 tasks.csv 에 없는 할 일은 따로 알려 줘 "
-        "(배정은 PO 가 tasks.csv 에 먼저). 내가 '만들어' 하면 이슈를 만들고, 링크를 notion '할 일' DB 같은 번호 줄의 '이슈' 칸에 적어 줘. "
+        "(배정은 PO 가 tasks.csv 에 먼저). 내가 좋다고 하면 할 일마다 team github_link(번호) 로 이슈 만들기 링크를 줘 "
+        "(이슈는 내가 깃허브 화면에서 만든다). 내가 '만들었어' 하면 team link_status 로 이슈를 찾아 "
+        "링크를 notion '할 일' DB 같은 번호 줄의 '이슈' 칸에 적어 줘. "
         + RULES
     )
 
