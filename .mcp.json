@@ -14,7 +14,13 @@
     },
     "team": {
       "command": "python",
-      "args": ["team/mcp/server.py"]
+      "args": [
+        "team/mcp/server.py"
+      ],
+      "env": {
+        "GITHUB_PAT": "${GITHUB_PAT:-}",
+        "NOTION_TOKEN": "${NOTION_TOKEN:-}"
+      }
     }
   }
 }
