@@ -7,9 +7,10 @@
 | --- | --- | --- | --- | --- | --- |
 | 깃허브 토큰 | **아무도 만들지 않는다** | 없음 | 없음. team 이 공개 레포를 토큰 없이 읽는다 | 없음 | 없음 |
 | `NOTION_TOKEN` | **신(PO)** 이 한 번 | 각자 내 PC 환경변수 | team 이 노션 할 일 DB 를 읽기 | 콘텐츠 읽기만, 7조 P2 페이지만 | 과제 끝나면 삭제 |
-| notion 로그인 | 토큰 없음 | Claude Code 가 PC 안전 저장소(Mac 키체인)에 보관 | notion MCP(노션 읽고 쓰기) | 내 노션 계정 권한 그대로 | `claude mcp logout notion` 까지 |
+| notion 로그인 | 토큰 없음. 조원은 선택, 신은 꼭 | Claude Code 가 PC 안전 저장소(Mac 키체인)에 보관 | notion MCP. 신은 노션 쓰기(서기), 조원은 읽기만 | 내 노션 계정 권한 그대로 (조원은 게스트라 읽기) | `claude mcp logout notion` 까지 |
 
-`NOTION_TOKEN` 은 없어도 일은 된다 (Claude 가 notion 로그인으로 노션을 읽는다). 있으면 team 이 진행률, 내 할 일에 노션의 지금 상태를 바로 보여 준다.
+`NOTION_TOKEN` 은 없어도 일은 된다 (노션 로그인을 했으면 Claude 가 notion 으로 읽는다). 있으면 team 이 진행률, 내 할 일에 노션의 지금 상태를 바로 보여 준다.
+신 노트북에는 꼭 있어야 한다: 서기(`/mcp__team__scribe`)가 부르는 `inbox` 가 이 토큰으로 노션을 읽어 고칠 칸을 찾는다.
 
 ## 깃허브는 왜 토큰이 없나
 - Claude 는 깃허브를 **읽기만** 한다. team 이 공개 레포 `JJongW/baby_agent` 의 이슈, PR 을 토큰 없이 읽는다
@@ -26,7 +27,7 @@
    │  터미널에서 claude 를 켜면 그대로 넘어간다
    ▼
 claude ── .mcp.json 을 읽고 ${NOTION_TOKEN} 자리에 값을 넣는다 (파일에는 이름만)
-   ├─ notion (원격) ← 토큰 없이, 처음 한 번 브라우저 로그인. Claude Code 가 보관
+   ├─ notion (원격) ← 토큰 없이, 처음 한 번 브라우저 로그인. Claude Code 가 보관 (노션 쓰기는 신 노트북만)
    └─ team (내 PC 에서 실행) ← api.github.com 은 토큰 없이, api.notion.com 은 NOTION_TOKEN 으로 **읽기만**
 
 git push (평소 git 로그인) ──▶ 깃허브 ◀── PR, 이슈, 머지는 사람이 깃허브 화면에서
@@ -61,14 +62,14 @@ Windows (PowerShell): 입력 값은 기록에 남지 않는다. 넣은 뒤 터�
 ```
 Windows: `if ($env:NOTION_TOKEN) { "NOTION_TOKEN 들어감" }`
 
-그다음 레포 맨 위 폴더에서 `claude` → MCP 서버 허용 → `/mcp` → notion → Authenticate (조 노션 워크스페이스 선택) → `/mcp` 에서 둘 다 connected.
+그다음 레포 맨 위 폴더에서 `claude` → MCP 서버 허용 → `/mcp` 에서 team connected. 노션 로그인은 조원은 선택, 신은 꼭: `/mcp` → notion → Authenticate (조 노션 워크스페이스 선택).
 
 ## 4. 보안: 꼭 지킬 것
 - 값은 레포, 슬랙 채널, 노션, 이슈와 PR 댓글, 스크린샷, 화면 공유에 **절대** 두지 않는다. 시연 전 터미널 기록도 확인
 - **Claude 채팅창에 토큰을 붙여 넣지 않는다.** 대화 기록에 남는다. Claude 가 토큰을 달라고 하면 거절한다
 - `claude mcp add -e KEY=값`, `-H "Authorization: Bearer 값"` 처럼 값을 명령에 직접 쓰지 않는다. 내 PC 설정 파일에 그대로 남는다
 - 권한은 최소로: 깃허브 토큰은 아예 없다. 노션 통합은 콘텐츠 읽기만, 조 페이지에만 연결
-- notion 로그인은 내 노션 계정 권한 그대로라 조 페이지 밖도 보일 수 있다. 로그인할 때 조 워크스페이스를 고르고, 규칙대로 조 페이지만 쓴다
+- notion 로그인은 내 노션 계정 권한 그대로라 조 페이지 밖도 보일 수 있다. 로그인할 때 조 워크스페이스를 고르고, 규칙대로 조 페이지만 본다. 노션 쓰기는 신 노트북의 서기만, `inbox` 에 나온 칸만
 - 데이터는 가짜만 쓴다 (실제 개인정보, 회사 자료 X)
 
 ## 5. 새었거나, 과제가 끝나면

@@ -5,7 +5,7 @@
 서비스를 만들기 전에, 조원 5명이 같은 MCP 세트와 같은 규칙으로 일하기 위한 폴더.
 터미널에서 `claude` 를 열면 "누구세요?"를 묻고, `shin-team-orchestrator` 가 team(할 일, 깃허브 읽기)과 notion 을 같이 읽어 진행 현황과 내 다음 할 일을 알려 준다.
 **깃허브 토큰은 없다.** Claude 는 깃허브를 읽기만 하고, PR, 이슈, 머지는 사람이 깃허브 화면에서 한다 (Claude 는 미리 채운 링크만 준다).
-할 일을 시작하거나 끝내면 Claude 에게 말만 하면 된다. 노션 할 일 DB 의 **내 줄**을 Claude 가 맞춰 준다 (먼저 보여 주고).
+노션은 조원이 무료 게스트라 **보기만** 한다. 할 일을 시작하면 내 이슈에 `/시작` 댓글, 끝나면 PR, 하루 끝엔 `[스탠드업]` 이슈에 댓글만 남기면 **신(PO) 노트북의 Claude 가 노션에 옮긴다** (`/mcp__team__scribe`).
 
 **구조도**: [docs/architecture.html](docs/architecture.html) (내려받아 브라우저로 열기). 왜 이렇게 만들었는지는 [docs/mcp-design.md](docs/mcp-design.md).
 
@@ -17,7 +17,7 @@
 | `roles/<폴더>.md` | 사람별 오늘 순서, 바로 쓸 말, 하지 말 것 |
 | `docs/` | 회의록, 설계 문서, 노션 보드 설계, 구조도 |
 | `START.html` | 처음 받으면 가장 먼저 여는 안내 페이지 (구조도, 준비, MCP 연결, 매일 쓰는 말) |
-| `mcp/server.py` | team MCP 서버 (읽기 전용 도구 9개 + 명령 틀 6개) |
+| `mcp/server.py` | team MCP 서버 (읽기 전용 도구 10개 + 명령 틀 7개) |
 
 | 이름 | 폴더 | 직군 | 조 과제 역할 |
 | --- | --- | --- | --- |
@@ -31,11 +31,13 @@
 | 무엇 | 원본 | 누가, 어떻게 |
 | --- | --- | --- |
 | 배정 (번호, 할 일, 담당, 마감) | `team/tasks.csv` | PO 가 고쳐 PR |
-| 상태 (할 일 → 진행 중 → 완료) | 노션 할 일 DB | 각자 Claude 에게 "9번 시작했어", "9번 PR 머지됐어" → Claude 가 노션 **내 줄**만 고친다 |
+| 상태 (할 일 → 진행 중 → 완료) | 노션 할 일 DB | 조원은 깃허브에 남긴다 (내 이슈에 `/시작` 댓글, PR, 머지) → 신 노트북의 Claude 가 `/mcp__team__scribe` 로 옮긴다 |
+| 스탠드업 | 노션 스탠드업 DB | 각자 깃허브 `[스탠드업]` 이슈에 댓글 (`오늘:`, `다음:`, `막힘:`) → 신 노트북이 옮긴다 |
 | 이슈, PR | 깃허브 | 사람이 깃허브 화면에서. 이슈는 PO, PR 은 각자. Claude 는 `github_link` 로 미리 채운 링크만 |
 
 세 곳은 **할 일 번호**로 잇는다: `tasks.csv` 번호 = 이슈 제목 앞 `[T번호]` = 노션 할 일 DB `번호`.
-team 은 세 곳을 모두 읽어(깃허브는 토큰 없이) 맞춰 보고, 노션에서 고칠 것을 찾아 준다 (`notion_board`). 고치기는 각자 로그인한 notion MCP 가 한다.
+team 은 세 곳을 모두 읽어(깃허브는 토큰 없이) 맞춰 보고, 노션에 옮길 것을 모은다 (`inbox`). 옮기기는 신(PO)이 로그인한 notion MCP 만 한다.
+다른 방법(깃허브 Actions, Supabase + 사이트)과 갈아탈 신호는 [docs/board-options.md](docs/board-options.md).
 
 ## 처음 받으면 (터미널)
 준비물: Claude Code CLI (`claude --version`), Python 3.10 이상 (`python --version`), git
@@ -48,8 +50,8 @@ team 은 세 곳을 모두 읽어(깃허브는 토큰 없이) 맞춰 보고, 노
    ```
 2. 노션 읽기 토큰: 신에게 DM 으로 받으면 **[docs/tokens.md](docs/tokens.md)** 대로 넣는다 (없어도 일은 된다). **깃허브 토큰은 만들지 않는다**
 3. 레포 맨 위 폴더에서 `claude` → "이 프로젝트의 MCP 서버를 쓸까요?" 가 나오면 notion, team 모두 **허용**
-4. 노션 로그인 (notion MCP 는 토큰 대신 로그인): 세션 안에서 `/mcp` → notion → **Authenticate** → 브라우저에서 조 노션 워크스페이스 허용
-5. 확인: `/mcp` 에서 둘 다 connected (터미널에서는 `claude mcp list`)
+4. (선택, 신은 꼭) 노션 로그인: Claude 가 노션 회의록을 바로 읽게 하려면 세션 안에서 `/mcp` → notion → **Authenticate** → 조 노션 워크스페이스 허용. 조원은 게스트라 읽기만 된다
+5. 확인: `/mcp` 에서 team connected, 4번을 했으면 notion 도 (터미널에서는 `claude mcp list`)
 6. 아무 말이나 입력 (예: `시작`) → Claude 가 누구인지 확인하고 내 할 일을 보여 준다
 
 ## MCP 는 어떻게 붙나 (CLI)
@@ -98,8 +100,8 @@ github MCP 는 일부러 없다. 깃허브에 쓰는 일(PR, 이슈, 댓글, 머
 | team 이 "깃허브 읽기 한도에 걸렸어요" | 토큰 없이 같은 와이파이에서 시간당 60번. 안내된 시간만큼 기다린다 (team 은 1분 동안 같은 걸 다시 안 읽는다) |
 | `git push` 가 403, permission denied | 다른 깃허브 계정으로 로그인돼 있는지. 협업자는 모두 수락돼 있다 (11/17). 그래도 안 되면 신에게. Claude 에 토큰을 주지 않는다 |
 | PR 링크를 열었는데 "There isn't anything to compare" | push 가 안 됐다 → `git push -u origin <브랜치>` 다시 |
-| notion "Needs authentication" | `/mcp` → notion → Authenticate, 또는 `claude mcp login notion` |
-| team 이 "NOTION_TOKEN 이 필요해요" | 토큰이 없어도 일은 된다 (Claude 가 notion MCP 로 읽는다). 넣으려면 [docs/tokens.md](docs/tokens.md) |
+| notion "Needs authentication" | 조원은 그냥 둬도 된다 (노션은 보기만). 로그인하려면 `/mcp` → notion → Authenticate, 또는 `claude mcp login notion` |
+| team 이 "NOTION_TOKEN 이 필요해요" | 토큰이 없어도 일은 된다 (노션 로그인을 했으면 Claude 가 notion 으로 읽는다). 넣으려면 [docs/tokens.md](docs/tokens.md) |
 | team 이 "HTTP Error 401" (노션) | 토큰 값이 틀렸거나 다시 발급됨 → PO 에게 새 값 |
 | team 이 "할 일 DB 를 못 찾았어요" | 조 페이지 ••• → 연결에 `7조 team 읽기` 가 있는지, 보드가 만들어졌는지 (PO) |
 | `git pull` 했는데 team 이 옛날 그대로 | `claude` 를 껐다 켜기 (서버를 다시 실행) |
@@ -109,5 +111,5 @@ github MCP 는 일부러 없다. 깃허브에 쓰는 일(PR, 이슈, 댓글, 머
 ```bash
 npx @modelcontextprotocol/inspector python team/mcp/server.py
 ```
-도구 9개(`whoami`, `list_tasks`, `progress`, `search_docs`, `link_status`, `report`, `notion_board`, `search_notion`, `github_link`)와 Prompts 탭의 명령 틀 6개(`next_steps`, `finish`, `my_board`, `standup`, `sync_board`, `meeting_to_issues`)가 보이고 눌러지면 정상.
+도구 10개(`whoami`, `list_tasks`, `progress`, `search_docs`, `link_status`, `report`, `github_link`, `inbox`, `notion_board`, `search_notion`)와 Prompts 탭의 명령 틀 7개(`next_steps`, `finish`, `my_board`, `standup`, `scribe`, `sync_board`, `meeting_to_issues`)가 보이고 눌러지면 정상.
 `NOTION_TOKEN` 없이 `notion_board` 를 누르면 토큰 안내가 나와야 정상이다. 설계와 "만들지 않은 도구"는 [docs/mcp-design.md](docs/mcp-design.md).

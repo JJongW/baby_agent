@@ -107,10 +107,10 @@
 
   <div class="card lead">
     <p><b>이걸 끝내면</b> 레포 폴더에서 <code>claude</code> 를 열 때마다 Claude 가 "누구세요?"를 묻고, 깃허브, 노션, 우리 조 할 일을 같이 읽어 <b>내 다음 할 일</b>을 알려 줘요. <b>깃허브 토큰은 필요 없어요.</b>
-    "9번 시작했어"라고 말하면 노션 보드의 <b>내 줄</b>도 Claude 가 바꿔 줘요 (바꾸기 전에 먼저 보여 줘요).</p>
+    노션은 보기만 하면 돼요. 시작하면 이슈에 <code>/시작</code> 댓글, 끝나면 PR, 하루 끝엔 스탠드업 댓글만 남기면 <b>신 노트북의 Claude 가 노션에 옮겨요.</b></p>
     <div class="flow">
       <div><b>team</b> 내 PC 에서 실행 <span class="pill">읽기 전용</span><br>명단, 할 일, 진행률, 문서 찾기, 깃허브 이슈와 PR 읽기 (토큰 없이)</div>
-      <div><b>notion</b> 원격 서버 <span class="pill">로그인</span><br>노션 보드 읽고, 내 줄만 고치기</div>
+      <div><b>notion</b> 원격 서버 <span class="pill">보기만</span><br>노션 보드와 회의록 읽기. 쓰기는 신 노트북만</div>
       <div><b>깃허브</b> MCP 없음 <span class="pill">토큰 없음</span><br>push 는 git 으로. PR, 이슈, 머지는 내가 화면에서 (Claude 는 링크만)</div>
     </div>
   </div>
@@ -172,7 +172,7 @@
     <input type="checkbox" aria-label="4번 완료">
     <div>
       <h2>4. 노션 읽기 토큰 넣기 <small>신에게 DM 으로 받으면</small></h2>
-      <p>team 이 노션 보드의 지금 상태를 읽을 때 써요. 읽기 전용이라 새어도 노션을 바꿀 수 없어요. <b>없어도 일은 돼요</b> (그땐 Claude 가 노션 로그인으로 직접 읽어요).</p>
+      <p>team 이 노션 보드의 지금 상태를 읽을 때 써요. 읽기 전용이라 새어도 노션을 바꿀 수 없어요. <b>없어도 일은 돼요</b> (그땐 노션 상태 대신 처음 값이 보여요).</p>
       <div data-only="mac">
         <div class="cmd"><pre>security add-generic-password -a "$USER" -s NOTION_TOKEN -w</pre></div>
         <div class="cmd"><pre>echo 'export NOTION_TOKEN="$(security find-generic-password -a "$USER" -s NOTION_TOKEN -w 2&gt;/dev/null)"' &gt;&gt; ~/.zshrc</pre></div>
@@ -207,8 +207,9 @@
   <section class="card step" data-step="6">
     <input type="checkbox" aria-label="6번 완료">
     <div>
-      <h2>6. 노션 로그인 <small>토큰 없이 로그인만</small></h2>
-      <p>claude 안에서 <code>/mcp</code> 입력 → <b>notion</b> 고르기 → <b>Authenticate</b> → 브라우저에서 <b>조 노션 워크스페이스</b>를 골라 허용.</p>
+      <h2>6. 노션 로그인 <small>선택 (신은 꼭)</small></h2>
+      <p>Claude 가 노션 회의록을 바로 읽게 하려면: claude 안에서 <code>/mcp</code> 입력 → <b>notion</b> 고르기 → <b>Authenticate</b> → 브라우저에서 <b>조 노션 워크스페이스</b>를 골라 허용.</p>
+      <p>조원은 게스트라 <b>읽기만</b> 돼요. 노션 쓰기는 신 노트북이 해요. 건너뛰어도 돼요.</p>
       <p class="note">claude 밖에서 하려면 <code>claude mcp login notion</code>. 끝낼 땐 <code>claude mcp logout notion</code>.</p>
     </div>
   </section>
@@ -217,13 +218,13 @@
     <input type="checkbox" aria-label="7번 완료">
     <div>
       <h2>7. 둘 다 붙었는지 확인</h2>
-      <p>claude 안에서 <code>/mcp</code> → notion, team 이 모두 <b>connected</b>. 터미널에서는:</p>
+      <p>claude 안에서 <code>/mcp</code> → team 이 <b>connected</b> (6번을 했으면 notion 도). 터미널에서는:</p>
       <div class="cmd"><pre>claude mcp list</pre></div>
       <p>그리고 조원 모두 같은 답이 나오는지 한 번씩:</p>
       <ul>
         <li><code>team 으로 직군별 진행률 보여 줘</code> → 끝줄에 "(상태: 노션 할 일 DB 의 지금 값)"</li>
         <li><code>team link_status 로 우리 조 할 일과 이슈, PR 보여 줘</code> → 토큰 없이 나오면 정상</li>
-        <li><code>노션 "11/17 킥오프" 의 결정 사항만 보여 줘</code></li>
+        <li><code>team search_notion 으로 "킥오프" 찾아 줘</code> → 노션 읽기 토큰이 있으면 나와요</li>
       </ul>
     </div>
   </section>
@@ -236,13 +237,13 @@
       <div class="tablewrap"><table>
         <tr><th>이럴 때</th><th>이렇게 말하기</th></tr>
         <tr><td>지금 뭐 하지?</td><td><code>지금 뭐 하면 돼?</code></td></tr>
-        <tr><td>일을 끝냈다</td><td><code>9번 끝났어</code> 또는 <code>/mcp__team__finish 내이름 9</code> → 한 표로 확인 → 커밋, push → <b>PR 만들기 링크</b>를 열어 내가 버튼 클릭 → "만들었어" → 노션 내 줄, team 보고</td></tr>
-        <tr><td>할 일을 시작했다</td><td><code>9번 시작했어</code> → 노션 내 줄이 "진행 중"으로 (먼저 보여 줌)</td></tr>
-        <tr><td>PR 이 머지됐다</td><td><code>/mcp__team__my_board 내이름</code> → 깃허브를 보고 "완료"와 PR 링크를 채움</td></tr>
-        <tr><td>하루 끝</td><td><code>/mcp__team__standup 내이름</code> → 노션 스탠드업에 내 줄 하나</td></tr>
+        <tr><td>일을 끝냈다</td><td><code>9번 끝났어</code> 또는 <code>/mcp__team__finish 내이름 9</code> → 한 표로 확인 → 커밋, push → <b>PR 만들기 링크</b>를 열어 내가 버튼 클릭 → "만들었어" → PR 연결 확인, team 보고 (노션은 신 노트북이 옮겨요)</td></tr>
+        <tr><td>할 일을 시작했다</td><td><code>9번 시작했어</code> → Claude 가 내 이슈 링크를 줘요 → 이슈에 <code>/시작</code> 댓글 → 노션이 "진행 중"으로 (신 노트북이 옮김)</td></tr>
+        <tr><td>PR 이 머지됐다</td><td>할 것 없어요. 신 노트북이 노션을 "완료"로 옮겨요. 내 줄 보기는 <code>/mcp__team__my_board 내이름</code></td></tr>
+        <tr><td>하루 끝</td><td><code>/mcp__team__standup 내이름</code> → 세 줄을 받아 <b>[스탠드업] 이슈에 댓글</b>로 붙이기</td></tr>
         <tr><td>회의록, 결정 찾기</td><td><code>team search_notion 으로 "타깃" 찾아 줘</code></td></tr>
       </table></div>
-      <div class="ok">상태(할 일, 진행 중, 완료)는 노션 보드가 원본이에요. 배정(할 일, 담당, 마감)은 레포 <code>team/tasks.csv</code>, 신(PO)만 바꿔요.</div>
+      <div class="ok">상태(할 일, 진행 중, 완료)는 노션 보드에서 보고, 바꾸는 신호는 깃허브에 남겨요. 배정(할 일, 담당, 마감)은 레포 <code>team/tasks.csv</code>, 신(PO)만 바꿔요.</div>
     </div>
   </section>
 
